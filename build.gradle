@@ -25,6 +25,7 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     //apply p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
 
