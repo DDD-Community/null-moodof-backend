@@ -1,4 +1,4 @@
-package com.ddd.moodof.infrastructure.configuration;
+package com.ddd.moodof.adapter.infrastructure.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

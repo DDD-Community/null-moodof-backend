@@ -1,7 +1,7 @@
-package com.ddd.moodof.infrastructure.auth;
+package com.ddd.moodof.adapter.infrastructure.auth;
 
-import com.ddd.moodof.infrastructure.auth.exception.InvalidTokenException;
-import com.ddd.moodof.presentation.LoginUserId;
+import com.ddd.moodof.adapter.infrastructure.auth.exception.InvalidTokenException;
+import com.ddd.moodof.adapter.presentation.LoginUserId;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

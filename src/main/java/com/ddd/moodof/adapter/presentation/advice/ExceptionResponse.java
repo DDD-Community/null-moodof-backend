@@ -1,4 +1,4 @@
-package com.ddd.moodof.presentation.advice;
+package com.ddd.moodof.adapter.presentation.advice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
