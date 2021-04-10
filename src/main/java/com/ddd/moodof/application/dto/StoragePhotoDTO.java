@@ -1,6 +1,6 @@
 package com.ddd.moodof.application.dto;
 
-import com.ddd.moodof.domain.storage.photo.StoragePhoto;
+import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

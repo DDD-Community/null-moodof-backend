@@ -1,6 +1,6 @@
-package com.ddd.moodof.infrastructure.configuration;
+package com.ddd.moodof.adapter.infrastructure.configuration;
 
-import com.ddd.moodof.infrastructure.auth.LoginUserIdArgumentResolver;
+import com.ddd.moodof.adapter.infrastructure.auth.LoginUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

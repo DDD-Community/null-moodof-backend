@@ -3,7 +3,7 @@ package com.ddd.moodof.acceptance;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import org.junit.jupiter.api.Test;
 
-import static com.ddd.moodof.presentation.StoragePhotoController.API_STORAGE_PHOTO;
+import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

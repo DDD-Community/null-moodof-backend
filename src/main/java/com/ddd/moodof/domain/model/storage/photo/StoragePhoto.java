@@ -1,4 +1,4 @@
-package com.ddd.moodof.domain.storage.photo;
+package com.ddd.moodof.domain.model.storage.photo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
-import com.ddd.moodof.domain.storage.photo.StoragePhoto;
-import com.ddd.moodof.domain.storage.photo.StoragePhotoRepository;
+import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
+import com.ddd.moodof.domain.model.storage.photo.StoragePhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

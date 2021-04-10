@@ -1,4 +1,4 @@
-package com.ddd.moodof.domain.entity;
+package com.ddd.moodof.domain.model.user;
 
 
 import lombok.Getter;

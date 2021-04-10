@@ -1,4 +1,4 @@
-package com.ddd.moodof.presentation;
+package com.ddd.moodof.adapter.presentation;
 
 import java.lang.annotation.*;
 
