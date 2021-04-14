@@ -1,16 +1,18 @@
 version: 0.0
 os: linux
-
 files:
   - source: /
-    destination: /opt/moodof
+    destination: /home/ubuntu/docker/back/jar
+    overwrite: yes
+
 permissions:
-  - object: /opt/moodof/
+  - object: /
+    pattern: "**"
     owner: ubuntu
     group: ubuntu
-    mode: 755
+
 hooks:
   AfterInstall:
-    - location: deploy.sh
+    - location: /deploy.sh
       timeout: 60
       runas: root
