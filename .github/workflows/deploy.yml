@@ -29,8 +29,13 @@ jobs:
         run: ./gradlew build
         shell: bash
     
-      - name: Make zip file
-        run: zip -qq -r ./$GITHUB_SHA.zip .
+      - name: Zip jar, appspec.yml, deploy.sh files
+        working-directory: ./build/libs
+        run: |
+          mv ../../appspec.yml .
+          mv ../../deploy.sh .
+          zip moodof.zip *.jar appspec.yml deploy.sh
+          rm *.jar *.yml *.sh
         shell: bash
 
       - name: Configure AWS credentials
