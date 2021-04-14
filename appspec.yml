@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/docker/back/jar
+    destination: /home/ubuntu/docker/moodof
     overwrite: yes
 
 permissions:
