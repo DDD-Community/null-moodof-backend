@@ -49,4 +49,4 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./build/libs/moodof.zip s3://moodof-deploy1/$PROJECT_NAME/moodof.zip
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name moodof-code-deploy --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name dev --s3-location bucket=moodof-deploy1,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws deploy create-deployment --application-name moodof-code-deploy --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name dev --s3-location bucket=moodof-deploy1,bundleType=zip,key=$PROJECT_NAME/moodof.zip
