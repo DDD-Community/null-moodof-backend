@@ -16,6 +16,8 @@ spring:
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true
 logging.level:
   org.hibernate.SQL: debug
 # org.hibernate.type: trace
