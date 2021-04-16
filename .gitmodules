@@ -1,0 +1,3 @@
+[submodule "moodof-secret"]
+	path = moodof-secret
+	url = https://github.com/kouz95/moodof-secret.git
