@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - develop
+      - feature/22
 
 name: Deploy String boot to Amazon EC2
 env:
