@@ -1,6 +1,6 @@
 package com.ddd.moodof.adapter.infrastructure.security.oauth2;
 
-import com.ddd.moodof.adapter.infrastructure.configuration.CookieUtils;
+import com.ddd.moodof.adapter.infrastructure.security.CookieUtils;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
