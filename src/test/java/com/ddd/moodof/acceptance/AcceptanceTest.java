@@ -53,7 +53,7 @@ public class AcceptanceTest {
                     .content(body)
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isCreated())
-                    .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, Matchers.matchesRegex(uri + "/\\d*")))
+                    .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, Matchers.matchesRegex(uri + "/com.ddd.moodof.authorization\\d*")))
                     .andReturn();
 
             return objectMapper.readValue(result.getResponse().getContentAsString(), response);

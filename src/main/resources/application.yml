@@ -18,6 +18,35 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 816491450432-8a14tsegerl77m5nul14pa1q0fo3mb5a.apps.googleusercontent.com
+            clientSecret: mRHdZmxmoae_ow32LSmZGrZk
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+app:
+  auth:
+    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenExpirationMsec: 84000000
+    # 60000:60초
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
+      - myandroidapp://oauth2/redirect
+      - myiosapp://oauth2/redirect
+
 logging.level:
   org.hibernate.SQL: debug
 # org.hibernate.type: trace
+
+#apply spring security
+
