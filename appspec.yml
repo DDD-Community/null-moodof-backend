@@ -3,7 +3,6 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/docker/moodof
-    overwrite: yes
 
 permissions:
   - object: /
