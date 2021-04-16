@@ -73,3 +73,12 @@ configurations {
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
+
+processResources.dependsOn('copySecret')
+
+task copySecret(type: Copy) {
+    from('./moodof-secret') {
+        include 'application-security.yml'
+    }
+    into 'src/main/resources'
+}
