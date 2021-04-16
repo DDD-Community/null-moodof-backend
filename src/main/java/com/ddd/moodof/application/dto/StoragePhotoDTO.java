@@ -13,7 +13,7 @@ public class StoragePhotoDTO {
     @NoArgsConstructor
     @Getter
     @AllArgsConstructor
-    public static class Create {
+    public static class CreateStoragePhoto {
         @NotBlank
         private String uri;
         @NotBlank
@@ -27,7 +27,7 @@ public class StoragePhotoDTO {
     @NoArgsConstructor
     @Getter
     @AllArgsConstructor
-    public static class Response {
+    public static class StoragePhotoResponse {
         private Long id;
         private Long userId;
         private String uri;
@@ -35,8 +35,8 @@ public class StoragePhotoDTO {
         private LocalDateTime createdDate;
         private LocalDateTime lastModifiedDate;
 
-        public static Response from(StoragePhoto storagePhoto) {
-            return new Response(storagePhoto.getId(), storagePhoto.getUserId(), storagePhoto.getUri(), storagePhoto.getRepresentativeColor(), storagePhoto.getCreatedDate(), storagePhoto.getLastModifiedDate());
+        public static StoragePhotoResponse from(StoragePhoto storagePhoto) {
+            return new StoragePhotoResponse(storagePhoto.getId(), storagePhoto.getUserId(), storagePhoto.getUri(), storagePhoto.getRepresentativeColor(), storagePhoto.getCreatedDate(), storagePhoto.getLastModifiedDate());
         }
     }
 }

@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 public class StoragePhotoService {
     private final StoragePhotoRepository storagePhotoRepository;
 
-    public StoragePhotoDTO.Response create(StoragePhotoDTO.Create request, Long userId) {
+    public StoragePhotoDTO.StoragePhotoResponse create(StoragePhotoDTO.CreateStoragePhoto request, Long userId) {
         StoragePhoto storagePhoto = request.toEntity(userId);
         StoragePhoto saved = storagePhotoRepository.save(storagePhoto);
-        return StoragePhotoDTO.Response.from(saved);
+        return StoragePhotoDTO.StoragePhotoResponse.from(saved);
     }
 }

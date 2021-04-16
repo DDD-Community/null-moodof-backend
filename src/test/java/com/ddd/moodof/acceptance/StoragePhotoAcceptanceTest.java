@@ -1,6 +1,7 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.Test;
 
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
@@ -10,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class StoragePhotoAcceptanceTest extends AcceptanceTest {
     @Test
     void 사진보관함에_사진을_추가한다() {
-        // TODO: 2021/04/06 인증 인가 완료시 회원 가입 후 userId를 응답받아야 한다.
         // given
-        Long userId = 1L;
+        User user = signUp();
+        Long userId = user.getId();
 
         // when
-        StoragePhotoDTO.Create request = new StoragePhotoDTO.Create("uri", "representativeColor");
-        StoragePhotoDTO.Response response = postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.Response.class, userId);
+        StoragePhotoDTO.CreateStoragePhoto request = new StoragePhotoDTO.CreateStoragePhoto("uri", "representativeColor");
+        StoragePhotoDTO.StoragePhotoResponse response = postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
 
         // then
         assertAll(

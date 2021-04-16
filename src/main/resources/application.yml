@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    include: security
   datasource:
     url: jdbc:h2:mem:test
     username: sa
@@ -18,6 +18,6 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
+
 logging.level:
   org.hibernate.SQL: debug
-# org.hibernate.type: trace
