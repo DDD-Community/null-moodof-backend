@@ -20,11 +20,16 @@ public class StoragePhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long userId;
+
     private String uri;
+
     private String representativeColor;
+
     @CreatedDate
     private LocalDateTime createdDate;
+
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 }

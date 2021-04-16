@@ -1,15 +1,16 @@
 package com.ddd.moodof.adapter.infrastructure.security.oauth2;
 
 import com.ddd.moodof.adapter.infrastructure.configuration.AppProperties;
-import com.ddd.moodof.adapter.infrastructure.auth.exception.BadRequestException;
-import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.adapter.infrastructure.configuration.CookieUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
+import com.ddd.moodof.adapter.infrastructure.security.UserPrincipal;
+import com.ddd.moodof.adapter.infrastructure.security.exception.BadRequestException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-import javax.servlet.ServletException;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,26 +20,15 @@ import java.util.Optional;
 
 import static com.ddd.moodof.adapter.infrastructure.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
+@RequiredArgsConstructor
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
-    private TokenProvider tokenProvider;
-
-    private AppProperties appProperties;
-
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
-
-    @Autowired
-    OAuth2AuthenticationSuccessHandler(TokenProvider tokenProvider, AppProperties appProperties,
-                                       HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) {
-        this.tokenProvider = tokenProvider;
-        this.appProperties = appProperties;
-        this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
-    }
+    private final TokenProvider tokenProvider;
+    private final AppProperties appProperties;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
@@ -54,13 +44,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
-        if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
+        if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
         }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
-        String token = tokenProvider.createToken(authentication);
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        String token = tokenProvider.createToken(principal.getId());
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", token)
@@ -80,11 +71,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .anyMatch(authorizedRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to
                     URI authorizedURI = URI.create(authorizedRedirectUri);
-                    if(authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
-                            && authorizedURI.getPort() == clientRedirectUri.getPort()) {
-                        return true;
-                    }
-                    return false;
+                    return authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
+                            && authorizedURI.getPort() == clientRedirectUri.getPort();
                 });
     }
 }

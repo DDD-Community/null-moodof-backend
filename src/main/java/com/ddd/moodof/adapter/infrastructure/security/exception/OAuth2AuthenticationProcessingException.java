@@ -1,4 +1,4 @@
-package com.ddd.moodof.adapter.infrastructure.auth.exception;
+package com.ddd.moodof.adapter.infrastructure.security.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

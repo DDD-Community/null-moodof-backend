@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class UserPrincipal implements OAuth2User, UserDetails{
-    private Long id;
-    private String email;
-    private String password;
+public class UserPrincipal implements OAuth2User, UserDetails {
+    private final Long id;
+    private final String email;
+    private final String password;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 

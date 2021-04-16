@@ -1,4 +1,4 @@
-package com.ddd.moodof.adapter.presentation.advice;
+package com.ddd.moodof.adapter.infrastructure.advice;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;

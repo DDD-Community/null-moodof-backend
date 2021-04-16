@@ -1,5 +1,9 @@
 package com.ddd.moodof.acceptance;
 
+import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
+import com.ddd.moodof.domain.model.user.AuthProvider;
+import com.ddd.moodof.domain.model.user.User;
+import com.ddd.moodof.domain.model.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
@@ -32,6 +36,12 @@ public class AcceptanceTest {
     @Autowired
     private WebApplicationContext context;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
@@ -40,11 +50,9 @@ public class AcceptanceTest {
                 .build();
     }
 
-
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {
-            // TODO: 2021/04/06 인증 인가 완료시 토큰으로 변경 (TokenProvider)
-            String token = userId.toString();
+            String token = tokenProvider.createToken(userId);
             String body = objectMapper.writeValueAsString(request);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
@@ -53,7 +61,29 @@ public class AcceptanceTest {
                     .content(body)
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isCreated())
-                    .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, Matchers.matchesRegex(uri + "/com.ddd.moodof.authorization\\d*")))
+                    .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, Matchers.matchesRegex(uri + "/\\d*")))
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected User signUp() {
+        return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
+    }
+
+    protected <T> T getWithLogin(String uri, Class<T> response, Long userId) {
+        try {
+
+            String token = tokenProvider.createToken(userId);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();
 
             return objectMapper.readValue(result.getResponse().getContentAsString(), response);

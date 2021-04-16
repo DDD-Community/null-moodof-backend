@@ -42,9 +42,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     //apply h2 database
     runtimeOnly 'com.h2database:h2'
-    testCompile('com.h2database:h2')
+    testImplementation 'com.h2database:h2'
+
     //apply security test
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

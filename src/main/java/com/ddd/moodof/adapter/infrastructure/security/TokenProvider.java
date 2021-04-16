@@ -2,50 +2,34 @@ package com.ddd.moodof.adapter.infrastructure.security;
 
 import com.ddd.moodof.adapter.infrastructure.configuration.AppProperties;
 import io.jsonwebtoken.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Service
+@Slf4j
+@Component
 public class TokenProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-
-    private AppProperties appProperties;
-
-    private String jwtToken = "";
+    private final AppProperties appProperties;
 
     public TokenProvider(AppProperties appProperties) {
         this.appProperties = appProperties;
     }
 
-    public String getToken(){
-        return this.jwtToken;
-    }
-    public void setToken(String jwtToken){
-        this.jwtToken = jwtToken;
-    }
+    public String createToken(Long userId) {
 
-    public String createToken(Authentication authentication) {
-
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
-        String jwtToken = Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
+        return Jwts.builder()
+                .setSubject(Long.toString(userId))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
-        setToken(jwtToken);
-        return jwtToken;
     }
 
-    public Long getUserIdFromToken(String token) {
+    public Long getUserId(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
                 .parseClaimsJws(token)
@@ -59,15 +43,15 @@ public class TokenProvider {
             Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
+            log.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
+            log.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
+            log.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
+            log.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+            log.error("JWT claims string is empty.");
         }
         return false;
     }
