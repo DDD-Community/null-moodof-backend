@@ -26,7 +26,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --args='--app.auth.tokenExpirationMsec=${{ secrets.TOKEN_EXPIRATION }} --app.auth.tokenSecret=${{ secrets.TOKEN_SECRET }} --app.oauth2.authorizedRedirectUris=${{ secrets.AUTHORIZED_REDIRECT_URIS }} --spring.security.oauth2.client.registration.google.clientId=${{ secrets.GOOGLE_CLIENT_ID }} --spring.security.oauth2.client.registration.google.clientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }} --spring.security.oauth2.client.registration.google.redirectUri={{ secrets.GOOGLE_REDIRECT_URI }} --spring.security.oauth2.client.registration.google.scope={{ secrets.GOOGLE_SCOPE }}'
         shell: bash
     
       - name: Zip jar, appspec.yml, deploy.sh files
