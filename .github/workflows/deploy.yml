@@ -15,7 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
+        with:
+          token: ${{ secrets.SUBMODULE_PAT }}
+          submodules: recursive
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
@@ -26,13 +28,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew build -Dapp.auth.tokenExpirationMsec=${{ secrets.TOKEN_EXPIRATION }} \
-                            -Dapp.auth.tokenSecret=${{ secrets.TOKEN_SECRET }} \
-                            -Dapp.oauth2.authorizedRedirectUris=${{ secrets.AUTHORIZED_REDIRECT_URIS }} \
-                            -Dspring.security.oauth2.client.registration.google.clientId=${{ secrets.GOOGLE_CLIENT_ID }} \
-                            -Dspring.security.oauth2.client.registration.google.clientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-                            -Dspring.security.oauth2.client.registration.google.redirectUri=${{ secrets.GOOGLE_REDIRECT_URI }} \
-                            -Dspring.security.oauth2.client.registration.google.scope=${{ secrets.GOOGLE_SCOPE }}
+        run: ./gradlew build
         shell: bash
     
       - name: Zip jar, appspec.yml, deploy.sh files
