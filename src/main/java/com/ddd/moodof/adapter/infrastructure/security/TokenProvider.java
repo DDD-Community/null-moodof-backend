@@ -1,6 +1,5 @@
 package com.ddd.moodof.adapter.infrastructure.security;
 
-import com.ddd.moodof.adapter.infrastructure.configuration.AppProperties;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

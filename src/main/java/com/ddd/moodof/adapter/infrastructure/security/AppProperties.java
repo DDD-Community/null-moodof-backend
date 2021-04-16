@@ -1,4 +1,4 @@
-package com.ddd.moodof.adapter.infrastructure.configuration;
+package com.ddd.moodof.adapter.infrastructure.security;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
