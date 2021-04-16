@@ -32,7 +32,7 @@ jobs:
                             -Dspring.security.oauth2.client.registration.google.clientId=${{ secrets.GOOGLE_CLIENT_ID }} \
                             -Dspring.security.oauth2.client.registration.google.clientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }} \
                             -Dspring.security.oauth2.client.registration.google.redirectUri=${{ secrets.GOOGLE_REDIRECT_URI }} \
-                            -Dspring.security.oauth2.client.registration.google.scope=${{ secrets.GOOGLE_SCOPE }}'
+                            -Dspring.security.oauth2.client.registration.google.scope=${{ secrets.GOOGLE_SCOPE }}
         shell: bash
     
       - name: Zip jar, appspec.yml, deploy.sh files
