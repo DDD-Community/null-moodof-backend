@@ -46,6 +46,13 @@ public class StoragePhotoController implements StoragePhotoAPI {
 
     }
 
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@LoginUserId Long userId, @PathVariable Long id) {
+        storagePhotoService.deleteById(userId, id);
+        return ResponseEntity.noContent().build();
+    }
+
     private Sort getSort(String sortBy, boolean descending) {
         Sort sort = Sort.by(sortBy);
         if (descending) {

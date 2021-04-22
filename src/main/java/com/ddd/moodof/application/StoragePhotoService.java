@@ -24,4 +24,11 @@ public class StoragePhotoService {
         List<StoragePhoto> storagePhotos = storagePhotoRepository.findPageByUserId(userId, pageable);
         return StoragePhotoDTO.StoragePhotoResponse.listFrom(storagePhotos);
     }
+
+    public void deleteById(Long userId, Long id) {
+        StoragePhoto storagePhoto = storagePhotoRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new IllegalArgumentException("요청과 일치하는 보관함 사진이 없습니다. id / userId: " + id + " / " + userId));
+
+        storagePhotoRepository.deleteById(storagePhoto.getId());
+    }
 }

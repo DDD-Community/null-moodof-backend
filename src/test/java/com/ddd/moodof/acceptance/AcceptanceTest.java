@@ -57,6 +57,15 @@ public class AcceptanceTest {
                 .build();
     }
 
+    protected User signUp() {
+        return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
+    }
+
+    protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
+        StoragePhotoDTO.CreateStoragePhoto request = new StoragePhotoDTO.CreateStoragePhoto(photoUri, representativeColor);
+        return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
+    }
+
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);
@@ -78,13 +87,8 @@ public class AcceptanceTest {
         }
     }
 
-    protected User signUp() {
-        return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
-    }
-
     protected <T> T getWithLogin(String uri, Class<T> response, Long userId) {
         try {
-
             String token = tokenProvider.createToken(userId);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -102,7 +106,6 @@ public class AcceptanceTest {
 
     protected <T> List<T> getListWithLogin(String uri, Class<T> response, Long userId) {
         try {
-
             String token = tokenProvider.createToken(userId);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -120,8 +123,19 @@ public class AcceptanceTest {
         }
     }
 
-    protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
-        StoragePhotoDTO.CreateStoragePhoto request = new StoragePhotoDTO.CreateStoragePhoto(photoUri, representativeColor);
-        return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
+    protected void deleteWithLogin(String uri, Long resourceId, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+
+            mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/{id}", resourceId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent())
+                    .andReturn();
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
     }
 }
