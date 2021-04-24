@@ -1,6 +1,6 @@
 package com.ddd.moodof.adapter.infrastructure.security.oauth2;
 
-import com.ddd.moodof.adapter.infrastructure.configuration.CookieUtils;
+import com.ddd.moodof.adapter.infrastructure.security.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;

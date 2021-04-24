@@ -1,7 +1,7 @@
 package com.ddd.moodof.adapter.infrastructure.security.oauth2;
 
-import com.ddd.moodof.adapter.infrastructure.configuration.AppProperties;
-import com.ddd.moodof.adapter.infrastructure.configuration.CookieUtils;
+import com.ddd.moodof.adapter.infrastructure.security.AppProperties;
+import com.ddd.moodof.adapter.infrastructure.security.CookieUtils;
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.adapter.infrastructure.security.UserPrincipal;
 import com.ddd.moodof.adapter.infrastructure.security.exception.BadRequestException;
