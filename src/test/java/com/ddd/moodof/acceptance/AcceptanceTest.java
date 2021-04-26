@@ -1,10 +1,12 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
+import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,13 +19,18 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.List;
+
+import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Slf4j
+@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
     private static final String BEARER = "Bearer ";
@@ -50,6 +57,15 @@ public class AcceptanceTest {
                 .build();
     }
 
+    protected User signUp() {
+        return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
+    }
+
+    protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
+        StoragePhotoDTO.CreateStoragePhoto request = new StoragePhotoDTO.CreateStoragePhoto(photoUri, representativeColor);
+        return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
+    }
+
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);
@@ -71,13 +87,8 @@ public class AcceptanceTest {
         }
     }
 
-    protected User signUp() {
-        return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
-    }
-
     protected <T> T getWithLogin(String uri, Class<T> response, Long userId) {
         try {
-
             String token = tokenProvider.createToken(userId);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -87,6 +98,41 @@ public class AcceptanceTest {
                     .andReturn();
 
             return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T> List<T> getListWithLogin(String uri, Class<T> response, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected void deleteWithLogin(String uri, Long resourceId, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+
+            mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/{id}", resourceId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent())
+                    .andReturn();
+
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AssertionError("test fails");
