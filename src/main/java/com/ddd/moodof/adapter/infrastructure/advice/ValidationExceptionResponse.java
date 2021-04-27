@@ -5,11 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
-
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-public class ExceptionResponse {
-    private List<String> messages;
+public class ValidationExceptionResponse extends Throwable {
+    private HttpStatus httpStatus;
+    private String message;
 }

@@ -2,6 +2,7 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TagDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -26,6 +27,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.List;
 
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
+import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -66,12 +68,44 @@ public class AcceptanceTest {
         return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
     }
 
+    protected TagDTO.TagResponse 태그_생성(Long userId, String tagName) {
+        TagDTO.CreateRequest request = new TagDTO.CreateRequest(tagName);
+        return postWithLogin(request, API_TAG, TagDTO.TagResponse.class, userId);
+    }
+    protected TagDTO.TagResponse 태그_수정(Long userId, String tagName) {
+        TagDTO.CreateRequest request = new TagDTO.CreateRequest(tagName);
+        return postWithLogin(request, API_TAG, TagDTO.TagResponse.class, userId);
+    }
+
+
+
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);
             String body = objectMapper.writeValueAsString(request);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isCreated())
+                    .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, Matchers.matchesRegex(uri + "/\\d*")))
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T, U> U putWithLogin(T request, String uri, Class<U> response, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+            String body = objectMapper.writeValueAsString(request);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(body)
