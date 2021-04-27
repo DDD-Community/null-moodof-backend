@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface StoragePhotoRepository extends JpaRepository<StoragePhoto, Long> {
     List<StoragePhoto> findPageByUserId(Long userId, Pageable pageable);
 
+    long countByUserId(Long userId);
+
     Optional<StoragePhoto> findByIdAndUserId(Long id, Long userId);
 
 }
