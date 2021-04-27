@@ -32,8 +32,8 @@ public class Tag {
     public void changeTagName(String tagName){
         this.tagName = tagName;
     }
-    public void changeTagUserId(String tagUserId){
-        this.tagUserId = tagUserId;
+    public void changeTagUserId(String UserId){
+        this.userId = userId;
     }
 
 
