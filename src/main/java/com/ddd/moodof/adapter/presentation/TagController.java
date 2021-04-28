@@ -1,6 +1,5 @@
 package com.ddd.moodof.adapter.presentation;
 
-import com.ddd.moodof.adapter.infrastructure.advice.ValidationExceptionResponse;
 import com.ddd.moodof.adapter.presentation.api.TagAPI;
 import com.ddd.moodof.application.TagService;
 import com.ddd.moodof.application.dto.TagDTO;
@@ -31,12 +30,7 @@ public class TagController implements TagAPI {
     public ResponseEntity<TagDTO.TagResponse> create(
             @RequestBody @Valid TagDTO.CreateRequest request,
             @LoginUserId Long userId) {
-        TagDTO.TagResponse response = null;
-        try {
-            response = tagService.create(request, userId);
-        } catch (ValidationExceptionResponse validationExceptionResponse) {
-            validationExceptionResponse.printStackTrace();
-        }
+        TagDTO.TagResponse response = tagService.create(request, userId);
         return ResponseEntity.created(URI.create(API_TAG + "/" + response.getId())).body(response);
     }
 
@@ -48,14 +42,9 @@ public class TagController implements TagAPI {
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<TagDTO.TagResponse> update(@RequestBody @Valid TagDTO.UpdateReqeust request, @LoginUserId Long userId) {
-        try {
-            TagDTO.TagResponse response = tagService.update(request, userId);
-            return ResponseEntity.created(URI.create(API_TAG + "/" + response.getId())).body(response);
-        } catch (ValidationExceptionResponse validationExceptionResponse) {
-            validationExceptionResponse.printStackTrace();
-        }
-        return ResponseEntity.badRequest().build();
+    @PutMapping("/{id}")
+    public ResponseEntity<TagDTO.TagResponse> update(@PathVariable Long id, @RequestBody @Valid TagDTO.UpdateRequest request, @LoginUserId Long userId) {
+        TagDTO.TagResponse response = tagService.update(id,request, userId);
+        return ResponseEntity.ok(response);
     }
 }

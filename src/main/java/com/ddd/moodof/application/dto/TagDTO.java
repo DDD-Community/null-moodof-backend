@@ -18,13 +18,13 @@ public class TagDTO {
     @Getter
     public static class CreateRequest{
         @NotBlank
-        private String tagName;
+        private String name;
 
-        public Tag toEntity(Long userId, String tagName) {
+        public Tag toEntity(Long userId, String name) {
             return Tag.builder()
                     .id(null)
                     .userId(userId)
-                    .tagName(tagName)
+                    .name(name)
                     .createdTime(null)
                     .lastModifiedDate(null)
                     .build();
@@ -34,15 +34,15 @@ public class TagDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class UpdateReqeust{
+    public static class UpdateRequest{
         @NotBlank
-        private String tagName;
+        private String name;
 
-        public Tag toEntity(Long userId, String tagName) {
+        public Tag toEntity(Long id, Long userId, String name) {
             return Tag.builder()
-                    .id(null)
+                    .id(id)
                     .userId(userId)
-                    .tagName(tagName)
+                    .name(name)
                     .createdTime(null)
                     .lastModifiedDate(null)
                     .build();
@@ -57,7 +57,7 @@ public class TagDTO {
     public static class TagResponse {
         private Long id;
         private Long userId;
-        private String tagName;
+        private String name;
         private LocalDateTime createdDate;
         private LocalDateTime lastModifiedDate;
 
@@ -65,7 +65,7 @@ public class TagDTO {
             return TagResponse.builder()
                     .id(tag.getId())
                     .userId(tag.getUserId())
-                    .tagName(tag.getTagName())
+                    .name(tag.getName())
                     .createdDate(tag.getCreatedTime())
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build();
@@ -74,7 +74,7 @@ public class TagDTO {
             return tagList.stream().map(tag -> TagResponse.builder()
                     .id(tag.getId())
                     .userId(tag.getUserId())
-                    .tagName(tag.getTagName())
+                    .name(tag.getName())
                     .createdDate(tag.getCreatedTime())
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build()).collect(Collectors.toList());

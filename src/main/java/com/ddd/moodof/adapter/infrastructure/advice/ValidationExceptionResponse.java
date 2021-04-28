@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-public class ValidationExceptionResponse extends Throwable {
+public class ValidationExceptionResponse{
     private HttpStatus httpStatus;
     private String message;
 }

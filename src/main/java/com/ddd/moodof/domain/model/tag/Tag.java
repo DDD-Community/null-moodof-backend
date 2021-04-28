@@ -21,20 +21,12 @@ public class Tag {
 
     private Long userId;
 
-    private String tagName;
+    private String name;
 
     @CreatedDate
     private LocalDateTime createdTime;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
-
-    public void changeTagName(String tagName){
-        this.tagName = tagName;
-    }
-    public void changeTagUserId(String UserId){
-        this.userId = userId;
-    }
-
 
 }

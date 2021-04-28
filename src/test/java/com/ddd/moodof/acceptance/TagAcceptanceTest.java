@@ -30,27 +30,29 @@ public class TagAcceptanceTest extends AcceptanceTest{
         TagDTO.TagResponse tagResponse = 태그_생성(userId, "tag4");
 
         // when
-        String uri = UriComponentsBuilder.fromUriString(API_TAG)
-                .build().toUriString();
+        String uri =API_TAG;
         List<TagDTO.TagResponse> response = getListWithLogin(uri, TagDTO.TagResponse.class, userId);
 
         // then
         assertAll(
-                () -> assertThat(response.get(0)).isNotNull()
+                () -> assertThat(response.size()).isEqualTo(4),
+                () -> assertThat(response.get(0).getName()).isEqualTo("tag1")
         );
     }
 
     @Test
     public void 태그를_생성한다() throws Exception {
+
         // given
-        TagDTO.TagResponse response = 태그_생성(userId, "tagName1");
 
         // when
+        TagDTO.TagResponse response = 태그_생성(userId, "name1");
+
         // then
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
                 () -> assertThat(response.getUserId()).isEqualTo(userId),
-                () -> assertThat(response.getTagName()).isEqualTo("tagName1"),
+                () -> assertThat(response.getName()).isEqualTo("name1"),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isNotNull()
         );
@@ -58,8 +60,8 @@ public class TagAcceptanceTest extends AcceptanceTest{
     @Test
     public void 태그를_삭제한다() throws Exception {
         // given
-        태그_생성(userId, "tagName1");
-        TagDTO.TagResponse response = 태그_생성(userId, "tagName2");
+        태그_생성(userId, "name1");
+        TagDTO.TagResponse response = 태그_생성(userId, "name2");
 
         // when
         태그_리스트_출력(userId);
@@ -67,18 +69,16 @@ public class TagAcceptanceTest extends AcceptanceTest{
         태그_리스트_출력(userId);
     }
     @Test
-    public void 태그를_수정() throws Exception {
+    public void 태그_수정() throws Exception {
         // given
-        TagDTO.TagResponse createList = 태그_생성(userId, "tagName1");
+        TagDTO.TagResponse createList = 태그_생성(userId, "name1");
 
         // when
-        TagDTO.TagResponse updateList = 태그_수정(userId, "tagName2");
+        TagDTO.TagResponse updateList = 태그_수정(userId, createList.getId(),"name2");
 
         // then
-        assertAll(
-                () -> assertThat(!createList.getTagName().equals(updateList.getTagName()))
-        );
-        System.err.println(updateList.getTagName());
+        assertThat(createList.getName()).isNotEqualTo(updateList.getName());
+        System.err.println(updateList.getName());
 
     }
     public void 태그_리스트_출력(Long userId) throws Exception {

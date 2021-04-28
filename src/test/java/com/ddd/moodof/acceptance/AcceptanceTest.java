@@ -68,13 +68,13 @@ public class AcceptanceTest {
         return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
     }
 
-    protected TagDTO.TagResponse 태그_생성(Long userId, String tagName) {
-        TagDTO.CreateRequest request = new TagDTO.CreateRequest(tagName);
+    protected TagDTO.TagResponse 태그_생성(Long userId, String name) {
+        TagDTO.CreateRequest request = new TagDTO.CreateRequest(name);
         return postWithLogin(request, API_TAG, TagDTO.TagResponse.class, userId);
     }
-    protected TagDTO.TagResponse 태그_수정(Long userId, String tagName) {
-        TagDTO.CreateRequest request = new TagDTO.CreateRequest(tagName);
-        return postWithLogin(request, API_TAG, TagDTO.TagResponse.class, userId);
+    protected TagDTO.TagResponse 태그_수정(Long id, Long userId, String name) {
+        TagDTO.UpdateRequest request = new TagDTO.UpdateRequest(name);
+        return putWithLogin(request, id, API_TAG, TagDTO.TagResponse.class, userId);
     }
 
 
@@ -100,18 +100,17 @@ public class AcceptanceTest {
         }
     }
 
-    protected <T, U> U putWithLogin(T request, String uri, Class<U> response, Long userId) {
+    protected <T, U> U putWithLogin(T request, Long resourceId, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);
             String body = objectMapper.writeValueAsString(request);
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri)
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri +"/{id}", resourceId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(body)
                     .header(AUTHORIZATION, BEARER + token))
-                    .andExpect(MockMvcResultMatchers.status().isCreated())
-                    .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, Matchers.matchesRegex(uri + "/\\d*")))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();
 
             return objectMapper.readValue(result.getResponse().getContentAsString(), response);
