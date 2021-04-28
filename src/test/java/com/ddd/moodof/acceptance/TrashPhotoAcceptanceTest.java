@@ -5,6 +5,7 @@ import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,10 +33,38 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
         // then
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
-                () -> assertThat(response.getStoragePhotoId()).isEqualTo(storagePhoto.getId()),
+                () -> assertThat(response.getStoragePhoto()).usingRecursiveComparison().isEqualTo(storagePhoto),
                 () -> assertThat(response.getUserId()).isEqualTo(userId),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isEqualTo(response.getCreatedDate())
+        );
+    }
+
+    @Test
+    void 휴지통_목록_조회() {
+        // given
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto1 = 보관함사진_생성(userId, "uri", "representativeColor");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto2 = 보관함사진_생성(userId, "uri", "representativeColor");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto3 = 보관함사진_생성(userId, "uri", "representativeColor");
+        보관함사진_생성(userId, "uri", "representativeColor");
+        보관함사진_휴지통_이동(storagePhoto1.getId(), userId);
+        보관함사진_휴지통_이동(storagePhoto2.getId(), userId);
+        TrashPhotoDTO.TrashPhotoResponse top = 보관함사진_휴지통_이동(storagePhoto3.getId(), userId);
+
+        // when
+        String uri = UriComponentsBuilder.fromUriString(API_TRASH_PHOTO)
+                .queryParam("page", 0)
+                .queryParam("size", 2)
+                .queryParam("sortBy", "lastModifiedDate")
+                .queryParam("descending", "true")
+                .build().toUriString();
+        TrashPhotoDTO.TrashPhotoPageResponse response = getWithLogin(uri, TrashPhotoDTO.TrashPhotoPageResponse.class, userId);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
+                () -> assertThat(response.getResponses().get(0).getStoragePhoto()).usingRecursiveComparison().isEqualTo(storagePhoto3),
+                () -> assertThat(response.getResponses().get(0).getId()).isEqualTo(top.getId())
         );
     }
 

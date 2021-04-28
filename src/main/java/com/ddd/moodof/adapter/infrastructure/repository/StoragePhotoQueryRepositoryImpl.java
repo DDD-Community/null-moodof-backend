@@ -1,15 +1,15 @@
-package com.ddd.moodof.adapter.infrastructure.querydsl;
+package com.ddd.moodof.adapter.infrastructure.repository;
 
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhotoQueryRepository;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
 
@@ -24,29 +24,29 @@ import static com.ddd.moodof.domain.model.trash.photo.QTrashPhoto.trashPhoto;
 public class StoragePhotoQueryRepositoryImpl implements StoragePhotoQueryRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
+    private final PaginationUtils paginationUtils;
 
     @Override
     public StoragePhotoDTO.StoragePhotoPageResponse findPageExcludeTrash(Long userId, int page, int size, String sortBy, boolean descending) {
-        Pageable pageable = PageRequest.of(page, size, getSort(sortBy, descending));
+        Pageable pageable = PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending));
 
-        JPAQuery<StoragePhoto> storagePhotoJPAQuery = jpaQueryFactory.selectFrom(storagePhoto)
+        JPAQuery<StoragePhotoDTO.StoragePhotoResponse> jpaQuery = jpaQueryFactory.select(Projections.constructor(StoragePhotoDTO.StoragePhotoResponse.class,
+                storagePhoto.id,
+                storagePhoto.userId,
+                storagePhoto.uri,
+                storagePhoto.representativeColor,
+                storagePhoto.createdDate,
+                storagePhoto.lastModifiedDate
+        ))
+                .from(storagePhoto)
                 .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
                 .where(storagePhoto.userId.eq(userId).and(trashPhoto.id.isNull()));
 
-        List<StoragePhoto> storagePhotos = new Querydsl(em, new PathBuilderFactory().create(StoragePhoto.class))
-                .applyPagination(pageable, storagePhotoJPAQuery)
+        List<StoragePhotoDTO.StoragePhotoResponse> responses = new Querydsl(em, new PathBuilderFactory().create(StoragePhoto.class))
+                .applyPagination(pageable, jpaQuery)
                 .fetch();
 
-        return new StoragePhotoDTO.StoragePhotoPageResponse((long) Math.ceil((double) storagePhotoJPAQuery.fetchCount() / pageable.getPageSize()),
-                StoragePhotoDTO.StoragePhotoResponse.listFrom(storagePhotos));
+        return new StoragePhotoDTO.StoragePhotoPageResponse(paginationUtils.getTotalPageCount(jpaQuery.fetchCount(), pageable.getPageSize()), responses);
 
-    }
-
-    private Sort getSort(String sortBy, boolean descending) {
-        Sort sort = Sort.by(sortBy);
-        if (descending) {
-            return sort.descending();
-        }
-        return sort.ascending();
     }
 }

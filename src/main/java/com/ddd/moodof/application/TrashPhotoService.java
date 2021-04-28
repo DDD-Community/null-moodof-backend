@@ -1,9 +1,10 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
+import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhoto;
+import com.ddd.moodof.domain.model.trash.photo.TrashPhotoQueryRepository;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhotoRepository;
-import com.ddd.moodof.domain.model.trash.photo.TrashPhotoVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrashPhotoService {
     private final TrashPhotoRepository trashPhotoRepository;
-    private final TrashPhotoVerifier trashPhotoVerifier;
+    private final TrashPhotoQueryRepository trashPhotoQueryRepository;
+    private final StoragePhotoService storagePhotoService;
 
     public TrashPhotoDTO.TrashPhotoResponse add(Long userId, TrashPhotoDTO.CreateTrashPhoto request) {
-        TrashPhoto saved = trashPhotoRepository.save(trashPhotoVerifier.toEntity(userId, request.getStoragePhotoId()));
-        return TrashPhotoDTO.TrashPhotoResponse.from(saved);
+        StoragePhoto storagePhoto = storagePhotoService.findByIdAndUserId(request.getStoragePhotoId(), userId);
+        TrashPhoto saved = trashPhotoRepository.save(request.toEntity(userId));
+        return TrashPhotoDTO.TrashPhotoResponse.of(saved, storagePhoto);
+    }
+
+    public TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending) {
+        return trashPhotoQueryRepository.findPage(userId, page, size, sortBy, descending);
     }
 
     public void cancel(Long id, Long userId) {

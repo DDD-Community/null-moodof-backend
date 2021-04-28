@@ -25,6 +25,18 @@ public class TrashPhotoController implements TrashPhotoAPI {
     }
 
     @Override
+    @GetMapping
+    public ResponseEntity<TrashPhotoDTO.TrashPhotoPageResponse> findPage(
+            @LoginUserId Long userId,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(defaultValue = "lastModifiedDate") String sortBy,
+            @RequestParam(defaultValue = "true") boolean descending) {
+        TrashPhotoDTO.TrashPhotoPageResponse response = trashPhotoService.findPage(userId, page, size, sortBy, descending);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancel(@LoginUserId Long userId, @PathVariable Long id) {
         trashPhotoService.cancel(id, userId);
