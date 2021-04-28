@@ -21,7 +21,6 @@ public class TagController implements TagAPI {
     @GetMapping
     public ResponseEntity<List<TagDTO.TagResponse>> findAllByTag(@LoginUserId Long userId) {
         List<TagDTO.TagResponse> allByTag = tagService.findAllByTag(userId);
-
         return ResponseEntity.ok(allByTag);
     }
 
