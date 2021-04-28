@@ -27,7 +27,7 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
         StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
 
         // when
-        TrashPhotoDTO.TrashPhotoResponse response = postWithLogin(new TrashPhotoDTO.CreateTrashPhoto(storagePhoto.getId()), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoResponse.class, userId);
+        TrashPhotoDTO.TrashPhotoResponse response = 보관함사진_휴지통_이동(storagePhoto.getId(), userId);
 
         // then
         assertAll(

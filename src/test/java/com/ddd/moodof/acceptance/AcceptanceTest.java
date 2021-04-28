@@ -2,6 +2,7 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -26,6 +27,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.List;
 
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
+import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH_PHOTO;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -64,6 +66,10 @@ public class AcceptanceTest {
     protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
         StoragePhotoDTO.CreateStoragePhoto request = new StoragePhotoDTO.CreateStoragePhoto(photoUri, representativeColor);
         return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
+    }
+
+    protected TrashPhotoDTO.TrashPhotoResponse 보관함사진_휴지통_이동(Long storagePhotoId, Long userId) {
+        return postWithLogin(new TrashPhotoDTO.CreateTrashPhoto(storagePhotoId), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoResponse.class, userId);
     }
 
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
