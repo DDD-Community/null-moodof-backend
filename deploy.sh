@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 REPOSITORY = /home/ubuntu/moodof/server
 PROJECT_NAME = moodof-server
