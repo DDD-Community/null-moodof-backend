@@ -74,10 +74,10 @@ public class TagAcceptanceTest extends AcceptanceTest{
         TagDTO.TagResponse createList = 태그_생성(userId, "name1");
 
         // when
-        TagDTO.TagResponse updateList = 태그_수정(userId, createList.getId(),"name2");
+        TagDTO.TagResponse updateList = 태그_수정(createList.getId(),userId,"name2");
 
         // then
-        assertThat(createList.getName()).isNotEqualTo(updateList.getName());
+        assertThat(updateList.getName()).isEqualTo("name2");
         System.err.println(updateList.getName());
 
     }
