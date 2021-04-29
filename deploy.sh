@@ -4,7 +4,7 @@ REPOSITORY=/home/ubuntu/moodof/server
 cd $REPOSITORY
 
 APP_NAME=moodof-server
-JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
+JAR_NAME=$(ls $REPOSITORY/ | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
