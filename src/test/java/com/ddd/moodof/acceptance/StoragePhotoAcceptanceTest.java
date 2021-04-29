@@ -5,9 +5,6 @@ import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
-
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -57,12 +54,14 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
                 .queryParam("sortBy", "lastModifiedDate")
                 .queryParam("descending", "true")
                 .build().toUriString();
-        List<StoragePhotoDTO.StoragePhotoResponse> responses = getListWithLogin(uri, StoragePhotoDTO.StoragePhotoResponse.class, userId);
+      
+        StoragePhotoDTO.StoragePhotoPageResponse response = getWithLogin(uri, StoragePhotoDTO.StoragePhotoPageResponse.class, userId);
 
         // then
         assertAll(
-                () -> assertThat(responses.size()).isEqualTo(3),
-                () -> assertThat(responses.get(0)).usingRecursiveComparison().isEqualTo(top)
+                () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
+                () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
         );
     }
 

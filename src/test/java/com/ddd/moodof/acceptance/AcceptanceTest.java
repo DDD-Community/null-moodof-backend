@@ -76,9 +76,6 @@ public class AcceptanceTest {
         TagDTO.UpdateRequest request = new TagDTO.UpdateRequest(name);
         return putWithLogin(request, id, API_TAG, TagDTO.TagResponse.class, userId);
     }
-
-
-
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);

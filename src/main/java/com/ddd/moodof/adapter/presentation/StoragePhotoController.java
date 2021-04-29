@@ -33,16 +33,19 @@ public class StoragePhotoController implements StoragePhotoAPI {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<StoragePhotoDTO.StoragePhotoResponse>> findPage(
+
+    public ResponseEntity<StoragePhotoDTO.StoragePhotoPageResponse> findPage(
+
             @LoginUserId Long userId,
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(defaultValue = "lastModifiedDate") String sortBy,
             @RequestParam(defaultValue = "true") boolean descending) {
 
-        Sort sort = getSort(sortBy, descending);
-        List<StoragePhotoDTO.StoragePhotoResponse> responses = storagePhotoService.findPage(userId, PageRequest.of(page, size, sort));
-        return ResponseEntity.ok(responses);
+
+        StoragePhotoDTO.StoragePhotoPageResponse response = storagePhotoService.findPage(userId, page, size, sortBy, descending);
+        return ResponseEntity.ok(response);
+
 
     }
 
@@ -53,11 +56,4 @@ public class StoragePhotoController implements StoragePhotoAPI {
         return ResponseEntity.noContent().build();
     }
 
-    private Sort getSort(String sortBy, boolean descending) {
-        Sort sort = Sort.by(sortBy);
-        if (descending) {
-            return sort.descending();
-        }
-        return sort.ascending();
-    }
 }

@@ -46,5 +46,15 @@ public class StoragePhotoDTO {
                     .map(StoragePhotoResponse::from)
                     .collect(Collectors.toList());
         }
+
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @AllArgsConstructor
+    public static class StoragePhotoPageResponse {
+        private long totalPageCount;
+        private List<StoragePhotoResponse> storagePhotos;
+
     }
 }
