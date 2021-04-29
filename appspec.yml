@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/docker/moodof
+    destination: /home/ubuntu/moodof/server
 
 permissions:
   - object: /
