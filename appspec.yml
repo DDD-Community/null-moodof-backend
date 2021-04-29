@@ -5,10 +5,10 @@ files:
     destination: /home/ubuntu/moodof/server
 
 permissions:
-  - object: /
-    pattern: "**"
+  - object: /home/ubuntu/moodof/server
     owner: ubuntu
     group: ubuntu
+    mode: 755
 
 hooks:
   AfterInstall:
