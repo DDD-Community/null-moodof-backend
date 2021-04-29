@@ -15,4 +15,4 @@ else
 fi
 
 echo "> $JAR_NAME 배포"
-nohup java -jar $JAR_NAME > log.out
+nohup java -jar $JAR_NAME &
