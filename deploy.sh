@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-REPOSITORY=/home/ubuntu/moodof/server
-cd $REPOSITORY
-
-APP_NAME=action_codedeploy
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+APP_NAME=moodof-server
+JAR_NAME=$(ls | grep '.jar' | tail -n 1)
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -18,5 +14,5 @@ else
   sleep 5
 fi
 
-echo "> $JAR_PATH 배포"
-nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+echo "> $JAR_NAME 배포"
+nohup java -jar $JAR_NAME > log.out
