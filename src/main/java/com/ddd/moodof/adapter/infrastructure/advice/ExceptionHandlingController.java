@@ -29,4 +29,10 @@ public class ExceptionHandlingController {
         return ResponseEntity.badRequest().body(new ExceptionResponse(errorMessages));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ExceptionResponse> handle(IllegalArgumentException e) {
+        List<String> errorMessages = Collections.singletonList(e.getMessage());
+        return ResponseEntity.badRequest().body(new ExceptionResponse(errorMessages));
+    }
+
 }

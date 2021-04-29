@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.util.List;
 
 public interface StoragePhotoAPI {
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
@@ -17,7 +18,9 @@ public interface StoragePhotoAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping
+
     ResponseEntity<StoragePhotoDTO.StoragePhotoPageResponse> findPage(@ApiIgnore Long userId, @ApiParam(value = "Starts at 0") @RequestParam int page, @RequestParam int size, @RequestParam String sortBy, @RequestParam boolean descending);
+
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping("/{id}")

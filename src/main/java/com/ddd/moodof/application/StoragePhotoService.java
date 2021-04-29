@@ -4,8 +4,10 @@ import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhotoRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class StoragePhotoService {
         return StoragePhotoDTO.StoragePhotoResponse.from(saved);
     }
 
+
     public StoragePhotoDTO.StoragePhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending) {
         List<StoragePhoto> storagePhotos = storagePhotoRepository.findPageByUserId(userId, PageRequest.of(page, size, getSort(sortBy, descending)));
         long count = storagePhotoRepository.countByUserId(userId);
@@ -33,6 +36,7 @@ public class StoragePhotoService {
             return sort.descending();
         }
         return sort.ascending();
+
     }
 
     public void deleteById(Long userId, Long id) {

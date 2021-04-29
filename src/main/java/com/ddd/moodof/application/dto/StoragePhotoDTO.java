@@ -46,6 +46,7 @@ public class StoragePhotoDTO {
                     .map(StoragePhotoResponse::from)
                     .collect(Collectors.toList());
         }
+
     }
 
     @NoArgsConstructor
@@ -54,5 +55,6 @@ public class StoragePhotoDTO {
     public static class StoragePhotoPageResponse {
         private long totalPageCount;
         private List<StoragePhotoResponse> storagePhotos;
+
     }
 }
