@@ -1,10 +1,12 @@
 package com.ddd.moodof.application;
 
+import com.ddd.moodof.adapter.infrastructure.repository.PaginationUtils;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhoto;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhotoQueryRepository;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhotoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,7 @@ public class TrashPhotoService {
     private final TrashPhotoRepository trashPhotoRepository;
     private final TrashPhotoQueryRepository trashPhotoQueryRepository;
     private final StoragePhotoService storagePhotoService;
+    private final PaginationUtils paginationUtils;
 
     public List<TrashPhotoDTO.TrashPhotoCreatedResponse> add(Long userId, TrashPhotoDTO.CreateTrashPhotos request) {
         if (request.getStoragePhotoId().stream().allMatch(it -> storagePhotoService.existsByIdAndUserId(it, userId))) {
@@ -25,7 +28,7 @@ public class TrashPhotoService {
     }
 
     public TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending) {
-        return trashPhotoQueryRepository.findPage(userId, page, size, sortBy, descending);
+        return trashPhotoQueryRepository.findPage(userId, PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending)));
     }
 
     public void cancel(Long id, Long userId) {

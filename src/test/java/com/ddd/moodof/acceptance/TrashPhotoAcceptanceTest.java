@@ -60,7 +60,7 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
 
         // when
         String uri = UriComponentsBuilder.fromUriString(API_TRASH_PHOTO)
-                .queryParam("page", 0)
+                .queryParam("page", -1)
                 .queryParam("size", 2)
                 .queryParam("sortBy", "lastModifiedDate")
                 .queryParam("descending", "true")

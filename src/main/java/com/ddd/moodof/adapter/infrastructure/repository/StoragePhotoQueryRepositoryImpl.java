@@ -8,7 +8,6 @@ import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
@@ -27,8 +26,7 @@ public class StoragePhotoQueryRepositoryImpl implements StoragePhotoQueryReposit
     private final PaginationUtils paginationUtils;
 
     @Override
-    public StoragePhotoDTO.StoragePhotoPageResponse findPageExcludeTrash(Long userId, int page, int size, String sortBy, boolean descending) {
-        Pageable pageable = PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending));
+    public StoragePhotoDTO.StoragePhotoPageResponse findPageExcludeTrash(Long userId, Pageable pageable) {
 
         JPAQuery<StoragePhotoDTO.StoragePhotoResponse> jpaQuery = jpaQueryFactory.select(Projections.constructor(StoragePhotoDTO.StoragePhotoResponse.class,
                 storagePhoto.id,
@@ -47,6 +45,5 @@ public class StoragePhotoQueryRepositoryImpl implements StoragePhotoQueryReposit
                 .fetch();
 
         return new StoragePhotoDTO.StoragePhotoPageResponse(paginationUtils.getTotalPageCount(jpaQuery.fetchCount(), pageable.getPageSize()), responses);
-
     }
 }

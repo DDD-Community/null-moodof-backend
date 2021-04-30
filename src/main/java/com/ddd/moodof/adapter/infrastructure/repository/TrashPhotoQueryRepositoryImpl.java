@@ -9,7 +9,7 @@ import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +27,7 @@ public class TrashPhotoQueryRepositoryImpl implements TrashPhotoQueryRepository 
     private final PaginationUtils paginationUtils;
 
     @Override
-    public TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending) {
+    public TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, Pageable pageable) {
         JPAQuery<TrashPhotoDTO.TrashPhotoResponse> jpaQuery = jpaQueryFactory.select(Projections.constructor(TrashPhotoDTO.TrashPhotoResponse.class,
                 trashPhoto.id,
                 Projections.constructor(StoragePhotoDTO.StoragePhotoResponse.class, storagePhoto.id,
@@ -43,9 +43,9 @@ public class TrashPhotoQueryRepositoryImpl implements TrashPhotoQueryRepository 
                 .leftJoin(storagePhoto).on(trashPhoto.storagePhotoId.eq(storagePhoto.id));
 
         List<TrashPhotoDTO.TrashPhotoResponse> trashPhotoResponses = new Querydsl(em, new PathBuilderFactory().create(TrashPhoto.class))
-                .applyPagination(PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending)), jpaQuery)
+                .applyPagination(pageable, jpaQuery)
                 .fetch();
 
-        return new TrashPhotoDTO.TrashPhotoPageResponse(paginationUtils.getTotalPageCount(jpaQuery.fetchCount(), size), trashPhotoResponses);
+        return new TrashPhotoDTO.TrashPhotoPageResponse(paginationUtils.getTotalPageCount(jpaQuery.fetchCount(), pageable.getPageSize()), trashPhotoResponses);
     }
 }

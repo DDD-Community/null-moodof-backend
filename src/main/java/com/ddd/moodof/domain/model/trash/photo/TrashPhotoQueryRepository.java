@@ -1,7 +1,8 @@
 package com.ddd.moodof.domain.model.trash.photo;
 
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
+import org.springframework.data.domain.Pageable;
 
 public interface TrashPhotoQueryRepository {
-    TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending);
+    TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, Pageable pageable);
 }
