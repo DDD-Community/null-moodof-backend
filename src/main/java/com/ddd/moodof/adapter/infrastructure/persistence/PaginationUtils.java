@@ -1,4 +1,4 @@
-package com.ddd.moodof.adapter.infrastructure.repository;
+package com.ddd.moodof.adapter.infrastructure.persistence;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;

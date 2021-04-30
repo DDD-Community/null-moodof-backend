@@ -1,6 +1,6 @@
 package com.ddd.moodof.application;
 
-import com.ddd.moodof.adapter.infrastructure.repository.PaginationUtils;
+import com.ddd.moodof.adapter.infrastructure.persistence.PaginationUtils;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhoto;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhotoQueryRepository;

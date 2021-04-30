@@ -1,5 +1,6 @@
-package com.ddd.moodof.adapter.infrastructure.repository;
+package com.ddd.moodof.adapter.infrastructure.persistence.querydsl;
 
+import com.ddd.moodof.adapter.infrastructure.persistence.PaginationUtils;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhoto;
@@ -21,7 +22,7 @@ import static com.ddd.moodof.domain.model.trash.photo.QTrashPhoto.trashPhoto;
 
 @RequiredArgsConstructor
 @Repository
-public class TrashPhotoQueryRepositoryImpl implements TrashPhotoQueryRepository {
+public class TrashPhotoQuerydslRepository implements TrashPhotoQueryRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
     private final PaginationUtils paginationUtils;

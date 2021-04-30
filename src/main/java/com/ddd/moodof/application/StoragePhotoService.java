@@ -1,6 +1,6 @@
 package com.ddd.moodof.application;
 
-import com.ddd.moodof.adapter.infrastructure.repository.PaginationUtils;
+import com.ddd.moodof.adapter.infrastructure.persistence.PaginationUtils;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhotoQueryRepository;
