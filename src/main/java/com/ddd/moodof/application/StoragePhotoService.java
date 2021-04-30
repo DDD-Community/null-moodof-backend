@@ -23,9 +23,8 @@ public class StoragePhotoService {
         return storagePhotoQueryRepository.findPageExcludeTrash(userId, page, size, sortBy, descending);
     }
 
-    public StoragePhoto findByIdAndUserId(Long id, Long userId) {
-        return storagePhotoRepository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new IllegalArgumentException("userId, storagePhotoId와 일치하는 StoragePhoto가 존재하지 않습니다. userId / stroagePhotoId = " + userId + " / " + id));
+    public boolean existsByIdAndUserId(Long id, Long userId) {
+        return storagePhotoRepository.existsByIdAndUserId(id, userId);
     }
 
     public void deleteById(Long userId, Long id) {

@@ -8,16 +8,19 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TrashPhotoDTO {
     @NoArgsConstructor
     @Getter
     @AllArgsConstructor
-    public static class CreateTrashPhoto {
-        private Long storagePhotoId;
+    public static class CreateTrashPhotos {
+        private List<Long> storagePhotoId;
 
-        public TrashPhoto toEntity(Long userId) {
-            return new TrashPhoto(null, storagePhotoId, userId, null, null);
+        public List<TrashPhoto> toEntities(Long userId) {
+            return storagePhotoId.stream()
+                    .map(storagePhotoId -> new TrashPhoto(null, storagePhotoId, userId, null, null))
+                    .collect(Collectors.toList());
         }
     }
 
@@ -33,6 +36,27 @@ public class TrashPhotoDTO {
 
         public static TrashPhotoResponse of(TrashPhoto trashPhoto, StoragePhoto storagePhoto) {
             return new TrashPhotoResponse(trashPhoto.getId(), StoragePhotoDTO.StoragePhotoResponse.from(storagePhoto), trashPhoto.getUserId(), trashPhoto.getCreatedDate(), trashPhoto.getLastModifiedDate());
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @AllArgsConstructor
+    public static class TrashPhotoCreatedResponse {
+        private Long id;
+        private Long storagePhotoId;
+        private Long userId;
+        private LocalDateTime createdDate;
+        private LocalDateTime lastModifiedDate;
+
+        public static List<TrashPhotoCreatedResponse> listOf(List<TrashPhoto> trashPhotos) {
+            return trashPhotos.stream()
+                    .map(TrashPhotoCreatedResponse::of)
+                    .collect(Collectors.toList());
+        }
+
+        public static TrashPhotoCreatedResponse of(TrashPhoto trashPhoto) {
+            return new TrashPhotoCreatedResponse(trashPhoto.getId(), trashPhoto.getStoragePhotoId(), trashPhoto.getUserId(), trashPhoto.getCreatedDate(), trashPhoto.getLastModifiedDate());
         }
     }
 

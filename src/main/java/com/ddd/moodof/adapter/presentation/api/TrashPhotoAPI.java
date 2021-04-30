@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 public interface TrashPhotoAPI {
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PostMapping
-    ResponseEntity<TrashPhotoDTO.TrashPhotoResponse> add(@ApiIgnore @LoginUserId Long userId, @RequestBody TrashPhotoDTO.CreateTrashPhoto request);
+    ResponseEntity<List<TrashPhotoDTO.TrashPhotoCreatedResponse>> add(@ApiIgnore @LoginUserId Long userId, @RequestBody TrashPhotoDTO.CreateTrashPhotos request);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping

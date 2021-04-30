@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
+
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -47,7 +49,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         StoragePhotoDTO.StoragePhotoResponse second = 보관함사진_생성(userId, "3", "3");
         StoragePhotoDTO.StoragePhotoResponse trash = 보관함사진_생성(userId, "4", "4");
         StoragePhotoDTO.StoragePhotoResponse top = 보관함사진_생성(userId, "5", "5");
-        보관함사진_휴지통_이동(trash.getId(), userId);
+        보관함사진_휴지통_이동(Collections.singletonList(trash.getId()), userId);
 
         // when
         String uri = UriComponentsBuilder.fromUriString(API_STORAGE_PHOTO)

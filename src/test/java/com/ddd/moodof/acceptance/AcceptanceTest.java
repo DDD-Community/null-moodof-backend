@@ -70,8 +70,8 @@ public class AcceptanceTest {
         return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
     }
 
-    protected TrashPhotoDTO.TrashPhotoResponse 보관함사진_휴지통_이동(Long storagePhotoId, Long userId) {
-        return postWithLogin(new TrashPhotoDTO.CreateTrashPhoto(storagePhotoId), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoResponse.class, userId);
+    protected List<TrashPhotoDTO.TrashPhotoCreatedResponse> 보관함사진_휴지통_이동(List<Long> storagePhotoIds, Long userId) {
+        return postListWithLogin(new TrashPhotoDTO.CreateTrashPhotos(storagePhotoIds), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoCreatedResponse.class, userId);
     }
 
     protected TagDTO.TagResponse 태그_생성(Long userId, String name) {
@@ -99,6 +99,29 @@ public class AcceptanceTest {
                     .andReturn();
 
             return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T, U> List<U> postListWithLogin(T request, String uri, Class<U> response, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+            String body = objectMapper.writeValueAsString(request);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
+
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AssertionError("test fails");

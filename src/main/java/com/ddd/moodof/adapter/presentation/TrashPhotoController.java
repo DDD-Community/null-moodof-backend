@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping(TrashPhotoController.API_TRASH_PHOTO)
@@ -19,9 +19,9 @@ public class TrashPhotoController implements TrashPhotoAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<TrashPhotoDTO.TrashPhotoResponse> add(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.CreateTrashPhoto request) {
-        TrashPhotoDTO.TrashPhotoResponse response = trashPhotoService.add(userId, request);
-        return ResponseEntity.created(URI.create(API_TRASH_PHOTO + "/" + response.getId())).body(response);
+    public ResponseEntity<List<TrashPhotoDTO.TrashPhotoCreatedResponse>> add(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.CreateTrashPhotos request) {
+        List<TrashPhotoDTO.TrashPhotoCreatedResponse> responses = trashPhotoService.add(userId, request);
+        return ResponseEntity.ok(responses);
     }
 
     @Override
