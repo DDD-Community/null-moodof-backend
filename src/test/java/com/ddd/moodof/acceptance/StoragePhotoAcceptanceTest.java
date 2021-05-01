@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
+
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -73,9 +75,10 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         // given
         보관함사진_생성(userId, "1", "1");
         보관함사진_생성(userId, "2", "2");
-        보관함사진_생성(userId, "3", "3");
-        보관함사진_생성(userId, "4", "4");
+        StoragePhotoDTO.StoragePhotoResponse second = 보관함사진_생성(userId, "3", "3");
+        StoragePhotoDTO.StoragePhotoResponse trash = 보관함사진_생성(userId, "4", "4");
         StoragePhotoDTO.StoragePhotoResponse top = 보관함사진_생성(userId, "5", "5");
+        보관함사진_휴지통_이동(Collections.singletonList(trash.getId()), userId);
 
         // when
         String uri = UriComponentsBuilder.fromUriString(API_STORAGE_PHOTO)
@@ -91,6 +94,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
                 () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
         );
     }
