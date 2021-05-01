@@ -5,12 +5,14 @@ import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.List;
+
 import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class TagAcceptanceTest extends AcceptanceTest{
+public class TagAcceptanceTest extends AcceptanceTest {
     private Long userId;
 
     @Override
@@ -30,7 +32,7 @@ public class TagAcceptanceTest extends AcceptanceTest{
         TagDTO.TagResponse tagResponse = 태그_생성(userId, "tag4");
 
         // when
-        String uri =API_TAG;
+        String uri = API_TAG;
         List<TagDTO.TagResponse> response = getListWithLogin(uri, TagDTO.TagResponse.class, userId);
 
         // then
@@ -57,6 +59,7 @@ public class TagAcceptanceTest extends AcceptanceTest{
                 () -> assertThat(response.getLastModifiedDate()).isNotNull()
         );
     }
+
     @Test
     public void 태그를_삭제한다() throws Exception {
         // given
@@ -68,25 +71,27 @@ public class TagAcceptanceTest extends AcceptanceTest{
         deleteWithLogin(API_TAG, response.getId(), userId);
         태그_리스트_출력(userId);
     }
+
     @Test
     public void 태그_수정() throws Exception {
         // given
         TagDTO.TagResponse createList = 태그_생성(userId, "name1");
 
         // when
-        TagDTO.TagResponse updateList = 태그_수정(createList.getId(),userId,"name2");
+        TagDTO.TagResponse updateList = 태그_수정(createList.getId(), userId, "name2");
 
         // then
         assertThat(updateList.getName()).isEqualTo("name2");
         System.err.println(updateList.getName());
 
     }
+
     public void 태그_리스트_출력(Long userId) throws Exception {
         String uri = UriComponentsBuilder.fromUriString(API_TAG)
                 .build().toUriString();
         List<TagDTO.TagResponse> reponseList = getListWithLogin(uri, TagDTO.TagResponse.class, userId);
         for (TagDTO.TagResponse r : reponseList) {
-            System.err.println("userId: " + userId + " id: "+ r.getId());
+            System.err.println("userId: " + userId + " id: " + r.getId());
         }
     }
 }
