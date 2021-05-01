@@ -17,6 +17,7 @@ import java.util.List;
 public class TagController implements TagAPI {
     public static final String API_TAG = "/api/tags";
     private final TagService tagService;
+
     @Override
     @GetMapping
     public ResponseEntity<List<TagDTO.TagResponse>> findAllByTag(@LoginUserId Long userId) {
@@ -35,7 +36,7 @@ public class TagController implements TagAPI {
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@LoginUserId Long userId,@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@LoginUserId Long userId, @PathVariable Long id) {
         tagService.delete(id, userId);
         return ResponseEntity.noContent().build();
     }
@@ -43,7 +44,7 @@ public class TagController implements TagAPI {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<TagDTO.TagResponse> update(@PathVariable Long id, @RequestBody @Valid TagDTO.UpdateRequest request, @LoginUserId Long userId) {
-        TagDTO.TagResponse response = tagService.update(id,request, userId);
+        TagDTO.TagResponse response = tagService.update(id, request, userId);
         return ResponseEntity.ok(response);
     }
 }

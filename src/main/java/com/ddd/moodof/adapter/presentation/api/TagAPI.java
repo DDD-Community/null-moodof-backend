@@ -26,5 +26,5 @@ public interface TagAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PutMapping
-    ResponseEntity<TagDTO.TagResponse> update(@PathVariable Long id,@RequestBody @Valid TagDTO.UpdateRequest request, @ApiIgnore @LoginUserId Long userId);
+    ResponseEntity<TagDTO.TagResponse> update(@PathVariable Long id, @RequestBody @Valid TagDTO.UpdateRequest request, @ApiIgnore @LoginUserId Long userId);
 }
