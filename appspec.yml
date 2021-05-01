@@ -2,16 +2,16 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/docker/moodof
+    destination: /home/ubuntu/moodof/server
 
 permissions:
-  - object: /
-    pattern: "**"
+  - object: /home/ubuntu/moodof/server
     owner: ubuntu
     group: ubuntu
+    mode: 755
 
 hooks:
   AfterInstall:
-    - location: /deploy.sh
+    - location: deploy.sh
       timeout: 60
       runas: root

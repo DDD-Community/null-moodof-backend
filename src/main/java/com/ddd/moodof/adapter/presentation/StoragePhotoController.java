@@ -4,14 +4,11 @@ import com.ddd.moodof.adapter.presentation.api.StoragePhotoAPI;
 import com.ddd.moodof.application.StoragePhotoService;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping(StoragePhotoController.API_STORAGE_PHOTO)
@@ -33,19 +30,15 @@ public class StoragePhotoController implements StoragePhotoAPI {
 
     @Override
     @GetMapping
-
     public ResponseEntity<StoragePhotoDTO.StoragePhotoPageResponse> findPage(
-
             @LoginUserId Long userId,
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(defaultValue = "lastModifiedDate") String sortBy,
             @RequestParam(defaultValue = "true") boolean descending) {
 
-
         StoragePhotoDTO.StoragePhotoPageResponse response = storagePhotoService.findPage(userId, page, size, sortBy, descending);
         return ResponseEntity.ok(response);
-
 
     }
 
@@ -55,5 +48,4 @@ public class StoragePhotoController implements StoragePhotoAPI {
         storagePhotoService.deleteById(userId, id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -3,6 +3,7 @@ package com.ddd.moodof.acceptance;
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagDTO;
+import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
+import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH_PHOTO;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -68,14 +70,20 @@ public class AcceptanceTest {
         return postWithLogin(request, API_STORAGE_PHOTO, StoragePhotoDTO.StoragePhotoResponse.class, userId);
     }
 
+    protected List<TrashPhotoDTO.TrashPhotoCreatedResponse> 보관함사진_휴지통_이동(List<Long> storagePhotoIds, Long userId) {
+        return postListWithLogin(new TrashPhotoDTO.CreateTrashPhotos(storagePhotoIds), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoCreatedResponse.class, userId);
+    }
+
     protected TagDTO.TagResponse 태그_생성(Long userId, String name) {
         TagDTO.CreateRequest request = new TagDTO.CreateRequest(name);
         return postWithLogin(request, API_TAG, TagDTO.TagResponse.class, userId);
     }
+
     protected TagDTO.TagResponse 태그_수정(Long id, Long userId, String name) {
         TagDTO.UpdateRequest request = new TagDTO.UpdateRequest(name);
         return putWithLogin(request, id, API_TAG, TagDTO.TagResponse.class, userId);
     }
+
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);
@@ -97,12 +105,35 @@ public class AcceptanceTest {
         }
     }
 
+    protected <T, U> List<U> postListWithLogin(T request, String uri, Class<U> response, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+            String body = objectMapper.writeValueAsString(request);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
     protected <T, U> U putWithLogin(T request, Long resourceId, String uri, Class<U> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);
             String body = objectMapper.writeValueAsString(request);
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri +"/{id}", resourceId)
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri + "/{id}", resourceId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(body)

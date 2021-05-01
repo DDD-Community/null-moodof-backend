@@ -16,7 +16,7 @@ public class TagDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class CreateRequest{
+    public static class CreateRequest {
         @NotBlank
         private String name;
 
@@ -34,7 +34,7 @@ public class TagDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class UpdateRequest{
+    public static class UpdateRequest {
         @NotBlank
         private String name;
 
@@ -61,7 +61,7 @@ public class TagDTO {
         private LocalDateTime createdDate;
         private LocalDateTime lastModifiedDate;
 
-        public static TagResponse from(Tag tag){
+        public static TagResponse from(Tag tag) {
             return TagResponse.builder()
                     .id(tag.getId())
                     .userId(tag.getUserId())
@@ -70,7 +70,8 @@ public class TagDTO {
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build();
         }
-        public static List<TagResponse> listFrom(List<Tag> tagList){
+
+        public static List<TagResponse> listFrom(List<Tag> tagList) {
             return tagList.stream().map(tag -> TagResponse.builder()
                     .id(tag.getId())
                     .userId(tag.getUserId())
