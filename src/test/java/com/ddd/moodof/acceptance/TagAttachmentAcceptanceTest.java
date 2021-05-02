@@ -29,8 +29,7 @@ public class TagAttachmentAcceptanceTest extends AcceptanceTest {
     @Test
     void 보관함사진에_태그를_붙인다() {
         // when
-        TagAttachmentDTO.CreateTagAttachment request = new TagAttachmentDTO.CreateTagAttachment(storagePhoto.getId(), tag.getId());
-        TagAttachmentDTO.TagAttachmentResponse response = postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
+        TagAttachmentDTO.TagAttachmentResponse response = 태그붙이기_생성(userId, storagePhoto.getId(), tag.getId());
 
         // then
         assertAll(
@@ -41,5 +40,14 @@ public class TagAttachmentAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isEqualTo(response.getCreatedDate())
         );
+    }
+
+    @Test
+    void 보관함사진에_태그를_뗀다() {
+        // given
+        TagAttachmentDTO.TagAttachmentResponse response = 태그붙이기_생성(userId, storagePhoto.getId(), tag.getId());
+
+        // when then
+        deleteWithLogin(API_TAG_ATTACHMENT, response.getId(), userId);
     }
 }

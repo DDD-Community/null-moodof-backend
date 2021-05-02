@@ -18,4 +18,11 @@ public class TagAttachmentService {
         TagAttachment saved = tagAttachmentRepository.save(tagAttachment);
         return TagAttachmentDTO.TagAttachmentResponse.from(saved);
     }
+
+    public void delete(Long id, Long userId) {
+        if (!tagAttachmentRepository.existsByIdAndUserId(id, userId)) {
+            throw new IllegalArgumentException("요청과 일치하는 TagAttachment가 없습니다. id / userId: " + id + " / " + userId);
+        }
+        tagAttachmentRepository.deleteById(id);
+    }
 }

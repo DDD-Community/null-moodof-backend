@@ -5,10 +5,7 @@ import com.ddd.moodof.application.TagAttachmentService;
 import com.ddd.moodof.application.dto.TagAttachmentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -25,6 +22,13 @@ public class TagAttachmentController implements TagAttachmentAPI {
     public ResponseEntity<TagAttachmentDTO.TagAttachmentResponse> create(@LoginUserId Long userId, @RequestBody TagAttachmentDTO.CreateTagAttachment request) {
         TagAttachmentDTO.TagAttachmentResponse response = tagAttachmentService.create(userId, request);
         return ResponseEntity.created(URI.create(API_TAG_ATTACHMENT + "/" + response.getId())).body(response);
+    }
+
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@LoginUserId Long userId, @PathVariable Long id) {
+        tagAttachmentService.delete(id, userId);
+        return ResponseEntity.noContent().build();
     }
 
 }
