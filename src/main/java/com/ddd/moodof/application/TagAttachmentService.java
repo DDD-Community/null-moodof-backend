@@ -5,10 +5,10 @@ import com.ddd.moodof.domain.model.tag.attachment.TagAttachment;
 import com.ddd.moodof.domain.model.tag.attachment.TagAttachmentRepository;
 import com.ddd.moodof.domain.model.tag.attachment.TagAttachmentVerifier;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Service
+@Component
 public class TagAttachmentService {
     private final TagAttachmentRepository tagAttachmentRepository;
     private final TagAttachmentVerifier tagAttachmentVerifier;
