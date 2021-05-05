@@ -39,6 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class AcceptanceTest {
     private static final String BEARER = "Bearer ";
 
+    protected Long userId;
+
     private MockMvc mockMvc;
 
     @Autowired
@@ -59,6 +61,8 @@ public class AcceptanceTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
+        User user = signUp();
+        userId = user.getId();
     }
 
     protected User signUp() {

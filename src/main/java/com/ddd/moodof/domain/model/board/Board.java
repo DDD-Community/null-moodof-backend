@@ -1,4 +1,4 @@
-package com.ddd.moodof.domain.model.storage.photo;
+package com.ddd.moodof.domain.model.board;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,21 +16,30 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class StoragePhoto {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long previousBoardId;
+
     private Long userId;
 
-    @Column(length = 2083)
-    private String uri;
+    private String name;
 
-    private String representativeColor;
+    private Long categoryId;
 
     @CreatedDate
     private LocalDateTime createdDate;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    public void updatePreviousBoardId(Long previousBoardId) {
+        this.previousBoardId = previousBoardId;
+    }
+
+    public boolean isNotEqual(Long id) {
+        return !this.id.equals(id);
+    }
 }
