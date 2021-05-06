@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping(StoragePhotoController.API_STORAGE_PHOTO)
@@ -35,9 +36,10 @@ public class StoragePhotoController implements StoragePhotoAPI {
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(defaultValue = "lastModifiedDate") String sortBy,
-            @RequestParam(defaultValue = "true") boolean descending) {
+            @RequestParam(defaultValue = "true") boolean descending,
+            @RequestParam(required = false, value = "tagIds") List<Long> tagIds) {
 
-        StoragePhotoDTO.StoragePhotoPageResponse response = storagePhotoService.findPage(userId, page, size, sortBy, descending);
+        StoragePhotoDTO.StoragePhotoPageResponse response = storagePhotoService.findPage(userId, page, size, sortBy, descending, tagIds);
         return ResponseEntity.ok(response);
 
     }

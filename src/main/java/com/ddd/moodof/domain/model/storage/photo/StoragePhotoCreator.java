@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class StoragePhotoCreateService {
+public class StoragePhotoCreator {
     private static final String BASE64_PREFIX = "data:";
 
     private final StoragePhotoRepository storagePhotoRepository;
