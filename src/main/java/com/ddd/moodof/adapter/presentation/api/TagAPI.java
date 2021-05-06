@@ -21,10 +21,10 @@ public interface TagAPI {
     ResponseEntity<TagDTO.TagResponse> create(@RequestBody @Valid TagDTO.CreateRequest request, @ApiIgnore @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(Long id, @ApiIgnore @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @PutMapping
+    @PutMapping("/{id}")
     ResponseEntity<TagDTO.TagResponse> update(@PathVariable Long id, @RequestBody @Valid TagDTO.UpdateRequest request, @ApiIgnore @LoginUserId Long userId);
 }
