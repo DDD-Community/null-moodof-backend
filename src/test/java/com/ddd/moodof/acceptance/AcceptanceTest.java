@@ -2,6 +2,7 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TagAttachmentDTO;
 import com.ddd.moodof.application.dto.TagDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
@@ -28,6 +29,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.List;
 
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
+import static com.ddd.moodof.adapter.presentation.TagAttachmentController.API_TAG_ATTACHMENT;
 import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
 import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH_PHOTO;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -198,5 +200,10 @@ public class AcceptanceTest {
             log.error(e.getMessage());
             throw new AssertionError("test fails");
         }
+    }
+
+    protected TagAttachmentDTO.TagAttachmentResponse 태그붙이기_생성(Long userId, Long storagePhotoId, Long tagId) {
+        TagAttachmentDTO.CreateTagAttachment request = new TagAttachmentDTO.CreateTagAttachment(storagePhotoId, tagId);
+        return postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
     }
 }

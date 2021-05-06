@@ -14,7 +14,7 @@ public interface TagAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping
-    ResponseEntity<List<TagDTO.TagResponse>> findAllByTag(@LoginUserId Long userId);
+    ResponseEntity<List<TagDTO.TagResponse>> findAllByTag(@ApiIgnore @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PostMapping

@@ -2,6 +2,7 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.aws.S3FileUploader;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TagDTO;
 import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,6 +94,44 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         // then
         assertAll(
                 () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
+                () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
+                () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
+        );
+    }
+
+    @Test
+    void 사진보관함_페이지_태그별_조회() {
+        // given
+        StoragePhotoDTO.StoragePhotoResponse third = 보관함사진_생성(userId, "1", "1");
+        StoragePhotoDTO.StoragePhotoResponse noContain = 보관함사진_생성(userId, "2", "2");
+        StoragePhotoDTO.StoragePhotoResponse second = 보관함사진_생성(userId, "3", "3");
+        StoragePhotoDTO.StoragePhotoResponse trash = 보관함사진_생성(userId, "4", "4");
+        StoragePhotoDTO.StoragePhotoResponse top = 보관함사진_생성(userId, "5", "5");
+        보관함사진_휴지통_이동(Collections.singletonList(trash.getId()), userId);
+        TagDTO.TagResponse tag1 = 태그_생성(userId, "name1");
+        TagDTO.TagResponse tag2 = 태그_생성(userId, "name2");
+        TagDTO.TagResponse noSearch = 태그_생성(userId, "name3");
+        태그붙이기_생성(userId, second.getId(), tag2.getId());
+        태그붙이기_생성(userId, third.getId(), tag1.getId());
+        태그붙이기_생성(userId, trash.getId(), tag1.getId());
+        태그붙이기_생성(userId, top.getId(), tag1.getId());
+        태그붙이기_생성(userId, noContain.getId(), noSearch.getId());
+
+        // when
+        String uri = UriComponentsBuilder.fromUriString(API_STORAGE_PHOTO)
+                .queryParam("page", 0)
+                .queryParam("size", 2)
+                .queryParam("sortBy", "lastModifiedDate")
+                .queryParam("descending", "true")
+                .queryParam("tagIds", tag1.getId(), tag2.getId())
+                .build().toUriString();
+
+        StoragePhotoDTO.StoragePhotoPageResponse response = getWithLogin(uri, StoragePhotoDTO.StoragePhotoPageResponse.class, userId);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getStoragePhotos().size()).isEqualTo(2),
                 () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
                 () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
