@@ -1,10 +1,7 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
-import com.ddd.moodof.application.dto.StoragePhotoDTO;
-import com.ddd.moodof.application.dto.TagAttachmentDTO;
-import com.ddd.moodof.application.dto.TagDTO;
-import com.ddd.moodof.application.dto.TrashPhotoDTO;
+import com.ddd.moodof.application.dto.*;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -28,6 +25,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
 
+import static com.ddd.moodof.adapter.presentation.CategoryController.API_CATEGORY;
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static com.ddd.moodof.adapter.presentation.TagAttachmentController.API_TAG_ATTACHMENT;
 import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
@@ -65,6 +63,11 @@ public class AcceptanceTest {
 
     protected User signUp() {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
+    }
+
+    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String name){
+        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(name);
+        return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
 
     protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
