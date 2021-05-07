@@ -61,6 +61,14 @@ public class CategoryDTO {
         @NotBlank
         private String name;
 
+
+        public Category toEntity(Category category, UpdateNameCategoryRequest request) {
+            return Category.builder()
+                    .id(category.getId())
+                    .name(request.getName())
+                    .userId(category.getUserId())
+                    .build();
+        }
     }
 
     @NoArgsConstructor

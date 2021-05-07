@@ -27,7 +27,7 @@ public class CategoryController implements CategoryAPI {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO.CategoryResponse> updateName(@PathVariable Long id, CategoryDTO.UpdateNameCategoryRequest request, Long userId) {
-        return null;
+        return ResponseEntity.ok(categoryService.updateName(request, id, userId));
     }
 
     @Override

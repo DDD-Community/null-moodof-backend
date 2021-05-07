@@ -32,8 +32,19 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isNotNull()
         );
-
     }
+    @Test
+    public void 카테고리_이름_변경() throws Exception {
+        // given
+
+        // when
+        CategoryDTO.CategoryResponse request = 카테고리_생성(userId, "category-1");
+        CategoryDTO.CategoryResponse response = 카테고리_이름_변경(request.getId(), request.getUserId(), "category-2");
+
+        // then
+        assertThat(response.getName()).isEqualTo("category-2");
+    }
+
     @Test
     public void 카테고리_삭제() throws Exception {
         // given
@@ -52,14 +63,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         // then
     }
 
-    @Test
-    public void 카테고리_이름_변경() throws Exception {
-        // given
 
-        // when
-
-        // then
-    }
     @Test
     public void 카테고리_조회() throws Exception {
         // given

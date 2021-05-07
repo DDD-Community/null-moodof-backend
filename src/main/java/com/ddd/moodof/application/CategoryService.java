@@ -18,4 +18,14 @@ public class CategoryService {
         Category category = categoryRepository.save(request.toEntity(userId, request.getName()));
         return CategoryDTO.CategoryResponse.from(category);
     }
+
+    public CategoryDTO.CategoryResponse updateName(CategoryDTO.UpdateNameCategoryRequest request, Long id, Long userId) {
+        if(!existsByIdAndUserId(id, userId)) throw new IllegalArgumentException("카테고리 정보가 일치하지 않습니다.");
+        Optional<Category> categoryInfo = categoryRepository.findById(id);
+        return CategoryDTO.CategoryResponse.from(categoryRepository.save(request.toEntity(categoryInfo.get(), request)));
+    }
+
+    private boolean existsByIdAndUserId(Long id, Long userId) {
+        return categoryRepository.existsByIdAndUserId(id, userId);
+    }
 }
