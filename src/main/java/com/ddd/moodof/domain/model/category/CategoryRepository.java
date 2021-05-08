@@ -15,4 +15,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByIdAndUserId(Long id, Long userId);
 
+    List<Category> findAllByPreviousId(Long previousId);
 }

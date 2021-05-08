@@ -18,8 +18,17 @@ public class CategoryService {
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
         findOptionalById(request, userId);
-        Category save = categoryRepository.save(request.toEntity(userId, request.getTitle(), request.getTargetId(), request.getPreviousId()));
-        return CategoryDTO.CategoryResponse.from(save);
+        Category saved = categoryRepository.save(request.toEntity(userId, request.getTitle(), request.getTargetId(), request.getPreviousId()));
+        insertOrder(saved, request.getPreviousId(), request.getTargetId());
+        return CategoryDTO.CategoryResponse.from(saved);
+    }
+
+    private void insertOrder(Category saved, Long previousId, Long targetId) {
+        categoryRepository.findAllByPreviousId(previousId)
+                .stream()
+                .filter(c -> !c.getId().equals(saved.getId()))
+                .findAny()
+                .ifPresent(cc -> cc.updatePreviousId(saved.getId(), targetId));
     }
 
     private void findOptionalById(CategoryDTO.CreateCategoryRequest request, Long userId) {
