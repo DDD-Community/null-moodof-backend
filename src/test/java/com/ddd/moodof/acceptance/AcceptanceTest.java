@@ -158,6 +158,26 @@ public class AcceptanceTest {
         }
     }
 
+    protected <T, U> U putPropertyWithLogin(T request, Long resourceId, String uri, Class<U> response, Long userId, String property) {
+        try {
+            String token = tokenProvider.createToken(userId);
+            String body = objectMapper.writeValueAsString(request);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri + "/{id}/{property}", resourceId, property)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
     protected <T> T getWithLogin(String uri, Class<T> response, Long userId) {
         try {
             String token = tokenProvider.createToken(userId);

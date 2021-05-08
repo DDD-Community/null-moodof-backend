@@ -44,7 +44,7 @@ public class BoardAcceptanceTest extends AcceptanceTest {
         // when
         String changed = "changed";
         BoardDTO.ChangeBoardName request = new BoardDTO.ChangeBoardName(changed);
-        BoardDTO.BoardResponse response = putWithLogin(request, board.getId(), API_BOARD, BoardDTO.BoardResponse.class, userId);
+        BoardDTO.BoardResponse response = putPropertyWithLogin(request, board.getId(), API_BOARD, BoardDTO.BoardResponse.class, userId, "name");
 
         // then
         assertAll(

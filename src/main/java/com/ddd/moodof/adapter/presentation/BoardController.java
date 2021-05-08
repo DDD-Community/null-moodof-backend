@@ -25,7 +25,7 @@ public class BoardController implements BoardAPI {
     }
 
     @Override
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/name")
     public ResponseEntity<BoardDTO.BoardResponse> changeName(@LoginUserId Long userId, @PathVariable Long id, @RequestBody BoardDTO.ChangeBoardName request) {
         BoardDTO.BoardResponse response = boardService.changeName(userId, id, request);
         return ResponseEntity.ok(response);
