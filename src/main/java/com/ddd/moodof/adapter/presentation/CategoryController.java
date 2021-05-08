@@ -32,10 +32,13 @@ public class CategoryController implements CategoryAPI {
     }
 
     @Override
-    @PutMapping()
+    @PutMapping("/{id}/order")
     public ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(
-            @RequestBody CategoryDTO.UpdateOrderCategoryRequest request, @LoginUserId Long userId) {
-        return null;
+            @PathVariable Long id,
+            @RequestBody CategoryDTO.UpdateOrderCategoryRequest request,
+            @LoginUserId Long userId) {
+        CategoryDTO.CategoryResponse response = categoryService.updateOrder(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @Override
