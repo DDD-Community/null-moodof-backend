@@ -6,6 +6,7 @@ import com.ddd.moodof.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -28,4 +29,16 @@ public class CategoryService {
     private boolean existsByIdAndUserId(Long id, Long userId) {
         return categoryRepository.existsByIdAndUserId(id, userId);
     }
+
+    public void deleteById(Long id, Long userId) {
+        if(categoryRepository.existsByIdAndUserId(id, userId)) categoryRepository.deleteById(id);
+        else new IllegalArgumentException("존재하지 않는 카테고리입니다. " + id + " / " + userId);
+    }
+
+    public List<CategoryDTO.CategoryResponse> findAllByUserId(Long userId){
+        List<Category> totalCategories = categoryRepository.findAllByUserId(userId);
+        return CategoryDTO.CategoryResponse.listForm(totalCategories);
+    }
+
+
 }

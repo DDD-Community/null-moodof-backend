@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CategoryDTO {
     @NoArgsConstructor
@@ -31,6 +33,17 @@ public class CategoryDTO {
                     .createdDate(category.getCreatedDate())
                     .lastModifiedDate(category.getLastModifiedDate())
                     .build();
+        }
+
+        public static List<CategoryResponse> listForm(List<Category> categories) {
+            return categories.stream().map(category -> CategoryResponse.builder()
+                    .id(category.getId())
+                    .userId(category.getUserId())
+                    .name(category.getName())
+                    .previousId(category.getPreviousId())
+                    .createdDate(category.getCreatedDate())
+                    .lastModifiedDate(category.getLastModifiedDate())
+                    .build()).collect(Collectors.toList());
         }
     }
 
@@ -61,7 +74,6 @@ public class CategoryDTO {
         @NotBlank
         private String name;
 
-
         public Category toEntity(Category category, UpdateNameCategoryRequest request) {
             return Category.builder()
                     .id(category.getId())
@@ -76,6 +88,7 @@ public class CategoryDTO {
     @Getter
     public static class UpdateOrderCategoryRequest {
         private Long id;
+
         private Long previousId;
     }
 }

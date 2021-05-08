@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping(CategoryController.API_CATEGORY)
@@ -37,14 +38,15 @@ public class CategoryController implements CategoryAPI {
     }
 
     @Override
-    @DeleteMapping
-    public ResponseEntity<Void> deleteById(@LoginUserId Long userId) {
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id, @LoginUserId Long userId) {
+        categoryService.deleteById(id,userId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<CategoryDTO.CategoryResponse> findByUserId(@LoginUserId Long userId) {
-        return null;
+    public ResponseEntity<List<CategoryDTO.CategoryResponse>>findAllByUserId(@LoginUserId Long userId) {
+        return ResponseEntity.ok(categoryService.findAllByUserId(userId));
     }
 }

@@ -4,7 +4,11 @@ import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
+import static com.ddd.moodof.adapter.presentation.CategoryController.API_CATEGORY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -48,10 +52,21 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     @Test
     public void 카테고리_삭제() throws Exception {
         // given
+        CategoryDTO.CategoryResponse one = 카테고리_생성(userId, "category-1");
+        CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2");
 
         // when
 
+        deleteWithLogin(API_CATEGORY, one.getId(), one.getUserId());
+        List<CategoryDTO.CategoryResponse> categoryResponseList = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
+
         // then
+        assertAll(
+                () -> assertThat(categoryResponseList.size()).isEqualTo(1),
+                () -> assertThat(categoryResponseList.get(0)).usingRecursiveComparison().isEqualTo(two)
+        );
+
+
     }
 
     @Test
@@ -67,11 +82,17 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     @Test
     public void 카테고리_조회() throws Exception {
         // given
-
+        CategoryDTO.CategoryResponse one = 카테고리_생성(userId, "category-1");
+        CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2");
         // when
 
+        List<CategoryDTO.CategoryResponse> categoryResponseList = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
+
         // then
+        assertAll(
+                () -> assertThat(categoryResponseList.size()).isEqualTo(2),
+                () -> assertThat(categoryResponseList.get(0)).usingRecursiveComparison().isEqualTo(one),
+                () -> assertThat(categoryResponseList.get(1)).usingRecursiveComparison().isEqualTo(two)
+        );
     }
-
-
 }

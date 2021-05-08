@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 public interface CategoryAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
@@ -21,10 +23,10 @@ public interface CategoryAPI {
     ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(@PathVariable Long id,@PathVariable Long previousId, @RequestBody CategoryDTO.UpdateOrderCategoryRequest request, @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @DeleteMapping
-    ResponseEntity<Void> deleteById(@LoginUserId Long userId);
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> deleteById(@PathVariable Long id,@LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping
-    ResponseEntity<CategoryDTO.CategoryResponse> findByUserId(@LoginUserId Long userId);
+    ResponseEntity<List<CategoryDTO.CategoryResponse>> findAllByUserId(@LoginUserId Long userId);
 }

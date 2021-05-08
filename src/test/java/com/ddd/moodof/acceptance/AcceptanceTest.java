@@ -72,7 +72,6 @@ public class AcceptanceTest {
     protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String name){
         CategoryDTO.UpdateNameCategoryRequest request = new CategoryDTO.UpdateNameCategoryRequest(name);
         return putWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
-
     }
 
     protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
