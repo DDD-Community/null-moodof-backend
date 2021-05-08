@@ -19,7 +19,7 @@ public class CategoryDTO {
     public static class CategoryResponse {
         private Long id;
         private Long userId;
-        private String name;
+        private String title;
         private Long previousId;
         private LocalDateTime createdDate;
         private LocalDateTime lastModifiedDate;
@@ -27,7 +27,7 @@ public class CategoryDTO {
         public static CategoryResponse from(Category category) {
             return CategoryResponse.builder()
                     .id(category.getId())
-                    .name(category.getName())
+                    .title(category.getTitle())
                     .userId(category.getUserId())
                     .previousId(category.getPreviousId())
                     .createdDate(category.getCreatedDate())
@@ -39,7 +39,7 @@ public class CategoryDTO {
             return categories.stream().map(category -> CategoryResponse.builder()
                     .id(category.getId())
                     .userId(category.getUserId())
-                    .name(category.getName())
+                    .title(category.getTitle())
                     .previousId(category.getPreviousId())
                     .createdDate(category.getCreatedDate())
                     .lastModifiedDate(category.getLastModifiedDate())
@@ -53,13 +53,17 @@ public class CategoryDTO {
     @Builder
     public static class CreateCategoryRequest {
         @NotBlank
-        private String name;
+        private String title;
 
-        public Category toEntity(Long userId, String name) {
+        private Long id;
+
+        private Long previousId;
+
+        public Category toEntity(Long userId, String title) {
             return Category.builder()
                     .id(null)
                     .previousId(null)
-                    .name(name)
+                    .title(title)
                     .userId(userId)
                     .createdDate(null)
                     .lastModifiedDate(null)
@@ -77,7 +81,7 @@ public class CategoryDTO {
         public Category toEntity(Category category, UpdateNameCategoryRequest request) {
             return Category.builder()
                     .id(category.getId())
-                    .name(request.getName())
+                    .title(request.getName())
                     .userId(category.getUserId())
                     .build();
         }

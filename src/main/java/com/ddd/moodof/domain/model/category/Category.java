@@ -22,7 +22,7 @@ public class Category {
 
     private Long previousId;
 
-    private String name;
+    private String title;
 
     private Long userId;
 

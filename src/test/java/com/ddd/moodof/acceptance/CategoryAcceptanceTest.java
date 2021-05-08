@@ -4,7 +4,6 @@ import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
                 () -> assertThat(response.getUserId()).isEqualTo(1L),
-                () -> assertThat(response.getName()).isEqualTo("category-2"),
+                () -> assertThat(response.getTitle()).isEqualTo("category-2"),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isNotNull()
         );
@@ -46,7 +45,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         CategoryDTO.CategoryResponse response = 카테고리_이름_변경(request.getId(), request.getUserId(), "category-2");
 
         // then
-        assertThat(response.getName()).isEqualTo("category-2");
+        assertThat(response.getTitle()).isEqualTo("category-2");
     }
 
     @Test

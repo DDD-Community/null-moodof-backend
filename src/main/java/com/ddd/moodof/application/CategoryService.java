@@ -14,9 +14,9 @@ import java.util.Optional;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
-        Optional<Category> categoryExist = categoryRepository.findByNameAndUserId(request.getName(), userId);
+        Optional<Category> categoryExist = categoryRepository.findByTitleAndUserId(request.getTitle(), userId);
         if (categoryExist.isPresent()) throw new IllegalArgumentException("존재하는 카테고리 입니다.");
-        Category category = categoryRepository.save(request.toEntity(userId, request.getName()));
+        Category category = categoryRepository.save(request.toEntity(userId, request.getTitle()));
         return CategoryDTO.CategoryResponse.from(category);
     }
 
