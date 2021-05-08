@@ -16,11 +16,11 @@ public interface CategoryAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PutMapping("/{id}")
-    ResponseEntity<CategoryDTO.CategoryResponse> updateName(@PathVariable Long id, @RequestBody CategoryDTO.UpdateNameCategoryRequest request, @LoginUserId Long userId);
+    ResponseEntity<CategoryDTO.CategoryResponse> updateTitle(@PathVariable Long id, @RequestBody CategoryDTO.UpdateTitleCategoryRequest request, @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @PutMapping("/{id}/{previousId}")
-    ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(@PathVariable Long id,@PathVariable Long previousId, @RequestBody CategoryDTO.UpdateOrderCategoryRequest request, @LoginUserId Long userId);
+    @PutMapping()
+    ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(@RequestBody CategoryDTO.UpdateOrderCategoryRequest request, @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping("/{id}")

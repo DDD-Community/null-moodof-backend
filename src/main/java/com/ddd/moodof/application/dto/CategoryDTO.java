@@ -17,11 +17,17 @@ public class CategoryDTO {
     @Getter
     @Builder
     public static class CategoryResponse {
+
         private Long id;
+
         private Long userId;
+
         private String title;
+
         private Long previousId;
+
         private LocalDateTime createdDate;
+
         private LocalDateTime lastModifiedDate;
 
         public static CategoryResponse from(Category category) {
@@ -74,14 +80,14 @@ public class CategoryDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class UpdateNameCategoryRequest {
+    public static class UpdateTitleCategoryRequest {
         @NotBlank
-        private String name;
+        private String title;
 
-        public Category toEntity(Category category, UpdateNameCategoryRequest request) {
+        public Category toEntity(Category category, UpdateTitleCategoryRequest request) {
             return Category.builder()
                     .id(category.getId())
-                    .title(request.getName())
+                    .title(request.getTitle())
                     .userId(category.getUserId())
                     .build();
         }

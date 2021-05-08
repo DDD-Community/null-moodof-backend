@@ -70,7 +70,7 @@ public class AcceptanceTest {
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
     protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String title){
-        CategoryDTO.UpdateNameCategoryRequest request = new CategoryDTO.UpdateNameCategoryRequest(title);
+        CategoryDTO.UpdateTitleCategoryRequest request = new CategoryDTO.UpdateTitleCategoryRequest(title);
         return putWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
 

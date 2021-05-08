@@ -27,13 +27,14 @@ public class CategoryController implements CategoryAPI {
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDTO.CategoryResponse> updateName(@PathVariable Long id, CategoryDTO.UpdateNameCategoryRequest request, Long userId) {
-        return ResponseEntity.ok(categoryService.updateName(request, id, userId));
+    public ResponseEntity<CategoryDTO.CategoryResponse> updateTitle(@PathVariable Long id, CategoryDTO.UpdateTitleCategoryRequest request, Long userId) {
+        return ResponseEntity.ok(categoryService.updateTitle(request, id, userId));
     }
 
     @Override
-    @PutMapping("/{id}/{previousId}")
-    public ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(@PathVariable Long id, @PathVariable Long previousId,CategoryDTO.UpdateOrderCategoryRequest request, Long userId) {
+    @PutMapping()
+    public ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(
+            @RequestBody CategoryDTO.UpdateOrderCategoryRequest request, @LoginUserId Long userId) {
         return null;
     }
 
