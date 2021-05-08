@@ -5,10 +5,7 @@ import com.ddd.moodof.application.BoardService;
 import com.ddd.moodof.application.dto.BoardDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -25,5 +22,12 @@ public class BoardController implements BoardAPI {
     public ResponseEntity<BoardDTO.BoardResponse> create(@LoginUserId Long userId, @RequestBody BoardDTO.CreateBoard request) {
         BoardDTO.BoardResponse response = boardService.create(userId, request);
         return ResponseEntity.created(URI.create(API_BOARD + "/" + response.getId())).body(response);
+    }
+
+    @Override
+    @PutMapping("/{id}")
+    public ResponseEntity<BoardDTO.BoardResponse> changeName(@LoginUserId Long userId, @PathVariable Long id, @RequestBody BoardDTO.ChangeBoardName request) {
+        BoardDTO.BoardResponse response = boardService.changeName(userId, id, request);
+        return ResponseEntity.ok(response);
     }
 }

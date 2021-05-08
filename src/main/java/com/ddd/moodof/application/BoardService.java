@@ -18,12 +18,18 @@ public class BoardService {
         // TODO: 2021/05/05 verify category
         Board saved = boardRepository.save(request.toEntity(userId));
 
-        boardRepository.findAllByPreviousBoardIdAndUserId(request.getPreviousBoardId(), userId)
-                .stream()
-                .filter(it -> it.isNotEqual(saved.getId()))
-                .findAny()
+        boardRepository.findByPreviousBoardIdAndUserIdAndIdNot(request.getPreviousBoardId(), userId, saved.getId())
                 .ifPresent(it -> it.updatePreviousBoardId(saved.getId()));
 
+        return BoardDTO.BoardResponse.from(saved);
+    }
+
+    public BoardDTO.BoardResponse changeName(Long userId, Long id, BoardDTO.ChangeBoardName request) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 보드입니다. id = " + id));
+
+        board.changeName(request.getName(), userId);
+        Board saved = boardRepository.save(board);
         return BoardDTO.BoardResponse.from(saved);
     }
 }

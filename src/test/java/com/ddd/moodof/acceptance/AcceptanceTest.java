@@ -1,6 +1,7 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
+import com.ddd.moodof.application.dto.BoardDTO;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
@@ -21,12 +22,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
 
+import static com.ddd.moodof.adapter.presentation.BoardController.API_BOARD;
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
 import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH_PHOTO;
@@ -34,7 +35,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Slf4j
-@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
     private static final String BEARER = "Bearer ";
@@ -87,6 +87,12 @@ public class AcceptanceTest {
         TagDTO.UpdateRequest request = new TagDTO.UpdateRequest(name);
         return putWithLogin(request, id, API_TAG, TagDTO.TagResponse.class, userId);
     }
+
+    protected BoardDTO.BoardResponse 보드_생성(Long userId, Long previousBoardId, Long categoryId, String name) {
+        BoardDTO.CreateBoard request = new BoardDTO.CreateBoard(previousBoardId, categoryId, name);
+        return postWithLogin(request, API_BOARD, BoardDTO.BoardResponse.class, userId);
+    }
+
 
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
         try {

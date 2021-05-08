@@ -39,7 +39,10 @@ public class Board {
         this.previousBoardId = previousBoardId;
     }
 
-    public boolean isNotEqual(Long id) {
-        return !this.id.equals(id);
+    public void changeName(String name, Long userId) {
+        if (!this.userId.equals(userId)) {
+            throw new IllegalArgumentException("userId가 일치하지 않습니다.");
+        }
+        this.name = name;
     }
 }

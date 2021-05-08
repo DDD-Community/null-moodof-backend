@@ -38,4 +38,11 @@ public class BoardDTO {
             return new BoardResponse(board.getId(), board.getPreviousBoardId(), board.getUserId(), board.getName(), board.getCategoryId(), board.getCreatedDate(), board.getLastModifiedDate());
         }
     }
+
+    @NoArgsConstructor
+    @Getter
+    @AllArgsConstructor
+    public static class ChangeBoardName {
+        private String name;
+    }
 }
