@@ -25,13 +25,13 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         // given
         // when
         카테고리_생성(userId, "category-1");
-        CategoryDTO.CategoryResponse response = 카테고리_생성(userId, "category-2");
+        카테고리_생성(userId, "category-2");
+        CategoryDTO.CategoryResponse response = 카테고리_생성(userId, "category-3");
 
         // then
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
-                () -> assertThat(response.getUserId()).isEqualTo(1L),
-                () -> assertThat(response.getTitle()).isEqualTo("category-2"),
+                () -> assertThat(response.getTitle()).isEqualTo("category-3"),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isNotNull()
         );

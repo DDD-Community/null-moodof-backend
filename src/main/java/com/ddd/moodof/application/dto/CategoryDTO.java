@@ -69,7 +69,7 @@ public class CategoryDTO {
 
         private Long previousId;
 
-        public Category toEntity(Long userId, String title,Long targetId, Long previousId) {
+        public Category toEntity(Long userId) {
             return Category.builder()
                     .id(null)
                     .targetId(targetId)

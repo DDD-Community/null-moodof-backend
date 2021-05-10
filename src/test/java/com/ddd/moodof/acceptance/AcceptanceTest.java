@@ -66,7 +66,7 @@ public class AcceptanceTest {
     }
 
     protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title){
-        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,null,null);
+        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,1L,0L);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
     protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String title){

@@ -18,9 +18,9 @@ public class CategoryService {
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
         findOptionalById(request, userId);
-        Category saved = categoryRepository.save(request.toEntity(userId, request.getTitle(), request.getTargetId(), request.getPreviousId()));
+        Category saved = categoryRepository.save(request.toEntity(userId));
         insertOrder(saved, request.getPreviousId(), request.getTargetId());
-        return CategoryDTO.CategoryResponse.from(saved);
+        return CategoryDTO.CategoryResponse.from(categoryRepository.save(saved));
     }
 
     private void insertOrder(Category saved, Long previousId, Long targetId) {
