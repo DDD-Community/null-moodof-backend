@@ -19,21 +19,8 @@ public class CategoryService {
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
         findOptionalById(request, userId);
         Category saved = categoryRepository.save(request.toEntity(userId));
-        insertOrder(saved, request.getPreviousId(), request.getTargetId());
+        insertCategoryIntermediate(saved, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(categoryRepository.save(saved));
-    }
-
-    private void insertOrder(Category saved, Long previousId, Long targetId) {
-        categoryRepository.findAllByPreviousId(previousId)
-                .stream()
-                .filter(c -> !c.getId().equals(saved.getId()))
-                .findAny()
-                .ifPresent(cc -> cc.updatePreviousId(saved.getId(), targetId));
-    }
-
-    private void findOptionalById(CategoryDTO.CreateCategoryRequest request, Long userId) {
-        Optional<Category> category = categoryRepository.findByTitleAndUserId(request.getTitle(), userId);
-        category.ifPresent(s -> { throw new IllegalArgumentException("존재하는 카테고리 입니다."); });
     }
 
     @Transactional
@@ -57,22 +44,34 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO.CategoryResponse updateOrder(Long id, CategoryDTO.UpdateOrderCategoryRequest request) {
-        Category category = findById(id);
-        updateOrder(category,request.getPreviousId(), request.getTargetId());
-        return CategoryDTO.CategoryResponse.from(categoryRepository.save(category));
+        Category target = findById(id);
+        updateOrder(target,request.getPreviousId());
+        return CategoryDTO.CategoryResponse.from(categoryRepository.save(target));
+    }
+
+    private void insertCategoryIntermediate(Category saved, Long previousId) {
+        categoryRepository.findAllByPreviousId(previousId)
+                .stream()
+                .filter(c -> !c.getId().equals(saved.getId()))
+                .findAny()
+                .ifPresent(cc -> cc.updatePreviousId(saved.getId()));
+    }
+
+    private void findOptionalById(CategoryDTO.CreateCategoryRequest request, Long userId) {
+        Optional<Category> category = categoryRepository.findByTitleAndUserId(request.getTitle(), userId);
+        category.ifPresent(s -> { throw new IllegalArgumentException("존재하는 카테고리 입니다."); });
     }
 
     private boolean existsByIdAndUserId(Long id, Long userId) {
         return categoryRepository.existsByIdAndUserId(id, userId);
     }
 
-    private void updateOrder(Category target, Long previousId, Long targetId) {
+    private void updateOrder(Category target, Long previousId) {
         Category destination = findByPreviousId(previousId);
         Optional<Category> afterTarget = categoryRepository.findOptionalByPreviousId(target.getId());
-        afterTarget.ifPresent(t ->
-                categoryRepository.save(t.updatePreviousId(target.getPreviousId(),targetId)));
-        categoryRepository.save(destination.updatePreviousId(target.getId(), targetId));
-        target.updatePreviousId(previousId, targetId);
+        afterTarget.ifPresent(t -> categoryRepository.save(t.updatePreviousId(target.getPreviousId())));
+        categoryRepository.save(destination.updatePreviousId(target.getId()));
+        target.updatePreviousId(previousId);
     }
 
     private Category findByPreviousId(Long previousId) {

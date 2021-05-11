@@ -22,8 +22,6 @@ public class CategoryDTO {
 
         private Long userId;
 
-        private Long targetId;
-
         private String title;
 
         private Long previousId;
@@ -37,7 +35,6 @@ public class CategoryDTO {
                     .id(category.getId())
                     .title(category.getTitle())
                     .userId(category.getUserId())
-                    .targetId(category.getTargetId())
                     .previousId(category.getPreviousId())
                     .createdDate(category.getCreatedDate())
                     .lastModifiedDate(category.getLastModifiedDate())
@@ -49,7 +46,6 @@ public class CategoryDTO {
                     .id(category.getId())
                     .userId(category.getUserId())
                     .title(category.getTitle())
-                    .targetId(category.getTargetId())
                     .previousId(category.getPreviousId())
                     .createdDate(category.getCreatedDate())
                     .lastModifiedDate(category.getLastModifiedDate())
@@ -65,14 +61,11 @@ public class CategoryDTO {
         @NotBlank
         private String title;
 
-        private Long targetId;
-
         private Long previousId;
 
         public Category toEntity(Long userId) {
             return Category.builder()
                     .id(null)
-                    .targetId(targetId)
                     .previousId(previousId)
                     .title(title)
                     .userId(userId)
@@ -102,9 +95,6 @@ public class CategoryDTO {
     @AllArgsConstructor
     @Getter
     public static class UpdateOrderCategoryRequest {
-
-        private Long targetId;
-
         private Long previousId;
     }
 }

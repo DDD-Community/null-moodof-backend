@@ -34,25 +34,14 @@ public class Category {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-
-    public Category updatePreviousId(Long previousId, Long targetId){
-        verifySurveyId(targetId);
-        verifyPreviousIdsAreSame(previousId);
+    public Category updatePreviousId(Long previousId){
+        validationPreviousId(previousId);
         this.previousId = previousId;
         return this;
     }
 
-    private void verifySurveyId(Long targetId) {
-        if (!this.targetId.equals(targetId)) {
-            throw new IllegalArgumentException(
-                    "수정할 targetId 일치하지 않습니다, 수정할 targetId: " + this.targetId + "입력 받은 targetId : " + targetId);
-        }
-    }
-
-    private void verifyPreviousIdsAreSame(Long previousId) {
-        if (this.previousId.equals(previousId)) {
-            throw new IllegalArgumentException("동일한 previousId 변경할 수 없습니다.");
-        }
+    private void validationPreviousId(Long previousId) {
+        if (this.previousId.equals(previousId)) throw new IllegalArgumentException("동일한 previousId: " + previousId);
     }
 
 }

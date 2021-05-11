@@ -32,7 +32,7 @@ public class CategoryController implements CategoryAPI {
     }
 
     @Override
-    @PutMapping("/{id}/order")
+    @PutMapping("/order/{id}")
     public ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(
             @PathVariable Long id,
             @RequestBody CategoryDTO.UpdateOrderCategoryRequest request,

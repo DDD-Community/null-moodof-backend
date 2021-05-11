@@ -65,9 +65,14 @@ public class AcceptanceTest {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
     }
 
-    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title){
-        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,1L,0L);
+    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId){
+        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
+    }
+    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId){
+        CategoryDTO.UpdateOrderCategoryRequest request = new CategoryDTO.UpdateOrderCategoryRequest(previousId);
+        return putWithLogin(request, id, API_CATEGORY + "/order", CategoryDTO.CategoryResponse.class, userId);
+
     }
     protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String title){
         CategoryDTO.UpdateTitleCategoryRequest request = new CategoryDTO.UpdateTitleCategoryRequest(title);
