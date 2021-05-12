@@ -1,8 +1,6 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.TagDTO;
-import com.ddd.moodof.domain.model.user.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -13,16 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TagAcceptanceTest extends AcceptanceTest {
-    private Long userId;
-
-    @Override
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        User user = signUp();
-        userId = user.getId();
-    }
-
     @Test
     public void 유저아이디_태그_전체_조회() throws Exception {
         // given
