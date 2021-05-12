@@ -1,8 +1,6 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.CategoryDTO;
-import com.ddd.moodof.domain.model.user.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,32 +10,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class CategoryAcceptanceTest extends AcceptanceTest{
-    private Long userId;
-    @BeforeEach
-    void setUp(){
-        super.setUp();
-        User user = signUp();
-        userId = user.getId();
-    }
+    public static final String PREVIOUS_ID = "previousId";
+    public static final String TITLE = "title";
 
     @Test
     public void 카테고리_생성() throws Exception {
         // given
 
         // when
-        CategoryDTO.CategoryResponse response1 = 카테고리_생성(userId, "category-1", 0L);
-        CategoryDTO.CategoryResponse response2 = 카테고리_생성(userId, "category-2", response1.getId());
-        CategoryDTO.CategoryResponse response = 카테고리_생성(userId, "category-3", response2.getId());
+        CategoryDTO.CategoryResponse one = 카테고리_생성(userId, "category-1", 0L);
+        CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2", one.getId());
+        CategoryDTO.CategoryResponse response = 카테고리_생성(userId, "category-3", two.getId());
 
         // then
         assertAll(
-                () -> assertThat(response1.getId()).isEqualTo(1L),
-                () -> assertThat(response1.getPreviousId()).isEqualTo(0L),
-                () -> assertThat(response2.getId()).isEqualTo(2L),
-                () -> assertThat(response2.getPreviousId()).isEqualTo(1L),
+                () -> assertThat(one.getId()).isEqualTo(one.getId()),
+                () -> assertThat(one.getPreviousId()).isNotNull(),
+                () -> assertThat(two.getId()).isEqualTo(two.getId()),
+                () -> assertThat(two.getPreviousId()).isEqualTo(one.getId()),
 
-                () -> assertThat(response.getId()).isEqualTo(3L),
-                () -> assertThat(response.getPreviousId()).isEqualTo(2L),
+                () -> assertThat(response.getId()).isEqualTo(two.getId()+1),
+                () -> assertThat(response.getPreviousId()).isEqualTo(two.getId()),
                 () -> assertThat(response.getTitle()).isEqualTo("category-3"),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
                 () -> assertThat(response.getLastModifiedDate()).isNotNull()
@@ -46,13 +39,21 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     @Test
     public void 카테고리_이름_변경() throws Exception {
         // given
+        CategoryDTO.CategoryResponse category = 카테고리_생성(userId, "category-1", 0L);
 
         // when
-        CategoryDTO.CategoryResponse request = 카테고리_생성(userId, "category-1", 0L);
-        CategoryDTO.CategoryResponse response = 카테고리_이름_변경(request.getId(), request.getUserId(), "category-2","title");
+        CategoryDTO.UpdateTitleCategoryRequest request = new CategoryDTO.UpdateTitleCategoryRequest("category-2");
+        CategoryDTO.CategoryResponse response = putPropertyWithLogin(request, category.getId(), API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, TITLE);
 
         // then
-        assertThat(response.getTitle()).isEqualTo("category-2");
+        assertAll(
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getId()).isEqualTo(category.getId()),
+                () -> assertThat(response.getUserId()).isNotNull(),
+                () -> assertThat(response.getTitle()).isEqualTo("category-2"),
+                () -> assertThat(response.getCreatedDate()).isEqualTo(category.getCreatedDate()),
+                () -> assertThat(response.getLastModifiedDate().isAfter(response.getCreatedDate())).isTrue()
+        );
     }
 
     @Test
@@ -67,52 +68,59 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
 
         // then
         assertAll(
+                () -> assertThat(categoryResponseList.get(0).getUserId()).isNotNull(),
+                () -> assertThat(categoryResponseList.get(0).getId()).isEqualTo(two.getId()),
                 () -> assertThat(categoryResponseList.size()).isEqualTo(1),
-                () -> assertThat(categoryResponseList.get(0)).usingRecursiveComparison().isEqualTo(two)
+                () -> assertThat(categoryResponseList.get(0)).usingRecursiveComparison().isEqualTo(two),
+                () -> assertThat(categoryResponseList.get(0).getCreatedDate()).isNotNull(),
+                () -> assertThat(categoryResponseList.get(0).getLastModifiedDate()).isNotNull()
         );
+
     }
 
     @Test
     public void 카테고리_순서_변경() throws Exception {
+
         // given
+        setUp();
         CategoryDTO.CategoryResponse one = 카테고리_생성(userId, "category-1", 0L);
         CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2", one.getId());
         CategoryDTO.CategoryResponse three = 카테고리_생성(userId, "category-3", two.getId());
         CategoryDTO.CategoryResponse four = 카테고리_생성(userId, "category-4", three.getId());
 
         // when
-        CategoryDTO.CategoryResponse unchangedResponse = 카테고리_순서_변경(three.getId(), 1L, userId, "previousId");
-        List<CategoryDTO.CategoryResponse> unchangedOrderResponseList = getListWithLogin(API_CATEGORY , CategoryDTO.CategoryResponse.class, userId);
-        CategoryDTO.CategoryResponse changedResponse = 카테고리_순서_변경(four.getId(), 3L, userId, "previousId");
-        List<CategoryDTO.CategoryResponse> changedOrderResponseList = getListWithLogin(API_CATEGORY , CategoryDTO.CategoryResponse.class, userId);
+        CategoryDTO.CategoryResponse firstChangedResponse = 카테고리_순서_변경(three.getId(), one.getId(), four.getUserId(), PREVIOUS_ID);
+        List<CategoryDTO.CategoryResponse> firstChangedOrderResponseList = getListWithLogin(API_CATEGORY , CategoryDTO.CategoryResponse.class, firstChangedResponse.getUserId());
+        CategoryDTO.CategoryResponse secondChangedResponse = 카테고리_순서_변경(four.getId(), three.getId(), firstChangedResponse.getUserId(), PREVIOUS_ID);
+        List<CategoryDTO.CategoryResponse> secondChangedOrderResponseList = getListWithLogin(API_CATEGORY , CategoryDTO.CategoryResponse.class, secondChangedResponse.getUserId());
 
         // then
         assertAll(
-                () -> assertThat(unchangedResponse).isNotNull(),
-                () -> assertThat(unchangedResponse.getId()).isEqualTo(three.getId()),
-                () -> assertThat(unchangedResponse.getPreviousId()).isEqualTo(1L),
+                () -> assertThat(firstChangedResponse).isNotNull(),
+                () -> assertThat(firstChangedResponse.getId()).isEqualTo(three.getId()),
+                () -> assertThat(firstChangedResponse.getPreviousId()).isEqualTo(two.getPreviousId()),
 
-                () -> assertThat(changedResponse).isNotNull(),
-                () -> assertThat(changedResponse.getId()).isEqualTo(four.getId()),
-                () -> assertThat(changedResponse.getPreviousId()).isEqualTo(3L),
+                () -> assertThat(secondChangedResponse).isNotNull(),
+                () -> assertThat(secondChangedResponse.getId()).isEqualTo(four.getId()),
+                () -> assertThat(secondChangedResponse.getPreviousId()).isEqualTo(four.getPreviousId()),
 
-                () -> assertThat(unchangedOrderResponseList.get(0).getId()).isEqualTo(1L),
-                () -> assertThat(unchangedOrderResponseList.get(0).getPreviousId()).isEqualTo(0L),
-                () -> assertThat(unchangedOrderResponseList.get(1).getId()).isEqualTo(2L),
-                () -> assertThat(unchangedOrderResponseList.get(1).getPreviousId()).isEqualTo(3L),
-                () -> assertThat(unchangedOrderResponseList.get(2).getId()).isEqualTo(3L),
-                () -> assertThat(unchangedOrderResponseList.get(2).getPreviousId()).isEqualTo(1L),
-                () -> assertThat(unchangedOrderResponseList.get(3).getId()).isEqualTo(4L),
-                () -> assertThat(unchangedOrderResponseList.get(3).getPreviousId()).isEqualTo(2L),
+                () -> assertThat(firstChangedOrderResponseList.get(0).getId()).isEqualTo(one.getId()),
+                () -> assertThat(firstChangedOrderResponseList.get(0).getPreviousId()).isEqualTo(0L),
+                () -> assertThat(firstChangedOrderResponseList.get(1).getId()).isEqualTo(two.getId()),
+                () -> assertThat(firstChangedOrderResponseList.get(1).getPreviousId()).isEqualTo(three.getId()),
+                () -> assertThat(firstChangedOrderResponseList.get(2).getId()).isEqualTo(three.getId()),
+                () -> assertThat(firstChangedOrderResponseList.get(2).getPreviousId()).isEqualTo(one.getId()),
+                () -> assertThat(firstChangedOrderResponseList.get(3).getId()).isEqualTo(four.getId()),
+                () -> assertThat(firstChangedOrderResponseList.get(3).getPreviousId()).isEqualTo(two.getId()),
 
-                () -> assertThat(changedOrderResponseList.get(0).getId()).isEqualTo(1L),
-                () -> assertThat(changedOrderResponseList.get(0).getPreviousId()).isEqualTo(0L),
-                () -> assertThat(changedOrderResponseList.get(1).getId()).isEqualTo(2L),
-                () -> assertThat(changedOrderResponseList.get(1).getPreviousId()).isEqualTo(4L),
-                () -> assertThat(changedOrderResponseList.get(2).getId()).isEqualTo(3L),
-                () -> assertThat(changedOrderResponseList.get(2).getPreviousId()).isEqualTo(1L),
-                () -> assertThat(changedOrderResponseList.get(3).getId()).isEqualTo(4L),
-                () -> assertThat(changedOrderResponseList.get(3).getPreviousId()).isEqualTo(3L)
+                () -> assertThat(secondChangedOrderResponseList.get(0).getId()).isEqualTo(one.getId()),
+                () -> assertThat(secondChangedOrderResponseList.get(0).getPreviousId()).isEqualTo(0L),
+                () -> assertThat(secondChangedOrderResponseList.get(1).getId()).isEqualTo(two.getId()),
+                () -> assertThat(secondChangedOrderResponseList.get(1).getPreviousId()).isEqualTo(four.getId()),
+                () -> assertThat(secondChangedOrderResponseList.get(2).getId()).isEqualTo(three.getId()),
+                () -> assertThat(secondChangedOrderResponseList.get(2).getPreviousId()).isEqualTo(one.getId()),
+                () -> assertThat(secondChangedOrderResponseList.get(3).getId()).isEqualTo(four.getId()),
+                () -> assertThat(secondChangedOrderResponseList.get(3).getPreviousId()).isEqualTo(three.getId())
         );
     }
 

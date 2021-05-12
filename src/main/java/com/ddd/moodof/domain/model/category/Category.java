@@ -20,8 +20,6 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long targetId;
-
     private Long previousId;
 
     private String title;
@@ -33,6 +31,10 @@ public class Category {
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    public void updateTitle(String title){
+        this.title = title;
+    }
 
     public Category updatePreviousId(Long previousId){
         validationPreviousId(previousId);

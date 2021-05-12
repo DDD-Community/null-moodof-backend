@@ -26,31 +26,38 @@ public class CategoryController implements CategoryAPI {
     }
 
     @Override
-    @PatchMapping("/{id}/title")
-    public ResponseEntity<CategoryDTO.CategoryResponse> updateTitle(@PathVariable Long id, CategoryDTO.UpdateTitleCategoryRequest request, Long userId) {
-        return ResponseEntity.ok(categoryService.updateTitle(request, id, userId));
+    @PutMapping("/{id}/title")
+    public ResponseEntity<CategoryDTO.CategoryResponse> updateTitle(
+            @PathVariable Long id,
+            @RequestBody CategoryDTO.UpdateTitleCategoryRequest request,
+            @LoginUserId Long userId) {
+        CategoryDTO.CategoryResponse response = categoryService.updateTitle(request, id, userId);
+        return ResponseEntity.ok(response);
     }
 
     @Override
     @PutMapping("/{id}/previousId")
-    public ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(
+    public ResponseEntity<CategoryDTO.CategoryResponse> updatePreviousId(
             @PathVariable Long id,
             @RequestBody CategoryDTO.UpdateOrderCategoryRequest request,
             @LoginUserId Long userId) {
-        CategoryDTO.CategoryResponse response = categoryService.updateOrder(id, request);
+        CategoryDTO.CategoryResponse response = categoryService.updatePreviousId(id, request, userId);
         return ResponseEntity.ok(response);
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id, @LoginUserId Long userId) {
+    public ResponseEntity<Void> deleteById(
+            @PathVariable Long id,
+            @LoginUserId Long userId) {
         categoryService.deleteById(id,userId);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<List<CategoryDTO.CategoryResponse>>findAllByUserId(@LoginUserId Long userId) {
+    public ResponseEntity<List<CategoryDTO.CategoryResponse>>findAllByUserId(
+            @LoginUserId Long userId) {
         return ResponseEntity.ok(categoryService.findAllByUserId(userId));
     }
 }

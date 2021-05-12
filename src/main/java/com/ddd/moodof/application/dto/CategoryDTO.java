@@ -81,14 +81,6 @@ public class CategoryDTO {
     public static class UpdateTitleCategoryRequest {
         @NotBlank
         private String title;
-
-        public Category toEntity(Category category, UpdateTitleCategoryRequest request) {
-            return Category.builder()
-                    .id(category.getId())
-                    .title(request.getTitle())
-                    .userId(category.getUserId())
-                    .build();
-        }
     }
 
     @NoArgsConstructor

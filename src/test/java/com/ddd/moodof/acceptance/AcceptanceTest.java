@@ -1,11 +1,7 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
-import com.ddd.moodof.application.dto.BoardDTO;
-import com.ddd.moodof.application.dto.CategoryDTO;
-import com.ddd.moodof.application.dto.StoragePhotoDTO;
-import com.ddd.moodof.application.dto.TagDTO;
-import com.ddd.moodof.application.dto.TrashPhotoDTO;
+import com.ddd.moodof.application.dto.*;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -75,14 +71,9 @@ public class AcceptanceTest {
         CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
-    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId, String type){
+    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId, String property){
         CategoryDTO.UpdateOrderCategoryRequest request = new CategoryDTO.UpdateOrderCategoryRequest(previousId);
-        return patchWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, type);
-
-    }
-    protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String title, String type){
-        CategoryDTO.UpdateTitleCategoryRequest request = new CategoryDTO.UpdateTitleCategoryRequest(title);
-        return patchWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, type);
+        return putPropertyWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, property);
     }
 
     protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
