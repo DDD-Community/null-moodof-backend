@@ -82,7 +82,6 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     public void 카테고리_순서_변경() throws Exception {
 
         // given
-        setUp();
         CategoryDTO.CategoryResponse one = 카테고리_생성(userId, "category-1", 0L);
         CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2", one.getId());
         CategoryDTO.CategoryResponse three = 카테고리_생성(userId, "category-3", two.getId());
