@@ -49,7 +49,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
 
         // when
         CategoryDTO.CategoryResponse request = 카테고리_생성(userId, "category-1", 0L);
-        CategoryDTO.CategoryResponse response = 카테고리_이름_변경(request.getId(), request.getUserId(), "category-2");
+        CategoryDTO.CategoryResponse response = 카테고리_이름_변경(request.getId(), request.getUserId(), "category-2","title");
 
         // then
         assertThat(response.getTitle()).isEqualTo("category-2");
@@ -81,9 +81,9 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         CategoryDTO.CategoryResponse four = 카테고리_생성(userId, "category-4", three.getId());
 
         // when
-        CategoryDTO.CategoryResponse unchangedResponse = 카테고리_순서_변경(three.getId(), 1L, userId);
+        CategoryDTO.CategoryResponse unchangedResponse = 카테고리_순서_변경(three.getId(), 1L, userId, "previousId");
         List<CategoryDTO.CategoryResponse> unchangedOrderResponseList = getListWithLogin(API_CATEGORY , CategoryDTO.CategoryResponse.class, userId);
-        CategoryDTO.CategoryResponse changedResponse = 카테고리_순서_변경(four.getId(), 3L, userId);
+        CategoryDTO.CategoryResponse changedResponse = 카테고리_순서_변경(four.getId(), 3L, userId, "previousId");
         List<CategoryDTO.CategoryResponse> changedOrderResponseList = getListWithLogin(API_CATEGORY , CategoryDTO.CategoryResponse.class, userId);
 
         // then

@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping(CategoryController.API_CATEGORY)
 @RestController
 public class CategoryController implements CategoryAPI {
-    public static final String API_CATEGORY = "/api/category";
+    public static final String API_CATEGORY = "/api/categories";
     private final CategoryService categoryService;
 
     @Override
@@ -26,13 +26,13 @@ public class CategoryController implements CategoryAPI {
     }
 
     @Override
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}/title")
     public ResponseEntity<CategoryDTO.CategoryResponse> updateTitle(@PathVariable Long id, CategoryDTO.UpdateTitleCategoryRequest request, Long userId) {
         return ResponseEntity.ok(categoryService.updateTitle(request, id, userId));
     }
 
     @Override
-    @PutMapping("/order/{id}")
+    @PutMapping("/{id}/previousId")
     public ResponseEntity<CategoryDTO.CategoryResponse> updateOrder(
             @PathVariable Long id,
             @RequestBody CategoryDTO.UpdateOrderCategoryRequest request,

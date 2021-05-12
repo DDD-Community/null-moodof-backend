@@ -1,7 +1,11 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
-import com.ddd.moodof.application.dto.*;
+import com.ddd.moodof.application.dto.BoardDTO;
+import com.ddd.moodof.application.dto.CategoryDTO;
+import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TagDTO;
+import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -19,13 +23,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
-
 import static com.ddd.moodof.adapter.presentation.CategoryController.API_CATEGORY;
+import static com.ddd.moodof.adapter.presentation.BoardController.API_BOARD;
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static com.ddd.moodof.adapter.presentation.TagAttachmentController.API_TAG_ATTACHMENT;
 import static com.ddd.moodof.adapter.presentation.TagController.API_TAG;
@@ -34,10 +37,11 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Slf4j
-@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
     private static final String BEARER = "Bearer ";
+
+    protected Long userId;
 
     private MockMvc mockMvc;
 
@@ -59,6 +63,8 @@ public class AcceptanceTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
+        User user = signUp();
+        userId = user.getId();
     }
 
     protected User signUp() {
@@ -69,14 +75,14 @@ public class AcceptanceTest {
         CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
-    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId){
+    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId, String type){
         CategoryDTO.UpdateOrderCategoryRequest request = new CategoryDTO.UpdateOrderCategoryRequest(previousId);
-        return putWithLogin(request, id, API_CATEGORY + "/order", CategoryDTO.CategoryResponse.class, userId);
+        return patchWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, type);
 
     }
-    protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String title){
+    protected CategoryDTO.CategoryResponse 카테고리_이름_변경(Long id, Long userId, String title, String type){
         CategoryDTO.UpdateTitleCategoryRequest request = new CategoryDTO.UpdateTitleCategoryRequest(title);
-        return putWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
+        return patchWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, type);
     }
 
     protected StoragePhotoDTO.StoragePhotoResponse 보관함사진_생성(Long userId, String photoUri, String representativeColor) {
@@ -96,6 +102,11 @@ public class AcceptanceTest {
     protected TagDTO.TagResponse 태그_수정(Long id, Long userId, String name) {
         TagDTO.UpdateRequest request = new TagDTO.UpdateRequest(name);
         return putWithLogin(request, id, API_TAG, TagDTO.TagResponse.class, userId);
+    }
+
+    protected BoardDTO.BoardResponse 보드_생성(Long userId, Long previousBoardId, Long categoryId, String name) {
+        BoardDTO.CreateBoard request = new BoardDTO.CreateBoard(previousBoardId, categoryId, name);
+        return postWithLogin(request, API_BOARD, BoardDTO.BoardResponse.class, userId);
     }
 
     protected <T, U> U postWithLogin(T request, String uri, Class<U> response, Long userId) {
@@ -148,6 +159,26 @@ public class AcceptanceTest {
             String body = objectMapper.writeValueAsString(request);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri + "/{id}", resourceId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T, U> U putPropertyWithLogin(T request, Long resourceId, String uri, Class<U> response, Long userId, String property) {
+        try {
+            String token = tokenProvider.createToken(userId);
+            String body = objectMapper.writeValueAsString(request);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(uri + "/{id}/{property}", resourceId, property)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(body)

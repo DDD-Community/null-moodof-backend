@@ -2,8 +2,6 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
-import com.ddd.moodof.domain.model.user.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -14,16 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TrashPhotoAcceptanceTest extends AcceptanceTest {
-    private Long userId;
-
-    @Override
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        User user = signUp();
-        userId = user.getId();
-    }
-
     @Test
     void 복수의_사진을_휴지통으로_이동한다() {
         // given
