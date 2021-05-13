@@ -10,4 +10,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByPreviousBoardId(Long previousBoardId);
 
     Optional<Board> findByPreviousBoardIdAndCategoryId(Long previousBoardId, Long categoryId);
+
+    void deleteAllByCategoryId(Long categoryId);
 }

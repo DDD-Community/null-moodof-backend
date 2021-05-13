@@ -1,6 +1,7 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.CategoryDTO;
+import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.category.Category;
 import com.ddd.moodof.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
@@ -30,10 +32,12 @@ public class CategoryService {
         return CategoryDTO.CategoryResponse.from(saved);
     }
 
+    @Transactional
     public void deleteById(Long id, Long userId) {
         categoryRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다. " + id + " / " + userId));
         categoryRepository.deleteById(id);
+        boardRepository.deleteAllByCategoryId(id);
     }
 
     public List<CategoryDTO.CategoryResponse> findAllByUserId(Long userId){
