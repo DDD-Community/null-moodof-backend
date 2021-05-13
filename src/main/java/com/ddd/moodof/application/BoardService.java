@@ -3,6 +3,7 @@ package com.ddd.moodof.application;
 import com.ddd.moodof.application.dto.BoardDTO;
 import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.board.BoardRepository;
+import com.ddd.moodof.domain.model.board.BoardVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +13,15 @@ import javax.transaction.Transactional;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final BoardVerifier boardVerifier;
 
     @Transactional
     public BoardDTO.BoardResponse create(Long userId, BoardDTO.CreateBoard request) {
-        // TODO: 2021/05/05 verify category
-        Board saved = boardRepository.save(request.toEntity(userId));
+        Board board = boardVerifier.toEntity(request.getPreviousBoardId(), request.getCategoryId(), request.getName(), userId);
+        Board saved = boardRepository.save(board);
 
-        boardRepository.findByPreviousBoardIdAndUserIdAndIdNot(request.getPreviousBoardId(), userId, saved.getId())
-                .ifPresent(it -> it.updatePreviousBoardId(saved.getId()));
+        boardRepository.findByPreviousBoardIdAndIdNot(request.getPreviousBoardId(), saved.getId())
+                .ifPresent(it -> it.updatePreviousBoardId(userId, saved.getId()));
 
         return BoardDTO.BoardResponse.from(saved);
     }

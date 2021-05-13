@@ -1,6 +1,8 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.BoardDTO;
+import com.ddd.moodof.application.dto.CategoryDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.ddd.moodof.adapter.presentation.BoardController.API_BOARD;
@@ -8,23 +10,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class BoardAcceptanceTest extends AcceptanceTest {
+    private CategoryDTO.CategoryResponse category;
+
+    @Override
+    @BeforeEach
+    void setUp() {
+        super.setUp();
+        category = 카테고리_생성(userId, "title", 0L);
+    }
 
     @Test
     void 보드를_생성한다() {
-        // given
-        // TODO: 2021/05/05 카테고리 생성 후 변경
-        long categoryId = 1L;
-
         // when
         long previousBoardId = 0L;
         String name = "name";
-        BoardDTO.BoardResponse response = 보드_생성(userId, previousBoardId, categoryId, name);
+        BoardDTO.BoardResponse response = 보드_생성(userId, previousBoardId, category.getId(), name);
 
         // then
         assertAll(
                 () -> assertThat(response.getId()).isNotNull(),
                 () -> assertThat(response.getPreviousBoardId()).isEqualTo(previousBoardId),
-                () -> assertThat(response.getCategoryId()).isEqualTo(categoryId),
+                () -> assertThat(response.getCategoryId()).isEqualTo(category.getId()),
                 () -> assertThat(response.getUserId()).isEqualTo(userId),
                 () -> assertThat(response.getName()).isEqualTo(name),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
@@ -36,10 +42,8 @@ public class BoardAcceptanceTest extends AcceptanceTest {
     void 보드_이름을_수정한다() {
         // given
         long previousBoardId = 0L;
-        // TODO: 2021/05/05 카테고리 생성 후 변경
-        long categoryId = 1L;
         String name = "name";
-        BoardDTO.BoardResponse board = 보드_생성(userId, previousBoardId, categoryId, name);
+        BoardDTO.BoardResponse board = 보드_생성(userId, previousBoardId, category.getId(), name);
 
         // when
         String changed = "changed";

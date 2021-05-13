@@ -35,14 +35,23 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public void updatePreviousBoardId(Long previousBoardId) {
+    public void updatePreviousBoardId(Long userId, Long previousBoardId) {
+        verify(userId);
         this.previousBoardId = previousBoardId;
     }
 
-    public void changeName(String name, Long userId) {
-        if (!this.userId.equals(userId)) {
+    private void verify(Long userId) {
+        if (isNotEqual(userId)) {
             throw new IllegalArgumentException("userId가 일치하지 않습니다.");
         }
+    }
+
+    public void changeName(String name, Long userId) {
+        verify(userId);
         this.name = name;
+    }
+
+    public boolean isNotEqual(Long userId) {
+        return !this.userId.equals(userId);
     }
 }
