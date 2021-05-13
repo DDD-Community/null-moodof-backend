@@ -30,4 +30,11 @@ public class BoardController implements BoardAPI {
         BoardDTO.BoardResponse response = boardService.changeName(userId, id, request);
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    @PutMapping("/{id}/previousBoardId")
+    public ResponseEntity<BoardDTO.BoardResponse> changeSequence(@LoginUserId Long userId, @PathVariable Long id, @RequestBody BoardDTO.ChangeBoardSequence request) {
+        BoardDTO.BoardResponse response = boardService.updateSequence(userId, id, request);
+        return ResponseEntity.ok(response);
+    }
 }

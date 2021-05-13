@@ -17,7 +17,6 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
-        findOptionalById(request, userId);
         Category saved = categoryRepository.save(request.toEntity(userId));
         saveCategoryIntermediate(saved, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(saved);
@@ -55,11 +54,6 @@ public class CategoryService {
                 .filter(c -> !c.getId().equals(saved.getId()))
                 .findAny()
                 .ifPresent(cc -> cc.updatePreviousId(saved.getId()));
-    }
-
-    private void findOptionalById(CategoryDTO.CreateCategoryRequest request, Long userId) {
-        Optional<Category> category = categoryRepository.findByTitleAndUserId(request.getTitle(), userId);
-        category.ifPresent(s -> { throw new IllegalArgumentException("존재하는 카테고리 입니다."); });
     }
 
     private void updatePreviousId(Category target, Long previousId) {

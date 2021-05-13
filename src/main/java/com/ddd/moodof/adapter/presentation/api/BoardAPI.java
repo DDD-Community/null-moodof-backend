@@ -18,4 +18,8 @@ public interface BoardAPI {
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PutMapping("/{id}/name")
     ResponseEntity<BoardDTO.BoardResponse> changeName(@ApiIgnore @LoginUserId Long userId, @PathVariable Long id, @RequestBody BoardDTO.ChangeBoardName request);
+
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @PutMapping("/{id}/previousBoardId")
+    ResponseEntity<BoardDTO.BoardResponse> changeSequence(@ApiIgnore @LoginUserId Long userId, @PathVariable Long id, @RequestBody BoardDTO.ChangeBoardSequence request);
 }

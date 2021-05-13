@@ -35,15 +35,12 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public void updatePreviousBoardId(Long userId, Long previousBoardId) {
+    public void changePreviousBoardId(Long previousBoardId, Long userId) {
         verify(userId);
-        this.previousBoardId = previousBoardId;
-    }
-
-    private void verify(Long userId) {
-        if (isNotEqual(userId)) {
-            throw new IllegalArgumentException("userId가 일치하지 않습니다.");
+        if (this.previousBoardId.equals(previousBoardId)) {
+            throw new IllegalArgumentException("previousBoardId가 같습니다.");
         }
+        this.previousBoardId = previousBoardId;
     }
 
     public void changeName(String name, Long userId) {
@@ -51,7 +48,23 @@ public class Board {
         this.name = name;
     }
 
-    public boolean isNotEqual(Long userId) {
+    public void updateSequence(Long previousBoardId, Long categoryId, Long userId) {
+        verify(userId);
+        this.previousBoardId = previousBoardId;
+        this.categoryId = categoryId;
+    }
+
+    private void verify(Long userId) {
+        if (isUserNotEqual(userId)) {
+            throw new IllegalArgumentException("userId가 일치하지 않습니다.");
+        }
+    }
+
+    public boolean isUserNotEqual(Long userId) {
         return !this.userId.equals(userId);
+    }
+
+    public boolean isCategoryEqual(Long categoryId) {
+        return false;
     }
 }

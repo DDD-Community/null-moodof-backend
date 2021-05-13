@@ -45,4 +45,12 @@ public class BoardDTO {
     public static class ChangeBoardName {
         private String name;
     }
+
+    @NoArgsConstructor
+    @Getter
+    @AllArgsConstructor
+    public static class ChangeBoardSequence {
+        private Long categoryId;
+        private Long previousBoardId;
+    }
 }
