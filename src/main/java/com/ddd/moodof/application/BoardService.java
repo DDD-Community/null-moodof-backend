@@ -43,4 +43,13 @@ public class BoardService {
         Board updated = boardSequenceUpdater.update(board, request.getPreviousBoardId(), request.getCategoryId(), userId);
         return BoardDTO.BoardResponse.from(updated);
     }
+
+    public void delete(Long userId, Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Board, id = " + id));
+        if (board.isUserNotEqual(userId)) {
+            throw new IllegalArgumentException("userId가 일치하지 않습니다. userId = " + userId);
+        }
+        boardRepository.deleteById(id);
+    }
 }

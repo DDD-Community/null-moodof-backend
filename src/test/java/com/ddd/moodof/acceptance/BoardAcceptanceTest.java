@@ -159,4 +159,13 @@ public class BoardAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(thirdBoard.getLastModifiedDate().isAfter(third.getLastModifiedDate())).isTrue()
         );
     }
+
+    @Test
+    void 보드를_삭제한다() {
+        // given
+        BoardDTO.BoardResponse board = 보드_생성(userId, 0L, category.getId(), "name");
+
+        // when then
+        deleteWithLogin(API_BOARD, board.getId(), userId);
+    }
 }

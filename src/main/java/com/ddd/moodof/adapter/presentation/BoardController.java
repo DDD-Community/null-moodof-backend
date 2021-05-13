@@ -37,4 +37,11 @@ public class BoardController implements BoardAPI {
         BoardDTO.BoardResponse response = boardService.updateSequence(userId, id, request);
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BoardDTO.BoardResponse> delete(@LoginUserId Long userId, @PathVariable Long id) {
+        boardService.delete(userId, id);
+        return ResponseEntity.noContent().build();
+    }
 }
