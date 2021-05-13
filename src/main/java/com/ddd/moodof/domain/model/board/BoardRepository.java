@@ -10,6 +10,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByPreviousBoardId(Long previousBoardId);
 
     Optional<Board> findByPreviousBoardIdAndCategoryId(Long previousBoardId, Long categoryId);
-
-    Optional<Board> findByPreviousBoardIdAndCategoryIdNot(Long previousBoardId, Long categoryId);
 }
