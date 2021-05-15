@@ -1,5 +1,6 @@
-package com.ddd.moodof.domain.model.board;
+package com.ddd.moodof.application.verifier;
 
+import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.category.Category;
 import com.ddd.moodof.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;

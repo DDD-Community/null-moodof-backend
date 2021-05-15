@@ -1,10 +1,10 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.BoardDTO;
+import com.ddd.moodof.application.verifier.BoardVerifier;
 import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.board.BoardSequenceUpdater;
-import com.ddd.moodof.domain.model.board.BoardVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
