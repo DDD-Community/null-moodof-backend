@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByPreviousBoardIdAndUserIdAndIdNot(Long previousBoardId, Long userId, Long id);
+
+    boolean existsByIdAndUserId(Long id, Long userId);
 }
