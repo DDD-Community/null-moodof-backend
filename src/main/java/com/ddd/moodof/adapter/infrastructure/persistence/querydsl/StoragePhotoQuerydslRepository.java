@@ -105,10 +105,10 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
         return JPAExpressions
                 .select(storagePhoto.id)
                 .from(storagePhoto)
-                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(minModifiedDate(userId, id))));
+                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(lastModifiedDateAfterStoragePhoto(userId, id))));
     }
 
-    private JPQLQuery<LocalDateTime> minModifiedDate(Long userId, Long id) {
+    private JPQLQuery<LocalDateTime> lastModifiedDateAfterStoragePhoto(Long userId, Long id) {
         return JPAExpressions
                 .select(storagePhoto.lastModifiedDate.min())
                 .from(storagePhoto)
@@ -127,10 +127,10 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
         return JPAExpressions
                 .select(storagePhoto.id)
                 .from(storagePhoto)
-                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(maxModifiedDate(userId, id))));
+                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(lastModifiedDateBeforeStoragePhoto(userId, id))));
     }
 
-    private JPQLQuery<LocalDateTime> maxModifiedDate(Long userId, Long id) {
+    private JPQLQuery<LocalDateTime> lastModifiedDateBeforeStoragePhoto(Long userId, Long id) {
         return JPAExpressions
                 .select(storagePhoto.lastModifiedDate.max())
                 .from(storagePhoto)
