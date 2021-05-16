@@ -1,10 +1,10 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.aws.S3FileUploader;
+import com.ddd.moodof.application.dto.BoardDTO;
+import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagDTO;
-import com.ddd.moodof.domain.model.user.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -135,5 +135,43 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
 
         // when then
         deleteWithLogin(API_STORAGE_PHOTO, storagePhotoResponse.getId(), userId);
+    }
+
+    @Test
+    void 보관함사진_상세_조회() {
+        // given
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto1 = 보관함사진_생성(userId, "1", "1");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto2 = 보관함사진_생성(userId, "2", "2");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto3 = 보관함사진_생성(userId, "3", "3");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto4 = 보관함사진_생성(userId, "4", "4");
+        CategoryDTO.CategoryResponse category1 = 카테고리_생성(userId, "category-1", 0L);
+        CategoryDTO.CategoryResponse category2 = 카테고리_생성(userId, "category-2", category1.getId());
+        BoardDTO.BoardResponse board1 = 보드_생성(userId, 0L, category1.getId(), "board-1");
+        BoardDTO.BoardResponse board2 = 보드_생성(userId, board1.getId(), category1.getId(), "board-2");
+        BoardDTO.BoardResponse board3 = 보드_생성(userId, 0L, category2.getId(), "board-3");
+        보드_사진_생성(userId, storagePhoto1.getId(), board1.getId());
+        보드_사진_생성(userId, storagePhoto2.getId(), board1.getId());
+        보드_사진_생성(userId, storagePhoto2.getId(), board2.getId());
+        보드_사진_생성(userId, storagePhoto2.getId(), board3.getId());
+        보드_사진_생성(userId, storagePhoto3.getId(), board1.getId());
+        보드_사진_생성(userId, storagePhoto4.getId(), board2.getId());
+        TagDTO.TagResponse tag1 = 태그_생성(userId, "tag-1");
+        TagDTO.TagResponse tag2 = 태그_생성(userId, "tag-2");
+        태그붙이기_생성(userId, storagePhoto2.getId(), tag1.getId());
+        태그붙이기_생성(userId, storagePhoto2.getId(), tag2.getId());
+
+        // when
+        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getId()).isEqualTo(storagePhoto2.getId()),
+                () -> assertThat(response.getCreatedDate()).isEqualTo(storagePhoto2.getCreatedDate()),
+                () -> assertThat(response.getLastModifiedDate()).isEqualTo(storagePhoto2.getLastModifiedDate()),
+                () -> assertThat(response.getPreviousStoragePhotoId()).isEqualTo(storagePhoto3.getId()),
+                () -> assertThat(response.getNextStoragePhotoId()).isEqualTo(storagePhoto1.getId()),
+                () -> assertThat(response.getCategories().size()).isEqualTo(2L),
+                () -> assertThat(response.getTags().size()).isEqualTo(2L)
+        );
     }
 }

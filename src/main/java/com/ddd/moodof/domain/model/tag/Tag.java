@@ -24,7 +24,7 @@ public class Tag {
     private String name;
 
     @CreatedDate
-    private LocalDateTime createdTime;
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;

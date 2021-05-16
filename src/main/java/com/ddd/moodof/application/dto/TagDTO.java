@@ -25,7 +25,7 @@ public class TagDTO {
                     .id(null)
                     .userId(userId)
                     .name(name)
-                    .createdTime(null)
+                    .createdDate(null)
                     .lastModifiedDate(null)
                     .build();
         }
@@ -43,7 +43,7 @@ public class TagDTO {
                     .id(id)
                     .userId(userId)
                     .name(name)
-                    .createdTime(null)
+                    .createdDate(null)
                     .lastModifiedDate(null)
                     .build();
         }
@@ -66,7 +66,7 @@ public class TagDTO {
                     .id(tag.getId())
                     .userId(tag.getUserId())
                     .name(tag.getName())
-                    .createdDate(tag.getCreatedTime())
+                    .createdDate(tag.getCreatedDate())
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build();
         }
@@ -76,7 +76,7 @@ public class TagDTO {
                     .id(tag.getId())
                     .userId(tag.getUserId())
                     .name(tag.getName())
-                    .createdDate(tag.getCreatedTime())
+                    .createdDate(tag.getCreatedDate())
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build()).collect(Collectors.toList());
         }
