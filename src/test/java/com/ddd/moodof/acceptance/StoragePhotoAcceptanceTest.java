@@ -3,8 +3,6 @@ package com.ddd.moodof.acceptance;
 import com.ddd.moodof.adapter.infrastructure.aws.S3FileUploader;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagDTO;
-import com.ddd.moodof.domain.model.user.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.util.UriComponentsBuilder;

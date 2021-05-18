@@ -46,4 +46,7 @@ public class Category {
         if (this.previousId.equals(previousId)) throw new IllegalArgumentException("동일한 previousId: " + previousId);
     }
 
+    public boolean isNotEqual(Long userId) {
+        return !this.userId.equals(userId);
+    }
 }
