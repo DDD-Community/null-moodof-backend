@@ -23,6 +23,7 @@ public class StoragePhoto {
 
     private Long userId;
 
+    @Column(length = 2083)
     private String uri;
 
     private String representativeColor;

@@ -1,9 +1,9 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.TagAttachmentDTO;
+import com.ddd.moodof.application.verifier.TagAttachmentVerifier;
 import com.ddd.moodof.domain.model.tag.attachment.TagAttachment;
 import com.ddd.moodof.domain.model.tag.attachment.TagAttachmentRepository;
-import com.ddd.moodof.domain.model.tag.attachment.TagAttachmentVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
