@@ -29,5 +29,9 @@ public interface CategoryAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping
-    ResponseEntity<List<CategoryDTO.CategoryResponse>> findAllByUserId(@ApiIgnore @LoginUserId Long userId);
+    ResponseEntity<List<CategoryDTO.CategoryResponse>>findCategoryByUserId(@ApiIgnore @LoginUserId Long userId);
+
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @GetMapping
+    ResponseEntity<List<CategoryDTO.CategoryWithBoardResponse>>findCategoryWithBoardResponse(@ApiIgnore @LoginUserId Long userId);
 }

@@ -3,6 +3,7 @@ package com.ddd.moodof.application;
 import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.category.Category;
+import com.ddd.moodof.domain.model.category.CategoryQueryRepository;
 import com.ddd.moodof.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryQueryRepository categoryQueryRepository;
     private final BoardRepository boardRepository;
 
     @Transactional
@@ -38,11 +40,6 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다. " + id + " / " + userId));
         categoryRepository.deleteById(id);
         boardRepository.deleteAllByCategoryId(id);
-    }
-
-    public List<CategoryDTO.CategoryResponse> findAllByUserId(Long userId){
-        List<Category> totalCategories = categoryRepository.findAllByUserId(userId);
-        return CategoryDTO.CategoryResponse.listForm(totalCategories);
     }
 
     @Transactional
@@ -77,4 +74,19 @@ public class CategoryService {
         return categoryRepository.findByIdAndUserId(id,userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID : " + id));
     }
+
+    public List<CategoryDTO.CategoryResponse> findCategoryByUserId(Long userId) {
+        List<Category> categoryList = categoryRepository.findCategoryByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("올바른 유저 아이디가 아닙니다. userId " + userId));
+        return CategoryDTO.CategoryResponse.listForm(categoryList);
+    }
+
+    public List<CategoryDTO.CategoryWithBoardResponse> findCategoryWithBoardByUserId(Long userId) {
+        if(!categoryRepository.existsByUserId(userId)){
+            throw new IllegalArgumentException("올바른 유저 아이디가 아닙니다. userId " + userId);
+        }
+        return categoryQueryRepository.findCategoryWithBoardByUserId(userId);
+    }
+
+
 }

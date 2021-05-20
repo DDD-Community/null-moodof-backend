@@ -1,5 +1,6 @@
 package com.ddd.moodof.acceptance;
 
+import com.ddd.moodof.application.dto.BoardDTO;
 import com.ddd.moodof.application.dto.CategoryDTO;
 import org.junit.jupiter.api.Test;
 
@@ -124,10 +125,10 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     }
 
     @Test
-    public void 카테고리_조회() throws Exception {
+    public void 카테고리_개별_조회() throws Exception {
         // given
         CategoryDTO.CategoryResponse one = 카테고리_생성(userId, "category-1",0L);
-        CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2", 1L);
+        CategoryDTO.CategoryResponse two = 카테고리_생성(userId, "category-2", one.getId());
 
         // when
         List<CategoryDTO.CategoryResponse> categoryResponseList = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
@@ -135,8 +136,55 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         // then
         assertAll(
                 () -> assertThat(categoryResponseList.size()).isEqualTo(2),
+                () -> assertThat(categoryResponseList.get(0).getId()).isEqualTo(one.getId()),
+                () -> assertThat(categoryResponseList.get(0).getPreviousId()).isEqualTo(one.getPreviousId()),
+                () -> assertThat(categoryResponseList.get(0).getTitle()).isEqualTo(one.getTitle()),
+                () -> assertThat(categoryResponseList.get(0).getCreatedDate()).isEqualTo(one.getCreatedDate()),
+                () -> assertThat(categoryResponseList.get(0).getLastModifiedDate()).isEqualTo(one.getCreatedDate()),
+
+                () -> assertThat(categoryResponseList.get(1).getId()).isEqualTo(two.getId()),
+                () -> assertThat(categoryResponseList.get(1).getPreviousId()).isEqualTo(two.getPreviousId()),
+                () -> assertThat(categoryResponseList.get(1).getTitle()).isEqualTo(two.getTitle()),
+                () -> assertThat(categoryResponseList.get(1).getCreatedDate()).isEqualTo(two.getCreatedDate()),
+                () -> assertThat(categoryResponseList.get(1).getLastModifiedDate()).isEqualTo(two.getCreatedDate()),
+
                 () -> assertThat(categoryResponseList.get(0)).usingRecursiveComparison().isEqualTo(one),
                 () -> assertThat(categoryResponseList.get(1)).usingRecursiveComparison().isEqualTo(two)
+        );
+    }
+    @Test
+    public void 카테고리_보드_조회() throws Exception {
+        // given
+        CategoryDTO.CategoryResponse categoryOne = 카테고리_생성(userId, "category-1", 0L);
+        CategoryDTO.CategoryResponse categoryTwo = 카테고리_생성(userId, "category-2", categoryOne.getId());
+        BoardDTO.BoardResponse boardOneFirst = 보드_생성(userId, 0L, categoryOne.getId(), "board1-first-name");
+        BoardDTO.BoardResponse boardOneSecond = 보드_생성(userId, boardOneFirst.getId(), categoryOne.getId(), "board1-second-name");
+
+        BoardDTO.BoardResponse boardTwoFirst = 보드_생성(userId, 0L, categoryTwo.getId(), "board2-first-name");
+        BoardDTO.BoardResponse boardTwoSecond = 보드_생성(userId, boardTwoFirst.getId(), categoryTwo.getId(), "board2-second-name");
+        BoardDTO.BoardResponse boardTwoThird = 보드_생성(userId, boardTwoSecond.getId(), categoryTwo.getId(), "board2-third-name");
+
+        // when
+        List<CategoryDTO.CategoryWithBoardResponse> categoryResponseList = getListWithLogin(API_CATEGORY + "/boards", CategoryDTO.CategoryWithBoardResponse.class, userId);
+
+        // then
+
+        assertAll(
+                () -> assertThat(categoryResponseList.get(0).getBoardList().size()).isEqualTo(2),
+                () -> assertThat(categoryResponseList.get(0).getId().equals(categoryOne.getId())),
+                () -> assertThat(categoryResponseList.get(0).getPreviousId().equals(categoryOne.getPreviousId())),
+                () -> assertThat(categoryResponseList.get(0).getTitle().equals(categoryOne.getTitle())),
+                () -> assertThat(categoryResponseList.get(0).getUserId().equals(categoryOne.getUserId())),
+                () -> assertThat(categoryResponseList.get(0).getCreatedDate().equals(categoryOne.getCreatedDate())),
+                () -> assertThat(categoryResponseList.get(0).getLastModifiedDate().equals(categoryOne.getCreatedDate())),
+
+                () -> assertThat(categoryResponseList.get(1).getBoardList().size()).isEqualTo(3),
+                () -> assertThat(categoryResponseList.get(1).getId().equals(categoryTwo.getId())),
+                () -> assertThat(categoryResponseList.get(1).getPreviousId().equals(categoryTwo.getPreviousId())),
+                () -> assertThat(categoryResponseList.get(1).getTitle().equals(categoryTwo.getTitle())),
+                () -> assertThat(categoryResponseList.get(1).getUserId().equals(categoryTwo.getUserId())),
+                () -> assertThat(categoryResponseList.get(1).getCreatedDate().equals(categoryTwo.getCreatedDate())),
+                () -> assertThat(categoryResponseList.get(1).getLastModifiedDate().equals(categoryTwo.getCreatedDate()))
         );
     }
 }
