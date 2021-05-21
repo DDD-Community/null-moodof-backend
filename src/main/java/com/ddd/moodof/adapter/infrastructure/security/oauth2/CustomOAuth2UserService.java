@@ -4,6 +4,7 @@ import com.ddd.moodof.adapter.infrastructure.security.UserPrincipal;
 import com.ddd.moodof.adapter.infrastructure.security.exception.OAuth2AuthenticationProcessingException;
 import com.ddd.moodof.adapter.infrastructure.security.oauth2.user.OAuth2UserInfo;
 import com.ddd.moodof.adapter.infrastructure.security.oauth2.user.OAuth2UserInfoFactory;
+import com.ddd.moodof.domain.model.category.CategoryInitializeCreator;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final CategoryInitializeCreator categoryInitializeCreator;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -63,13 +65,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User(null, oAuth2UserInfo.getEmail(), null, oAuth2UserInfo.getName(), oAuth2UserInfo.getImageUrl(), null, null, AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()), oAuth2UserInfo.getId());
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        categoryInitializeCreator.create(saved.getId(), saved.getNickname());
+        return saved;
     }
-
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         existingUser.changeNickname(oAuth2UserInfo.getName());
         existingUser.changeProfileUrl(oAuth2UserInfo.getImageUrl());
         return userRepository.save(existingUser);
     }
+
 
 }

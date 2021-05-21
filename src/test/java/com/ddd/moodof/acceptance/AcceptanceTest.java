@@ -2,6 +2,8 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
 import com.ddd.moodof.application.dto.*;
+import com.ddd.moodof.domain.model.category.Category;
+import com.ddd.moodof.domain.model.category.CategoryInitializeCreator;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -42,6 +44,7 @@ public class AcceptanceTest {
 
     protected Long userId;
 
+    protected String nickName;
     private MockMvc mockMvc;
 
     @Autowired
@@ -64,6 +67,7 @@ public class AcceptanceTest {
                 .build();
         User user = signUp();
         userId = user.getId();
+        nickName = user.getNickname();
     }
 
     protected User signUp() {
