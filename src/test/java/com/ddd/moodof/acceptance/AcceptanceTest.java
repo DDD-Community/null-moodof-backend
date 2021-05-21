@@ -1,9 +1,8 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
+import com.ddd.moodof.adapter.presentation.SharingController;
 import com.ddd.moodof.application.dto.*;
-import com.ddd.moodof.domain.model.category.Category;
-import com.ddd.moodof.domain.model.category.CategoryInitializeCreator;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -72,6 +71,11 @@ public class AcceptanceTest {
 
     protected User signUp() {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
+    }
+
+    protected SharingDTO.SharingBoardResponse 보드_공유하기(Long id, Long userId){
+        SharingDTO.SharingBoardRequest request = new SharingDTO.SharingBoardRequest(id);
+        return postWithLogin(request, SharingController.API_SHARING, SharingDTO.SharingBoardResponse.class, userId);
     }
 
     protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId){

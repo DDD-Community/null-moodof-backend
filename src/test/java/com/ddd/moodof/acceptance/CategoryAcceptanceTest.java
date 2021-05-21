@@ -2,7 +2,7 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.domain.model.category.Category;
-import com.ddd.moodof.domain.model.category.CategoryInitializeCreator;
+import com.ddd.moodof.domain.model.category.CategoryInitializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class CategoryAcceptanceTest extends AcceptanceTest{
     public static final String PREVIOUS_ID = "previousId";
     public static final String TITLE = "title";
-    public static final String NICKNAME = "nickname";
-    public  static final String SUBTITLE = "님의 카테고리";
+    public static final String NICK_NAME = "nickname";
+    public  static final String SUB_TITLE = "님의 카테고리";
 
     @Autowired
-    private CategoryInitializeCreator categoryInitializeCreator;
+    private CategoryInitializer categoryInitializer;
 
     @Test
     public void 카테고리_생성() throws Exception {
@@ -153,14 +153,14 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
         // given
 
         // when
-        Category category = categoryInitializeCreator.create(userId, nickName);
+        Category category = categoryInitializer.create(userId, nickName);
         List<CategoryDTO.CategoryResponse> response = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
         // then
         assertAll(
                 () -> assertThat(category.getPreviousId()).isEqualTo(0L),
                 () -> assertThat(category.getId()).isEqualTo(1L),
                 () -> assertThat(category.getUserId()).isEqualTo(userId),
-                () -> assertThat(category.getTitle()).isEqualTo(NICKNAME+SUBTITLE),
+                () -> assertThat(category.getTitle()).isEqualTo(NICK_NAME+SUB_TITLE),
                 () -> assertThat(category.getCreatedDate()).isNotNull(),
                 () -> assertThat(category.getLastModifiedDate()).isEqualTo(category.getCreatedDate()),
 
