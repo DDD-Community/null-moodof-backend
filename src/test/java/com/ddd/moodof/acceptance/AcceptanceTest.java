@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,6 +35,7 @@ import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
@@ -73,6 +75,7 @@ public class AcceptanceTest {
         CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
+
     protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId, String property){
         CategoryDTO.UpdateOrderCategoryRequest request = new CategoryDTO.UpdateOrderCategoryRequest(previousId);
         return putPropertyWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, property);

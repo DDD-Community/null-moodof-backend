@@ -1,6 +1,7 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.CategoryDTO;
+import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.category.Category;
 import com.ddd.moodof.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +15,10 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
-        findOptionalById(request, userId);
         Category saved = categoryRepository.save(request.toEntity(userId));
         saveCategoryIntermediate(saved, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(saved);
@@ -31,10 +32,12 @@ public class CategoryService {
         return CategoryDTO.CategoryResponse.from(saved);
     }
 
+    @Transactional
     public void deleteById(Long id, Long userId) {
         categoryRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다. " + id + " / " + userId));
         categoryRepository.deleteById(id);
+        boardRepository.deleteAllByCategoryId(id);
     }
 
     public List<CategoryDTO.CategoryResponse> findAllByUserId(Long userId){
@@ -55,11 +58,6 @@ public class CategoryService {
                 .filter(c -> !c.getId().equals(saved.getId()))
                 .findAny()
                 .ifPresent(cc -> cc.updatePreviousId(saved.getId()));
-    }
-
-    private void findOptionalById(CategoryDTO.CreateCategoryRequest request, Long userId) {
-        Optional<Category> category = categoryRepository.findByTitleAndUserId(request.getTitle(), userId);
-        category.ifPresent(s -> { throw new IllegalArgumentException("존재하는 카테고리 입니다."); });
     }
 
     private void updatePreviousId(Category target, Long previousId) {

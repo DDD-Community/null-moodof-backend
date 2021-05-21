@@ -1,7 +1,8 @@
-package com.ddd.moodof.domain.model.tag.attachment;
+package com.ddd.moodof.application.verifier;
 
 import com.ddd.moodof.domain.model.storage.photo.StoragePhotoRepository;
 import com.ddd.moodof.domain.model.tag.TagRepository;
+import com.ddd.moodof.domain.model.tag.attachment.TagAttachment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

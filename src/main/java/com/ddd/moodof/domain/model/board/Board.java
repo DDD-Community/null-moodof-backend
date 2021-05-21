@@ -35,14 +35,32 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public void updatePreviousBoardId(Long previousBoardId) {
+    public void changePreviousBoardId(Long previousBoardId, Long userId) {
+        verify(userId);
+        if (this.previousBoardId.equals(previousBoardId)) {
+            throw new IllegalArgumentException("previousBoardId가 같습니다.");
+        }
         this.previousBoardId = previousBoardId;
     }
 
     public void changeName(String name, Long userId) {
-        if (!this.userId.equals(userId)) {
+        verify(userId);
+        this.name = name;
+    }
+
+    public void updateSequence(Long previousBoardId, Long categoryId, Long userId) {
+        verify(userId);
+        this.previousBoardId = previousBoardId;
+        this.categoryId = categoryId;
+    }
+
+    private void verify(Long userId) {
+        if (isUserNotEqual(userId)) {
             throw new IllegalArgumentException("userId가 일치하지 않습니다.");
         }
-        this.name = name;
+    }
+
+    public boolean isUserNotEqual(Long userId) {
+        return !this.userId.equals(userId);
     }
 }
