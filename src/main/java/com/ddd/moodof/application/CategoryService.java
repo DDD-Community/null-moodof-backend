@@ -59,14 +59,14 @@ public class CategoryService {
 
     private void updatePreviousId(Category target, Long previousId) {
         Category destination = findByPreviousId(previousId);
-        Optional<Category> afterTarget = categoryRepository.findOptionalByPreviousId(target.getId());
+        Optional<Category> afterTarget = categoryRepository.findByPreviousId(target.getId());
         afterTarget.ifPresent(t -> categoryRepository.save(t.updatePreviousId(target.getPreviousId())));
         categoryRepository.save(destination.updatePreviousId(target.getId()));
         target.updatePreviousId(previousId);
     }
 
     private Category findByPreviousId(Long previousId) {
-        return categoryRepository.findOptionalByPreviousId(previousId)
+        return categoryRepository.findByPreviousId(previousId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지않는 previousId : " + previousId));
     }
 
@@ -75,18 +75,7 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID : " + id));
     }
 
-    public List<CategoryDTO.CategoryResponse> findCategoryByUserId(Long userId) {
-        List<Category> categoryList = categoryRepository.findCategoryByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("올바른 유저 아이디가 아닙니다. userId " + userId));
-        return CategoryDTO.CategoryResponse.listForm(categoryList);
+    public List<CategoryDTO.CategoryWithBoardResponse> findAllByUserId(Long userId) {
+        return categoryQueryRepository.findAllByUserId(userId);
     }
-
-    public List<CategoryDTO.CategoryWithBoardResponse> findCategoryWithBoardByUserId(Long userId) {
-        if(!categoryRepository.existsByUserId(userId)){
-            throw new IllegalArgumentException("올바른 유저 아이디가 아닙니다. userId " + userId);
-        }
-        return categoryQueryRepository.findCategoryWithBoardByUserId(userId);
-    }
-
-
 }

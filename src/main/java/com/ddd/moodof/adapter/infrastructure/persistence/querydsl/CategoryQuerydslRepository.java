@@ -20,7 +20,7 @@ public class CategoryQuerydslRepository implements CategoryQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CategoryDTO.CategoryWithBoardResponse> findCategoryWithBoardByUserId(Long userId) {
+    public List<CategoryDTO.CategoryWithBoardResponse> findAllByUserId(Long userId) {
         List<CategoryDTO.CategoryWithBoardResponse> categoryWithBoardList = new ArrayList<>();
         BooleanExpression includeUserId = includeUserId(userId);
 
