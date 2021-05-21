@@ -4,7 +4,7 @@ import com.ddd.moodof.adapter.infrastructure.security.UserPrincipal;
 import com.ddd.moodof.adapter.infrastructure.security.exception.OAuth2AuthenticationProcessingException;
 import com.ddd.moodof.adapter.infrastructure.security.oauth2.user.OAuth2UserInfo;
 import com.ddd.moodof.adapter.infrastructure.security.oauth2.user.OAuth2UserInfoFactory;
-import com.ddd.moodof.domain.model.category.CategoryInitializeCreator;
+import com.ddd.moodof.domain.model.category.CategoryInitializer;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -24,9 +25,10 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-    private final CategoryInitializeCreator categoryInitializeCreator;
+    private final CategoryInitializer categoryInitializer;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
 
@@ -66,7 +68,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User(null, oAuth2UserInfo.getEmail(), null, oAuth2UserInfo.getName(), oAuth2UserInfo.getImageUrl(), null, null, AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()), oAuth2UserInfo.getId());
         User saved = userRepository.save(user);
-        categoryInitializeCreator.create(saved.getId(), saved.getNickname());
+        categoryInitializer.create(saved.getId(), saved.getNickname());
         return saved;
     }
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
