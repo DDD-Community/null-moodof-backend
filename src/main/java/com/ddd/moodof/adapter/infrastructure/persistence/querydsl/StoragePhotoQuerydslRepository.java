@@ -35,6 +35,8 @@ import static com.ddd.moodof.domain.model.trash.photo.QTrashPhoto.trashPhoto;
 @RequiredArgsConstructor
 @Repository
 public class StoragePhotoQuerydslRepository implements StoragePhotoQueryRepository {
+    private static final long NO_TAG = 0L;
+
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
     private final PaginationUtils paginationUtils;
@@ -70,8 +72,13 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
             return storagePhotoQuery
                     .where(excludeTrash);
         }
+        if (tagIds.contains(NO_TAG)) {
+            return storagePhotoQuery
+                    .leftJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
+                    .where(excludeTrash.and(tagAttachment.tagId.in(tagIds).or(tagAttachment.id.isNull())));
+        }
         return storagePhotoQuery
-                .leftJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
+                .innerJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
                 .where(excludeTrash.and(tagAttachment.tagId.in(tagIds)));
     }
 
@@ -80,7 +87,7 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
     }
 
     @Override
-    public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id) {
+    public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id, List<Long> tagIds) {
         StoragePhotoDTO.StoragePhotoDetailResponse storagePhotoDetailResponse = jpaQueryFactory
                 .select(new QStoragePhotoDTO_StoragePhotoDetailResponse(
                         storagePhoto.id,
@@ -89,8 +96,8 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
                         storagePhoto.representativeColor,
                         storagePhoto.createdDate,
                         storagePhoto.lastModifiedDate,
-                        ExpressionUtils.as(previousStoragePhotoId(userId, id), "previousStoragePhotoId"),
-                        ExpressionUtils.as(nextStoragePhotoId(userId, id), "nextStoragePhotoId")))
+                        ExpressionUtils.as(previousStoragePhotoId(userId, id, tagIds), "previousStoragePhotoId"),
+                        ExpressionUtils.as(nextStoragePhotoId(userId, id, tagIds), "nextStoragePhotoId")))
                 .from(storagePhoto)
                 .where(storagePhoto.id.eq(id))
                 .fetchOne();
@@ -101,19 +108,36 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
         return storagePhotoDetailResponse;
     }
 
-    private JPQLQuery<Long> previousStoragePhotoId(Long userId, Long id) {
+    private JPQLQuery<Long> previousStoragePhotoId(Long userId, Long id, List<Long> tagIds) {
         return JPAExpressions
                 .select(storagePhoto.id)
                 .from(storagePhoto)
-                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(lastModifiedDateAfterStoragePhoto(userId, id))));
+                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(lastModifiedDateAfterStoragePhoto(userId, id, tagIds))));
     }
 
-    private JPQLQuery<LocalDateTime> lastModifiedDateAfterStoragePhoto(Long userId, Long id) {
+    private JPQLQuery<LocalDateTime> lastModifiedDateAfterStoragePhoto(Long userId, Long id, List<Long> tagIds) {
+        if (tagIds.isEmpty()) {
+            return JPAExpressions
+                    .select(storagePhoto.lastModifiedDate.min())
+                    .from(storagePhoto)
+                    .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
+                    .where(excludeTrash(userId).and(storagePhoto.lastModifiedDate.after(storagePhotoModifiedDate(id))));
+        }
+        if (tagIds.contains(NO_TAG)) {
+            return JPAExpressions
+                    .select(storagePhoto.lastModifiedDate.min())
+                    .from(storagePhoto)
+                    .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
+                    .leftJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
+                    .where(excludeTrash(userId).and(tagAttachment.tagId.in(tagIds).or(tagAttachment.id.isNull())).and(storagePhoto.lastModifiedDate.after(storagePhotoModifiedDate(id))));
+        }
+
         return JPAExpressions
                 .select(storagePhoto.lastModifiedDate.min())
                 .from(storagePhoto)
                 .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
-                .where(excludeTrash(userId).and(storagePhoto.lastModifiedDate.after(storagePhotoModifiedDate(id))));
+                .innerJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
+                .where(excludeTrash(userId).and(tagAttachment.tagId.in(tagIds)).and(storagePhoto.lastModifiedDate.after(storagePhotoModifiedDate(id))));
     }
 
     private JPQLQuery<LocalDateTime> storagePhotoModifiedDate(Long id) {
@@ -123,19 +147,35 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
                 .where(storagePhoto.id.eq(id));
     }
 
-    private JPQLQuery<Long> nextStoragePhotoId(Long userId, Long id) {
+    private JPQLQuery<Long> nextStoragePhotoId(Long userId, Long id, List<Long> tagIds) {
         return JPAExpressions
                 .select(storagePhoto.id)
                 .from(storagePhoto)
-                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(lastModifiedDateBeforeStoragePhoto(userId, id))));
+                .where(storagePhoto.userId.eq(userId).and(storagePhoto.lastModifiedDate.eq(lastModifiedDateBeforeStoragePhoto(userId, id, tagIds))));
     }
 
-    private JPQLQuery<LocalDateTime> lastModifiedDateBeforeStoragePhoto(Long userId, Long id) {
+    private JPQLQuery<LocalDateTime> lastModifiedDateBeforeStoragePhoto(Long userId, Long id, List<Long> tagIds) {
+        if (tagIds.isEmpty()) {
+            return JPAExpressions
+                    .select(storagePhoto.lastModifiedDate.max())
+                    .from(storagePhoto)
+                    .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
+                    .where(excludeTrash(userId).and(storagePhoto.lastModifiedDate.before(storagePhotoModifiedDate(id))));
+        }
+        if (tagIds.contains(NO_TAG)) {
+            return JPAExpressions
+                    .select(storagePhoto.lastModifiedDate.max())
+                    .from(storagePhoto)
+                    .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
+                    .leftJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
+                    .where(excludeTrash(userId).and(tagAttachment.tagId.in(tagIds).or(tagAttachment.id.isNull())).and(storagePhoto.lastModifiedDate.before(storagePhotoModifiedDate(id))));
+        }
         return JPAExpressions
                 .select(storagePhoto.lastModifiedDate.max())
                 .from(storagePhoto)
                 .leftJoin(trashPhoto).on(storagePhoto.id.eq(trashPhoto.storagePhotoId))
-                .where(excludeTrash(userId).and(storagePhoto.lastModifiedDate.before(storagePhotoModifiedDate(id))));
+                .innerJoin(tagAttachment).on(storagePhoto.id.eq(tagAttachment.storagePhotoId))
+                .where(excludeTrash(userId).and(tagAttachment.tagId.in(tagIds)).and(storagePhoto.lastModifiedDate.before(storagePhotoModifiedDate(id))));
     }
 
     private List<CategoryDTO.CategoryDetailResponse> findCategories(Long storagePhotoId) {

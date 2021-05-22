@@ -94,6 +94,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
     @Test
     void 사진보관함_페이지_태그별_조회() {
         // given
+        StoragePhotoDTO.StoragePhotoResponse noTag = 보관함사진_생성(userId, "0", "0");
         StoragePhotoDTO.StoragePhotoResponse third = 보관함사진_생성(userId, "1", "1");
         StoragePhotoDTO.StoragePhotoResponse noContain = 보관함사진_생성(userId, "2", "2");
         StoragePhotoDTO.StoragePhotoResponse second = 보관함사진_생성(userId, "3", "3");
@@ -115,7 +116,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
                 .queryParam("size", 2)
                 .queryParam("sortBy", "lastModifiedDate")
                 .queryParam("descending", "true")
-                .queryParam("tagIds", tag1.getId(), tag2.getId())
+                .queryParam("tagIds", 0L, tag1.getId(), tag2.getId())
                 .build().toUriString();
 
         StoragePhotoDTO.StoragePhotoPageResponse response = getWithLogin(uri, StoragePhotoDTO.StoragePhotoPageResponse.class, userId);
@@ -161,10 +162,11 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         TagDTO.TagResponse tag2 = 태그_생성(userId, "tag-2");
         태그붙이기_생성(userId, storagePhoto2.getId(), tag1.getId());
         태그붙이기_생성(userId, storagePhoto2.getId(), tag2.getId());
+        태그붙이기_생성(userId, storagePhoto5.getId(), tag2.getId());
         보관함사진_휴지통_이동(List.of(storagePhoto3.getId(), storagePhoto4.getId()), userId);
 
         // when
-        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
+        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId() + "?tagIds=0," + tag2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
 
         // then
         assertAll(
