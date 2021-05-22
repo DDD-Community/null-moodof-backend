@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: security
+    include: security, dev
   datasource:
     url: jdbc:h2:mem:test
     username: sa
