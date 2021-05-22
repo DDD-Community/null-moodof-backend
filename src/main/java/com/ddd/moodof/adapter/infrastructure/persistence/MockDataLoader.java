@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 
 
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile("dev & !test")
 @Component
 public class MockDataLoader implements ApplicationRunner {
     private final UserRepository userRepository;
