@@ -12,4 +12,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByPreviousBoardIdAndCategoryId(Long previousBoardId, Long categoryId);
 
     void deleteAllByCategoryId(Long categoryId);
+
+    boolean existsByIdAndUserId(Long id, Long userId);
 }

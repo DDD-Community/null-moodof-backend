@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    //apply querydsl
-    implementation 'com.querydsl:querydsl-jpa'
+    implementation "com.querydsl:querydsl-jpa:4.4.0"
+    implementation "com.querydsl:querydsl-apt:4.4.0"
 
     //apply p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
@@ -60,19 +60,28 @@ test {
     useJUnitPlatform()
 }
 //apply querydsl directory path
-def querydslDir = "$buildDir/generated/querydsl"
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
+def generatedSourcesDir = file("${buildDir}/generated/querydsl")
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
-sourceSets {
-    main.java.srcDir querydslDir
-}
+
 configurations {
     querydsl.extendsFrom compileClasspath
 }
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
+
+sourceSets {
+    main {
+        java {
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+querydsl {
+    querydslSourcesDir = relativePath(generatedSourcesDir)
+    library = "com.querydsl:querydsl-apt"
+    jpa = true
 }
 
 processResources.dependsOn('copySecret')

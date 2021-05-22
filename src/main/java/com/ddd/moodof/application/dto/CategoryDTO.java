@@ -1,6 +1,7 @@
 package com.ddd.moodof.application.dto;
 
 import com.ddd.moodof.domain.model.category.Category;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,5 +89,32 @@ public class CategoryDTO {
     @Getter
     public static class UpdateOrderCategoryRequest {
         private Long previousId;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CategoryDetailResponse {
+        private Long id;
+        private Long userId;
+        private String title;
+        private Long previousId;
+        private LocalDateTime createdDate;
+        private LocalDateTime lastModifiedDate;
+        private List<BoardDTO.BoardResponse> boards;
+
+        @QueryProjection
+        public CategoryDetailResponse(Long id, Long userId, String title, Long previousId, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+            this.id = id;
+            this.userId = userId;
+            this.title = title;
+            this.previousId = previousId;
+            this.createdDate = createdDate;
+            this.lastModifiedDate = lastModifiedDate;
+        }
+
+        public void setBoards(List<BoardDTO.BoardResponse> boards) {
+            this.boards = boards;
+        }
     }
 }

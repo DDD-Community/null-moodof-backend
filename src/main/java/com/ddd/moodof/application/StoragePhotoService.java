@@ -39,4 +39,8 @@ public class StoragePhotoService {
         }
         storagePhotoRepository.deleteById(id);
     }
+
+    public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id) {
+        return storagePhotoQueryRepository.findDetail(userId, id);
+    }
 }

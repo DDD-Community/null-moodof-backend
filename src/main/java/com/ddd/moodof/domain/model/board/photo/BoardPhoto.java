@@ -1,32 +1,38 @@
-package com.ddd.moodof.domain.model.tag;
+package com.ddd.moodof.domain.model.board.photo;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-@Builder
-public class Tag {
+public class BoardPhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    private Long storagePhotoId;
 
-    private String name;
+    private Long boardId;
+
+    private Long userId;
 
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @LastModifiedDate
+    @CreatedDate
     private LocalDateTime lastModifiedDate;
 
+    public boolean isUserNotEqual(Long userId) {
+        return !this.userId.equals(userId);
+    }
 }

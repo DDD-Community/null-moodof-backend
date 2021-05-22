@@ -36,7 +36,7 @@ public class Category {
         this.title = title;
     }
 
-    public Category updatePreviousId(Long previousId){
+    public Category updatePreviousId(Long previousId) {
         validationPreviousId(previousId);
         this.previousId = previousId;
         return this;

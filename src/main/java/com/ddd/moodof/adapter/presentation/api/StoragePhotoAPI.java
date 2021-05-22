@@ -27,6 +27,10 @@ public interface StoragePhotoAPI {
             @RequestParam(required = false, value = "tagIds[]") List<Long> tagIds);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @GetMapping("/{id}")
+    ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> findDetail(@ApiIgnore @LoginUserId Long userId, @PathVariable Long id);
+
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> deleteById(@ApiIgnore Long userId, @PathVariable Long id);
 }
