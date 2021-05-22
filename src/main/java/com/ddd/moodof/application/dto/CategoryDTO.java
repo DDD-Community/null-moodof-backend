@@ -110,6 +110,17 @@ public class CategoryDTO {
                     .lastModifiedDate(null)
                     .build();
         }
+        public Category toEntity(Long userId, String title, Long previousId){
+            return Category.builder()
+                    .id(null)
+                    .previousId(previousId)
+                    .title(title)
+                    .userId(userId)
+                    .createdDate(null)
+                    .lastModifiedDate(null)
+                    .build();
+
+        }
     }
 
     @NoArgsConstructor

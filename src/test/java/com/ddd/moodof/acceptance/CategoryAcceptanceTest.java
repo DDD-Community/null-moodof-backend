@@ -2,7 +2,10 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.BoardDTO;
 import com.ddd.moodof.application.dto.CategoryDTO;
+import com.ddd.moodof.domain.model.category.Category;
+import com.ddd.moodof.domain.model.category.CategoryInitializer;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -13,6 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class CategoryAcceptanceTest extends AcceptanceTest{
     public static final String PREVIOUS_ID = "previousId";
     public static final String TITLE = "title";
+    public static final String NICK_NAME = "nickname";
+    public  static final String SUB_TITLE = "님의 카테고리";
+
+    @Autowired
+    private CategoryInitializer categoryInitializer;
 
     @Test
     public void 카테고리_생성() throws Exception {
@@ -158,5 +166,30 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
                 () -> assertThat(categoryResponseList.get(1).getCreatedDate().equals(categoryTwo.getCreatedDate())),
                 () -> assertThat(categoryResponseList.get(1).getLastModifiedDate().equals(categoryTwo.getCreatedDate()))
         );
+    }
+
+    @Test
+    public void 카테고리_회원가입후_생성_초기화() throws Exception{
+        // given
+
+        // when
+        Category category = categoryInitializer.create(userId, nickName);
+        List<CategoryDTO.CategoryResponse> response = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
+        // then
+        assertAll(
+                () -> assertThat(category.getPreviousId()).isEqualTo(0L),
+                () -> assertThat(category.getId()).isEqualTo(1L),
+                () -> assertThat(category.getUserId()).isEqualTo(userId),
+                () -> assertThat(category.getTitle()).isEqualTo(NICK_NAME+SUB_TITLE),
+                () -> assertThat(category.getCreatedDate()).isNotNull(),
+                () -> assertThat(category.getLastModifiedDate()).isEqualTo(category.getCreatedDate()),
+
+                () -> assertThat(response.get(0).getId()).isEqualTo(category.getId()),
+                () -> assertThat(response.get(0).getUserId()).isEqualTo(category.getUserId()),
+                () -> assertThat(response.get(0).getTitle()).isEqualTo(category.getTitle()),
+                () -> assertThat(response.get(0).getCreatedDate()).isEqualTo(category.getCreatedDate()),
+                () -> assertThat(response.get(0).getLastModifiedDate()).isEqualTo(category.getLastModifiedDate())
+        );
+
     }
 }
