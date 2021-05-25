@@ -152,12 +152,9 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         BoardDTO.BoardResponse board1 = 보드_생성(userId, 0L, category1.getId(), "board-1");
         BoardDTO.BoardResponse board2 = 보드_생성(userId, board1.getId(), category1.getId(), "board-2");
         BoardDTO.BoardResponse board3 = 보드_생성(userId, 0L, category2.getId(), "board-3");
-        보드_사진_생성(userId, storagePhoto1.getId(), board1.getId());
-        보드_사진_생성(userId, storagePhoto2.getId(), board1.getId());
-        보드_사진_생성(userId, storagePhoto2.getId(), board2.getId());
-        보드_사진_생성(userId, storagePhoto2.getId(), board3.getId());
-        보드_사진_생성(userId, storagePhoto3.getId(), board1.getId());
-        보드_사진_생성(userId, storagePhoto4.getId(), board2.getId());
+        보드_사진_복수_생성(userId, List.of(storagePhoto1.getId(), storagePhoto2.getId(), storagePhoto3.getId()), board1.getId());
+        보드_사진_복수_생성(userId, List.of(storagePhoto2.getId(), storagePhoto4.getId()), board2.getId());
+        보드_사진_복수_생성(userId, List.of(storagePhoto2.getId()), board3.getId());
         TagDTO.TagResponse tag1 = 태그_생성(userId, "tag-1");
         TagDTO.TagResponse tag2 = 태그_생성(userId, "tag-2");
         태그붙이기_생성(userId, storagePhoto2.getId(), tag1.getId());

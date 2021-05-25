@@ -7,12 +7,16 @@ import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.ddd.moodof.adapter.presentation.BoardPhotoController.API_BOARD_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class BoardPhotoAcceptanceTest extends AcceptanceTest {
     private StoragePhotoDTO.StoragePhotoResponse storagePhoto;
+    private StoragePhotoDTO.StoragePhotoResponse storagePhoto2;
     private BoardDTO.BoardResponse board;
     private CategoryDTO.CategoryResponse category;
 
@@ -21,6 +25,7 @@ public class BoardPhotoAcceptanceTest extends AcceptanceTest {
     void setUp() {
         super.setUp();
         storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
+        storagePhoto2 = 보관함사진_생성(userId, "photoUri2", "representativeColor2");
         category = 카테고리_생성(userId, "title", 0L);
         board = 보드_생성(userId, 0L, category.getId(), "name");
     }
@@ -28,25 +33,28 @@ public class BoardPhotoAcceptanceTest extends AcceptanceTest {
     @Test
     void 보드에_보관함사진을_추가한다() {
         // when
-        BoardPhotoDTO.BoardPhotoResponse response = 보드_사진_생성(userId, storagePhoto.getId(), board.getId());
+        List<BoardPhotoDTO.BoardPhotoResponse> responses = 보드_사진_복수_생성(userId, List.of(storagePhoto.getId(), storagePhoto2.getId()), board.getId());
+        List<BoardPhotoDTO.BoardPhotoResponse> responses2 = 보드_사진_복수_생성(userId, List.of(storagePhoto.getId(), storagePhoto2.getId()), board.getId());
 
         // then
         assertAll(
-                () -> assertThat(response.getId()).isNotNull(),
-                () -> assertThat(response.getUserId()).isEqualTo(userId),
-                () -> assertThat(response.getStoragePhotoId()).isEqualTo(storagePhoto.getId()),
-                () -> assertThat(response.getBoardId()).isEqualTo(board.getId()),
-                () -> assertThat(response.getCreatedDate()).isNotNull(),
-                () -> assertThat(response.getLastModifiedDate()).isEqualTo(response.getCreatedDate())
+                () -> assertThat(responses.size()).isEqualTo(2),
+                () -> assertThat(responses.get(0).getPreviousBoardPhotoId()).isEqualTo(0L),
+                () -> assertThat(responses.get(1).getPreviousBoardPhotoId()).isEqualTo(responses.get(0).getId()),
+                () -> assertThat(responses2.get(0).getPreviousBoardPhotoId()).isEqualTo(responses.get(1).getId()),
+                () -> assertThat(responses2.get(1).getPreviousBoardPhotoId()).isEqualTo(responses2.get(0).getId())
         );
     }
 
     @Test
     void 보드에서_보관함사진을_제거한다() {
         // given
-        BoardPhotoDTO.BoardPhotoResponse response = 보드_사진_생성(userId, storagePhoto.getId(), board.getId());
+        List<BoardPhotoDTO.BoardPhotoResponse> responses = 보드_사진_복수_생성(userId, List.of(storagePhoto.getId()), board.getId());
 
         // when then
-        deleteWithLogin(API_BOARD_PHOTO, response.getId(), userId);
+        List<Long> boardPhotoIds = responses.stream()
+                .map(BoardPhotoDTO.BoardPhotoResponse::getId)
+                .collect(Collectors.toList());
+        deleteListWithLogin(API_BOARD_PHOTO, new BoardPhotoDTO.RemoveBoardPhotos(boardPhotoIds), userId);
     }
 }

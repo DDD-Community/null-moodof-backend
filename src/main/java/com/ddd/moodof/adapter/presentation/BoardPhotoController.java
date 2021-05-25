@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -20,15 +20,15 @@ public class BoardPhotoController implements BoardPhotoAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<BoardPhotoDTO.BoardPhotoResponse> addPhoto(@LoginUserId Long userId, @RequestBody BoardPhotoDTO.AddBoardPhoto request) {
-        BoardPhotoDTO.BoardPhotoResponse response = boardPhotoService.addPhoto(userId, request);
-        return ResponseEntity.created(URI.create(API_BOARD_PHOTO + "/" + response.getId())).body(response);
+    public ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> addPhotos(@LoginUserId Long userId, @RequestBody BoardPhotoDTO.AddBoardPhoto request) {
+        List<BoardPhotoDTO.BoardPhotoResponse> responses = boardPhotoService.addPhotos(userId, request);
+        return ResponseEntity.ok(responses);
     }
 
     @Override
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removePhoto(@LoginUserId Long userId, @PathVariable Long id) {
-        boardPhotoService.removePhoto(userId, id);
+    @DeleteMapping
+    public ResponseEntity<Void> removePhoto(@LoginUserId Long userId, @RequestBody BoardPhotoDTO.RemoveBoardPhotos request) {
+        boardPhotoService.removePhoto(userId, request);
         return ResponseEntity.noContent().build();
     }
 }
