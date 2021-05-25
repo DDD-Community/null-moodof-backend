@@ -4,9 +4,7 @@ import com.ddd.moodof.adapter.presentation.LoginUserId;
 import com.ddd.moodof.application.dto.BoardPhotoDTO;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -15,6 +13,10 @@ public interface BoardPhotoAPI {
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PostMapping
     ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> addPhotos(@ApiIgnore Long userId, @RequestBody BoardPhotoDTO.AddBoardPhoto request);
+
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @GetMapping
+    ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> findAllByBoard(@ApiIgnore @LoginUserId Long userId, @RequestParam Long boardId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping

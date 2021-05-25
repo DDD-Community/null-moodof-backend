@@ -47,6 +47,18 @@ public class BoardPhotoAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    void 보드사진을_조회한다() {
+        // given
+        보드_사진_복수_생성(userId, List.of(storagePhoto.getId(), storagePhoto2.getId()), board.getId());
+
+        // when
+        List<BoardPhotoDTO.BoardPhotoResponse> responses = getListWithLogin(API_BOARD_PHOTO + "?boardId=" + board.getId(), BoardPhotoDTO.BoardPhotoResponse.class, userId);
+
+        // then
+        assertThat(responses.size()).isEqualTo(2);
+    }
+
+    @Test
     void 보드에서_보관함사진을_제거한다() {
         // given
         List<BoardPhotoDTO.BoardPhotoResponse> responses = 보드_사진_복수_생성(userId, List.of(storagePhoto.getId()), board.getId());

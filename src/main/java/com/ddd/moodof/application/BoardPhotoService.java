@@ -52,4 +52,9 @@ public class BoardPhotoService {
 
         boardPhotoRepository.deleteAll(boardPhotos);
     }
+
+    public List<BoardPhotoDTO.BoardPhotoResponse> findAllByBoardId(Long boardId, Long userId) {
+        List<BoardPhoto> boardPhotos = boardPhotoRepository.findAllByBoardIdAndUserId(boardId, userId);
+        return BoardPhotoDTO.BoardPhotoResponse.listFrom(boardPhotos);
+    }
 }

@@ -26,6 +26,13 @@ public class BoardPhotoController implements BoardPhotoAPI {
     }
 
     @Override
+    @GetMapping
+    public ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> findAllByBoard(@LoginUserId Long userId, @RequestParam Long boardId) {
+        List<BoardPhotoDTO.BoardPhotoResponse> responses = boardPhotoService.findAllByBoardId(boardId, userId);
+        return ResponseEntity.ok(responses);
+    }
+
+    @Override
     @DeleteMapping
     public ResponseEntity<Void> removePhoto(@LoginUserId Long userId, @RequestBody BoardPhotoDTO.RemoveBoardPhotos request) {
         boardPhotoService.removePhoto(userId, request);
