@@ -50,7 +50,9 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
                 .applyPagination(pageable, jpaQuery)
                 .fetch();
 
-        return new StoragePhotoDTO.StoragePhotoPageResponse(paginationUtils.getTotalPageCount(jpaQuery.fetchCount(), pageable.getPageSize()), responses);
+        long totalCount = jpaQuery.fetchCount();
+
+        return new StoragePhotoDTO.StoragePhotoPageResponse(totalCount, paginationUtils.getTotalPageCount(totalCount, pageable.getPageSize()), responses);
     }
 
     private JPAQuery<StoragePhotoDTO.StoragePhotoResponse> getQuery(Long userId, List<Long> tagIds) {
