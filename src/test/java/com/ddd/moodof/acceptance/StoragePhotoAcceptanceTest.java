@@ -100,14 +100,11 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         StoragePhotoDTO.StoragePhotoResponse trash = 보관함사진_생성(userId, "4", "4");
         StoragePhotoDTO.StoragePhotoResponse top = 보관함사진_생성(userId, "5", "5");
         보관함사진_휴지통_이동(Collections.singletonList(trash.getId()), userId);
-        TagDTO.TagResponse tag1 = 태그_생성(userId, "name1");
-        TagDTO.TagResponse tag2 = 태그_생성(userId, "name2");
-        TagDTO.TagResponse noSearch = 태그_생성(userId, "name3");
-        태그붙이기_생성(userId, second.getId(), tag2.getId());
-        태그붙이기_생성(userId, third.getId(), tag1.getId());
+        TagDTO.TagCreatedResponse tag1 = 태그_생성(userId, third.getId(), "name1");
+        TagDTO.TagCreatedResponse tag2 = 태그_생성(userId, second.getId(), "name2");
+        TagDTO.TagCreatedResponse noSearch = 태그_생성(userId, noContain.getId(), "name3");
         태그붙이기_생성(userId, trash.getId(), tag1.getId());
         태그붙이기_생성(userId, top.getId(), tag1.getId());
-        태그붙이기_생성(userId, noContain.getId(), noSearch.getId());
 
         // when
         String uri = UriComponentsBuilder.fromUriString(API_STORAGE_PHOTO)
@@ -157,10 +154,8 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         보드_사진_생성(userId, storagePhoto2.getId(), board3.getId());
         보드_사진_생성(userId, storagePhoto3.getId(), board1.getId());
         보드_사진_생성(userId, storagePhoto4.getId(), board2.getId());
-        TagDTO.TagResponse tag1 = 태그_생성(userId, "tag-1");
-        TagDTO.TagResponse tag2 = 태그_생성(userId, "tag-2");
-        태그붙이기_생성(userId, storagePhoto2.getId(), tag1.getId());
-        태그붙이기_생성(userId, storagePhoto2.getId(), tag2.getId());
+        TagDTO.TagCreatedResponse tag1 = 태그_생성(userId, storagePhoto2.getId(), "tag-1");
+        TagDTO.TagCreatedResponse tag2 = 태그_생성(userId, storagePhoto2.getId(), "tag-2");
         보관함사진_휴지통_이동(List.of(storagePhoto3.getId(), storagePhoto4.getId()), userId);
 
         // when

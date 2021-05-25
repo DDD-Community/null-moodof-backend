@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -19,21 +18,9 @@ public class TagService {
         return TagDTO.TagResponse.listFrom(allByUserId);
     }
 
-    public TagDTO.TagResponse create(TagDTO.CreateRequest request, Long userId) {
-        Optional<Tag> tagExist = tagRepository.findTagByNameAndUserId(request.getName(), userId);
-        if (tagExist.isPresent()) {
-            throw new IllegalArgumentException("존재하는 태그 입니다.");
-        }
-        Tag save = tagRepository.save(request.toEntity(userId, request.getName()));
-        return TagDTO.TagResponse.from(save);
-    }
-
     public void delete(Long id, Long userId) {
         Tag tag = tagRepository.findTagByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그 정보입니다. " + id + " / " + userId));
-        if (userId.compareTo(tag.getUserId()) != 0) {
-            throw new IllegalArgumentException("요청 응답 유저의 값이 다른 정보입니다.");
-        }
         tagRepository.deleteById(tag.getId());
     }
 

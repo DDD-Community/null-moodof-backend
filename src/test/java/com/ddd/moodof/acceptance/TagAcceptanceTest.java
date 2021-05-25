@@ -1,8 +1,8 @@
 package com.ddd.moodof.acceptance;
 
+import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagDTO;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -12,12 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TagAcceptanceTest extends AcceptanceTest {
     @Test
-    public void 유저아이디_태그_전체_조회() throws Exception {
+    public void 유저아이디_태그_전체_조회() {
         // given
-        태그_생성(userId, "tag1");
-        태그_생성(userId, "tag2");
-        태그_생성(userId, "tag3");
-        TagDTO.TagResponse tagResponse = 태그_생성(userId, "tag4");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
+        태그_생성(userId, storagePhoto.getId(), "tag1");
+        태그_생성(userId, storagePhoto.getId(), "tag2");
+        태그_생성(userId, storagePhoto.getId(), "tag3");
+        태그_생성(userId, storagePhoto.getId(), "tag4");
 
         // when
         String uri = API_TAG;
@@ -31,12 +32,12 @@ public class TagAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    public void 태그를_생성한다() throws Exception {
-
+    public void 태그를_생성한다() {
         // given
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
 
         // when
-        TagDTO.TagResponse response = 태그_생성(userId, "name1");
+        TagDTO.TagCreatedResponse response = 태그_생성(userId, storagePhoto.getId(), "name1");
 
         // then
         assertAll(
@@ -44,42 +45,34 @@ public class TagAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.getUserId()).isEqualTo(userId),
                 () -> assertThat(response.getName()).isEqualTo("name1"),
                 () -> assertThat(response.getCreatedDate()).isNotNull(),
-                () -> assertThat(response.getLastModifiedDate()).isNotNull()
+                () -> assertThat(response.getLastModifiedDate()).isNotNull(),
+                () -> assertThat(response.getTagAttachment().getId()).isNotNull(),
+                () -> assertThat(response.getTagAttachment().getStoragePhotoId()).isEqualTo(storagePhoto.getId()),
+                () -> assertThat(response.getTagAttachment().getTagId()).isEqualTo(response.getId())
         );
     }
 
     @Test
-    public void 태그를_삭제한다() throws Exception {
+    public void 태그를_삭제한다() {
         // given
-        태그_생성(userId, "name1");
-        TagDTO.TagResponse response = 태그_생성(userId, "name2");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
+        태그_생성(userId, storagePhoto.getId(), "name1");
+        TagDTO.TagCreatedResponse response = 태그_생성(userId, storagePhoto.getId(), "name2");
 
         // when
-        태그_리스트_출력(userId);
         deleteWithLogin(API_TAG, response.getId(), userId);
-        태그_리스트_출력(userId);
     }
 
     @Test
-    public void 태그_수정() throws Exception {
+    public void 태그_수정() {
         // given
-        TagDTO.TagResponse createList = 태그_생성(userId, "name1");
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
+        TagDTO.TagCreatedResponse tag = 태그_생성(userId, storagePhoto.getId(), "name1");
 
         // when
-        TagDTO.TagResponse updateList = 태그_수정(createList.getId(), userId, "name2");
+        TagDTO.TagResponse updateList = 태그_수정(tag.getId(), userId, "name2");
 
         // then
         assertThat(updateList.getName()).isEqualTo("name2");
-        System.err.println(updateList.getName());
-
-    }
-
-    public void 태그_리스트_출력(Long userId) throws Exception {
-        String uri = UriComponentsBuilder.fromUriString(API_TAG)
-                .build().toUriString();
-        List<TagDTO.TagResponse> reponseList = getListWithLogin(uri, TagDTO.TagResponse.class, userId);
-        for (TagDTO.TagResponse r : reponseList) {
-            System.err.println("userId: " + userId + " id: " + r.getId());
-        }
     }
 }
