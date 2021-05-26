@@ -14,4 +14,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     void deleteAllByCategoryId(Long categoryId);
 
     boolean existsByIdAndUserId(Long id, Long userId);
+
+    long countByCategoryId(Long categoryId);
 }

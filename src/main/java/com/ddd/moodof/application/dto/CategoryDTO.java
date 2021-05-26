@@ -1,6 +1,5 @@
 package com.ddd.moodof.application.dto;
 
-import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.category.Category;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
@@ -8,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -95,6 +95,7 @@ public class CategoryDTO {
     @Getter
     @Builder
     public static class CreateCategoryRequest {
+        @Max(value = 20, message = "카테고리의 최대 글자수는 20자 입니다.")
         @NotBlank
         private String title;
 

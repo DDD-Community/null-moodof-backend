@@ -12,4 +12,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findByIdAndUserId(Long id, Long userId);
 
     List<Category> findAllByPreviousId(Long previousId);
+
+    long countByUserId(Long userId);
 }

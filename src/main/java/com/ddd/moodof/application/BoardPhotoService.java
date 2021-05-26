@@ -10,10 +10,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class BoardPhotoService {
+    private static final int MAX_BOARD_PHOTO_COUNT = 50;
+
     private final BoardPhotoRepository boardPhotoRepository;
     private final BoardPhotoVerifier boardPhotoVerifier;
 
     public BoardPhotoDTO.BoardPhotoResponse addPhoto(Long userId, BoardPhotoDTO.AddBoardPhoto request) {
+        if (boardPhotoRepository.countByBoardId(request.getBoardId()) >= MAX_BOARD_PHOTO_COUNT) {
+            throw new IllegalStateException("보드에 추가할 수 있는 최대 사진 개수는 50개 입니다.");
+        }
+
         BoardPhoto boardPhoto = boardPhotoVerifier.toEntity(userId, request.getStoragePhotoId(), request.getBoardId());
         BoardPhoto saved = boardPhotoRepository.save(boardPhoto);
         return BoardPhotoDTO.BoardPhotoResponse.from(saved);

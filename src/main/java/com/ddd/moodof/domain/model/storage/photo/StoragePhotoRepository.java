@@ -6,4 +6,5 @@ public interface StoragePhotoRepository extends JpaRepository<StoragePhoto, Long
 
     boolean existsByIdAndUserId(Long id, Long userId);
 
+    long countByUserId(Long userId);
 }

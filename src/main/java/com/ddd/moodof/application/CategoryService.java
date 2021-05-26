@@ -15,12 +15,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CategoryService {
+    private static final int MAX_CATEGORY_COUNT = 10;
     private final CategoryRepository categoryRepository;
     private final CategoryQueryRepository categoryQueryRepository;
     private final BoardRepository boardRepository;
 
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
+        if (categoryRepository.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
+            throw new IllegalStateException("생성할 수 있는 카테고리의 최대 개수는 10개 입니다.");
+        }
+
         Category saved = categoryRepository.save(request.toEntity(userId));
         saveCategoryIntermediate(saved, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(saved);
@@ -44,8 +49,8 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO.CategoryResponse updatePreviousId(Long id, CategoryDTO.UpdateOrderCategoryRequest request, Long userId) {
-        Category target = findByIdAndUserId(id,userId);
-        updatePreviousId(target,request.getPreviousId());
+        Category target = findByIdAndUserId(id, userId);
+        updatePreviousId(target, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(categoryRepository.save(target));
     }
 
@@ -71,7 +76,7 @@ public class CategoryService {
     }
 
     private Category findByIdAndUserId(Long id, Long userId) {
-        return categoryRepository.findByIdAndUserId(id,userId)
+        return categoryRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID : " + id));
     }
 

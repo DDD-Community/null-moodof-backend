@@ -12,6 +12,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class TagService {
+    private static final int MAX_TAG_COUNT = 30;
+
     private final TagRepository tagRepository;
 
     public List<TagDTO.TagResponse> findAllByTag(Long userId) {
@@ -20,6 +22,10 @@ public class TagService {
     }
 
     public TagDTO.TagResponse create(TagDTO.CreateRequest request, Long userId) {
+        if (tagRepository.countByUserId(userId) >= MAX_TAG_COUNT) {
+            throw new IllegalStateException("생성할 수 있는 태그의 최대 개수는 30개 입니다.");
+        }
+
         Optional<Tag> tagExist = tagRepository.findTagByNameAndUserId(request.getName(), userId);
         if (tagExist.isPresent()) {
             throw new IllegalArgumentException("존재하는 태그 입니다.");

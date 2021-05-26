@@ -13,12 +13,18 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Service
 public class BoardService {
+    private static final int MAX_BOARD_IN_CATEGORY_COUNT = 10;
+
     private final BoardRepository boardRepository;
     private final BoardVerifier boardVerifier;
     private final BoardSequenceUpdater boardSequenceUpdater;
 
     @Transactional
     public BoardDTO.BoardResponse create(Long userId, BoardDTO.CreateBoard request) {
+        if (boardRepository.countByCategoryId(request.getCategoryId()) >= MAX_BOARD_IN_CATEGORY_COUNT) {
+            throw new IllegalStateException("하나의 카테고리에 생성할 수 있는 보드 최대 개수는 10개 입니다.");
+        }
+
         Board board = boardVerifier.toEntity(request.getPreviousBoardId(), request.getCategoryId(), request.getName(), userId);
         Board saved = boardRepository.save(board);
 

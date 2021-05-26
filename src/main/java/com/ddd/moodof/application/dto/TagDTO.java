@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ public class TagDTO {
     @AllArgsConstructor
     @Getter
     public static class CreateRequest {
+        @Max(value = 15, message = "태그의 최대 글자수는 15자 입니다.")
         @NotBlank
         private String name;
 
