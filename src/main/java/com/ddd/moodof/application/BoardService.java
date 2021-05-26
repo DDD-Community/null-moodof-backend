@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Service
 public class BoardService {
-    private static final int MAX_BOARD_IN_CATEGORY_COUNT = 10;
+    public static final int MAX_BOARD_IN_CATEGORY_COUNT = 10;
 
     private final BoardRepository boardRepository;
     private final BoardVerifier boardVerifier;

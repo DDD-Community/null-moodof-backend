@@ -16,6 +16,7 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     private static final int MAX_CATEGORY_COUNT = 10;
+
     private final CategoryRepository categoryRepository;
     private final CategoryQueryRepository categoryQueryRepository;
     private final BoardRepository boardRepository;
