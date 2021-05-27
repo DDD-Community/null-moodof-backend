@@ -3,6 +3,7 @@ package com.ddd.moodof.application;
 import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.category.Category;
+import com.ddd.moodof.domain.model.category.CategoryQueryRepository;
 import com.ddd.moodof.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryQueryRepository categoryQueryRepository;
     private final BoardRepository boardRepository;
 
     @Transactional
@@ -40,11 +42,6 @@ public class CategoryService {
         boardRepository.deleteAllByCategoryId(id);
     }
 
-    public List<CategoryDTO.CategoryResponse> findAllByUserId(Long userId){
-        List<Category> totalCategories = categoryRepository.findAllByUserId(userId);
-        return CategoryDTO.CategoryResponse.listForm(totalCategories);
-    }
-
     @Transactional
     public CategoryDTO.CategoryResponse updatePreviousId(Long id, CategoryDTO.UpdateOrderCategoryRequest request, Long userId) {
         Category target = findByIdAndUserId(id,userId);
@@ -62,19 +59,23 @@ public class CategoryService {
 
     private void updatePreviousId(Category target, Long previousId) {
         Category destination = findByPreviousId(previousId);
-        Optional<Category> afterTarget = categoryRepository.findOptionalByPreviousId(target.getId());
+        Optional<Category> afterTarget = categoryRepository.findByPreviousId(target.getId());
         afterTarget.ifPresent(t -> categoryRepository.save(t.updatePreviousId(target.getPreviousId())));
         categoryRepository.save(destination.updatePreviousId(target.getId()));
         target.updatePreviousId(previousId);
     }
 
     private Category findByPreviousId(Long previousId) {
-        return categoryRepository.findOptionalByPreviousId(previousId)
+        return categoryRepository.findByPreviousId(previousId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지않는 previousId : " + previousId));
     }
 
     private Category findByIdAndUserId(Long id, Long userId) {
         return categoryRepository.findByIdAndUserId(id,userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID : " + id));
+    }
+
+    public List<CategoryDTO.CategoryWithBoardResponse> findAllByUserId(Long userId) {
+        return categoryQueryRepository.findAllByUserId(userId);
     }
 }

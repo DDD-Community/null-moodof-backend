@@ -1,6 +1,8 @@
 package com.ddd.moodof.application.dto;
 
+import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.category.Category;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,40 @@ public class CategoryDTO {
                     .lastModifiedDate(category.getLastModifiedDate())
                     .build()).collect(Collectors.toList());
         }
+
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class CategoryWithBoardResponse{
+
+        private Long id;
+
+        private Long userId;
+
+        private String title;
+
+        private Long previousId;
+
+        private LocalDateTime createdDate;
+
+        private LocalDateTime lastModifiedDate;
+
+        private List<BoardDTO.BoardResponse> boardList = new ArrayList<>();
+
+        public static CategoryWithBoardResponse from(CategoryDTO.CategoryResponse category, List<BoardDTO.BoardResponse> boards) {
+            return CategoryWithBoardResponse.builder()
+                    .id(category.getId())
+                    .title(category.getTitle())
+                    .userId(category.getUserId())
+                    .previousId(category.getPreviousId())
+                    .createdDate(category.getCreatedDate())
+                    .lastModifiedDate(category.getLastModifiedDate())
+                    .boardList(boards)
+                    .build();
+        }
     }
 
     @NoArgsConstructor
@@ -73,6 +110,17 @@ public class CategoryDTO {
                     .lastModifiedDate(null)
                     .build();
         }
+        public Category toEntity(Long userId, String title, Long previousId){
+            return Category.builder()
+                    .id(null)
+                    .previousId(previousId)
+                    .title(title)
+                    .userId(userId)
+                    .createdDate(null)
+                    .lastModifiedDate(null)
+                    .build();
+
+        }
     }
 
     @NoArgsConstructor
@@ -88,5 +136,32 @@ public class CategoryDTO {
     @Getter
     public static class UpdateOrderCategoryRequest {
         private Long previousId;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CategoryDetailResponse {
+        private Long id;
+        private Long userId;
+        private String title;
+        private Long previousId;
+        private LocalDateTime createdDate;
+        private LocalDateTime lastModifiedDate;
+        private List<BoardDTO.BoardResponse> boards;
+
+        @QueryProjection
+        public CategoryDetailResponse(Long id, Long userId, String title, Long previousId, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+            this.id = id;
+            this.userId = userId;
+            this.title = title;
+            this.previousId = previousId;
+            this.createdDate = createdDate;
+            this.lastModifiedDate = lastModifiedDate;
+        }
+
+        public void setBoards(List<BoardDTO.BoardResponse> boards) {
+            this.boards = boards;
+        }
     }
 }

@@ -26,6 +26,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.List;
 
 import static com.ddd.moodof.adapter.presentation.BoardController.API_BOARD;
+import static com.ddd.moodof.adapter.presentation.BoardPhotoController.API_BOARD_PHOTO;
 import static com.ddd.moodof.adapter.presentation.CategoryController.API_CATEGORY;
 import static com.ddd.moodof.adapter.presentation.StoragePhotoController.API_STORAGE_PHOTO;
 import static com.ddd.moodof.adapter.presentation.TagAttachmentController.API_TAG_ATTACHMENT;
@@ -42,6 +43,7 @@ public class AcceptanceTest {
 
     protected Long userId;
 
+    protected String nickName;
     private MockMvc mockMvc;
 
     @Autowired
@@ -64,6 +66,7 @@ public class AcceptanceTest {
                 .build();
         User user = signUp();
         userId = user.getId();
+        nickName = user.getNickname();
     }
 
     protected User signUp() {
@@ -243,5 +246,10 @@ public class AcceptanceTest {
     protected TagAttachmentDTO.TagAttachmentResponse 태그붙이기_생성(Long userId, Long storagePhotoId, Long tagId) {
         TagAttachmentDTO.CreateTagAttachment request = new TagAttachmentDTO.CreateTagAttachment(storagePhotoId, tagId);
         return postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
+    }
+
+    protected BoardPhotoDTO.BoardPhotoResponse 보드_사진_생성(Long userId, Long storagePhotoId, Long boardId) {
+        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoId, boardId);
+        return postWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
     }
 }

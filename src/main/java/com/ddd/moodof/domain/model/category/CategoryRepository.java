@@ -7,13 +7,9 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    Optional<Category> findByTitleAndUserId(String title, Long userId);
-
-    Optional<Category> findOptionalByPreviousId(Long previousId);
+    Optional<Category> findByPreviousId(Long previousId);
 
     Optional<Category> findByIdAndUserId(Long id, Long userId);
-
-    List<Category> findAllByUserId(Long userId);
 
     List<Category> findAllByPreviousId(Long previousId);
 }

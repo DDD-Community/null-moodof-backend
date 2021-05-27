@@ -56,7 +56,7 @@ public class CategoryController implements CategoryAPI {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<CategoryDTO.CategoryResponse>>findAllByUserId(
+    public ResponseEntity<List<CategoryDTO.CategoryWithBoardResponse>> findAllByUserId(
             @LoginUserId Long userId) {
         return ResponseEntity.ok(categoryService.findAllByUserId(userId));
     }
