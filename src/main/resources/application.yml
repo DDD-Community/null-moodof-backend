@@ -21,3 +21,5 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
+server:
+  port: 80
