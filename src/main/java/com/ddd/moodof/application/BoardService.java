@@ -28,7 +28,7 @@ public class BoardService {
         Board board = boardVerifier.toEntity(request.getPreviousBoardId(), request.getCategoryId(), request.getName(), userId);
         Board saved = boardRepository.save(board);
 
-        boardRepository.findByPreviousBoardIdAndIdNot(request.getPreviousBoardId(), saved.getId())
+        boardRepository.findByUserIdAndPreviousBoardIdAndIdNot(userId, request.getPreviousBoardId(), saved.getId())
                 .ifPresent(it -> it.changePreviousBoardId(saved.getId(), userId));
 
         return BoardDTO.BoardResponse.from(saved);

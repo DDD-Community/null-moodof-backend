@@ -18,19 +18,11 @@ public class TagDTO {
     @AllArgsConstructor
     @Getter
     public static class CreateRequest {
-        @Max(value = 15, message = "태그의 최대 글자수는 15자 입니다.")
-        @NotBlank
-        private String name;
+        private Long storagePhotoId;
 
-        public Tag toEntity(Long userId, String name) {
-            return Tag.builder()
-                    .id(null)
-                    .userId(userId)
-                    .name(name)
-                    .createdDate(null)
-                    .lastModifiedDate(null)
-                    .build();
-        }
+        @NotBlank
+        @Max(value = 15, message = "태그의 최대 글자수는 15자 입니다.")
+        private String name;
     }
 
     @NoArgsConstructor
@@ -38,6 +30,7 @@ public class TagDTO {
     @Getter
     public static class UpdateRequest {
         @NotBlank
+        @Max(value = 15, message = "태그의 최대 글자수는 15자 입니다.")
         private String name;
 
         public Tag toEntity(Long id, Long userId, String name) {
@@ -50,7 +43,6 @@ public class TagDTO {
                     .build();
         }
     }
-
 
     @NoArgsConstructor
     @AllArgsConstructor
@@ -82,5 +74,17 @@ public class TagDTO {
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build()).collect(Collectors.toList());
         }
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class TagCreatedResponse {
+        private Long id;
+        private Long userId;
+        private String name;
+        private LocalDateTime createdDate;
+        private LocalDateTime lastModifiedDate;
+        private TagAttachmentDTO.TagAttachmentResponse tagAttachment;
     }
 }

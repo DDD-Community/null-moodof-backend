@@ -26,6 +26,7 @@ public class MockDataLoader implements ApplicationRunner {
     private final StoragePhotoService storagePhotoService;
     private final TagAttachmentService tagAttachmentService;
     private final TagService tagService;
+    private final TagCreator tagCreator;
     private final TrashPhotoService trashPhotoService;
 
     @Value("${dev.user.email}")
@@ -57,18 +58,14 @@ public class MockDataLoader implements ApplicationRunner {
         BoardDTO.BoardResponse 보드3 = boardService.create(userId, new BoardDTO.CreateBoard(보드2.getId(), 카테고리1.getId(), "보드 3"));
         BoardDTO.BoardResponse 보드4 = boardService.create(userId, new BoardDTO.CreateBoard(0L, 카테고리2.getId(), "보드 4"));
         BoardDTO.BoardResponse 보드5 = boardService.create(userId, new BoardDTO.CreateBoard(보드4.getId(), 카테고리2.getId(), "보드 5"));
-        TagDTO.TagResponse 태그1 = tagService.create(new TagDTO.CreateRequest("태그 1"), userId);
-        TagDTO.TagResponse 태그2 = tagService.create(new TagDTO.CreateRequest("태그 2"), userId);
-        TagDTO.TagResponse 태그3 = tagService.create(new TagDTO.CreateRequest("태그 3"), userId);
-        TagDTO.TagResponse 태그4 = tagService.create(new TagDTO.CreateRequest("태그 4"), userId);
-        tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진1.getId(), 태그1.getId()));
-        tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진1.getId(), 태그2.getId()));
-        tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진1.getId(), 태그3.getId()));
+        TagDTO.TagCreatedResponse 태그1 = tagCreator.create("태그 1", userId, 사진1.getId());
+        TagDTO.TagCreatedResponse 태그2 = tagCreator.create("태그 2", userId, 사진1.getId());
+        TagDTO.TagCreatedResponse 태그3 = tagCreator.create("태그 3", userId, 사진1.getId());
+        TagDTO.TagCreatedResponse 태그4 = tagCreator.create("태그 4", userId, 사진4.getId());
         tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진2.getId(), 태그1.getId()));
         tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진2.getId(), 태그2.getId()));
         tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진3.getId(), 태그3.getId()));
         tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진3.getId(), 태그1.getId()));
-        tagAttachmentService.create(userId, new TagAttachmentDTO.CreateTagAttachment(사진4.getId(), 태그4.getId()));
         trashPhotoService.add(userId, new TrashPhotoDTO.CreateTrashPhotos(List.of(사진4.getId(), 사진5.getId())));
     }
 

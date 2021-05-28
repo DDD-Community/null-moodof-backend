@@ -18,7 +18,7 @@ public class BoardSequenceUpdater {
             throw new IllegalStateException("하나의 카테고리에 생성할 수 있는 보드 최대 개수는 10개 입니다.");
         }
 
-        boardRepository.findByPreviousBoardId(board.getId())
+        boardRepository.findByUserIdAndPreviousBoardId(userId, board.getId())
                 .ifPresent(it -> it.changePreviousBoardId(board.getPreviousBoardId(), userId));
 
         boardRepository.findByPreviousBoardIdAndCategoryId(previousBoardId, categoryId)
