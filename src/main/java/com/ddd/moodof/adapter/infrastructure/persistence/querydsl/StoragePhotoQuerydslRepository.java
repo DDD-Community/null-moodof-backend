@@ -118,7 +118,7 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
     }
 
     private JPQLQuery<LocalDateTime> lastModifiedDateAfterStoragePhoto(Long userId, Long id, List<Long> tagIds) {
-        if (tagIds.isEmpty()) {
+        if (Objects.isNull(tagIds) || tagIds.isEmpty()) {
             return JPAExpressions
                     .select(storagePhoto.lastModifiedDate.min())
                     .from(storagePhoto)
@@ -157,7 +157,7 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
     }
 
     private JPQLQuery<LocalDateTime> lastModifiedDateBeforeStoragePhoto(Long userId, Long id, List<Long> tagIds) {
-        if (tagIds.isEmpty()) {
+        if (Objects.isNull(tagIds) || tagIds.isEmpty()) {
             return JPAExpressions
                     .select(storagePhoto.lastModifiedDate.max())
                     .from(storagePhoto)
