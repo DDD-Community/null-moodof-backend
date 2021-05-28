@@ -26,6 +26,8 @@ public class BoardPhoto {
 
     private Long userId;
 
+    private Long previousBoardPhotoId;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -34,5 +36,9 @@ public class BoardPhoto {
 
     public boolean isUserNotEqual(Long userId) {
         return !this.userId.equals(userId);
+    }
+
+    public void setPreviousBoardPhotoId(Long previousBoardPhotoId) {
+        this.previousBoardPhotoId = previousBoardPhotoId;
     }
 }

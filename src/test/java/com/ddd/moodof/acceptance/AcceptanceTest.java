@@ -248,7 +248,24 @@ public class AcceptanceTest {
             String token = tokenProvider.createToken(userId);
 
             mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/{id}", resourceId)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent())
+                    .andReturn();
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T> void deleteListWithLogin(String uri, T request, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+
+
+            mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isNoContent())
                     .andReturn();
@@ -264,8 +281,8 @@ public class AcceptanceTest {
         return postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
     }
 
-    protected BoardPhotoDTO.BoardPhotoResponse 보드_사진_생성(Long userId, Long storagePhotoId, Long boardId) {
-        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoId, boardId);
-        return postWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
+    protected List<BoardPhotoDTO.BoardPhotoResponse> 보드_사진_복수_생성(Long userId, List<Long> storagePhotoIds, Long boardId) {
+        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoIds, boardId);
+        return postListWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
     }
 }

@@ -87,13 +87,15 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
                 () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
                 () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
-                () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
+                () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
+                () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
         );
     }
 
     @Test
     void 사진보관함_페이지_태그별_조회() {
         // given
+        StoragePhotoDTO.StoragePhotoResponse noTag = 보관함사진_생성(userId, "0", "0");
         StoragePhotoDTO.StoragePhotoResponse third = 보관함사진_생성(userId, "1", "1");
         StoragePhotoDTO.StoragePhotoResponse noContain = 보관함사진_생성(userId, "2", "2");
         StoragePhotoDTO.StoragePhotoResponse second = 보관함사진_생성(userId, "3", "3");
@@ -112,7 +114,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
                 .queryParam("size", 2)
                 .queryParam("sortBy", "lastModifiedDate")
                 .queryParam("descending", "true")
-                .queryParam("tagIds", tag1.getId(), tag2.getId())
+                .queryParam("tagIds", 0L, tag1.getId(), tag2.getId())
                 .build().toUriString();
 
         StoragePhotoDTO.StoragePhotoPageResponse response = getWithLogin(uri, StoragePhotoDTO.StoragePhotoPageResponse.class, userId);
@@ -122,7 +124,8 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.getStoragePhotos().size()).isEqualTo(2),
                 () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
                 () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
-                () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
+                () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
+                () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
         );
     }
 
@@ -148,18 +151,16 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         BoardDTO.BoardResponse board1 = 보드_생성(userId, 0L, category1.getId(), "board-1");
         BoardDTO.BoardResponse board2 = 보드_생성(userId, board1.getId(), category1.getId(), "board-2");
         BoardDTO.BoardResponse board3 = 보드_생성(userId, 0L, category2.getId(), "board-3");
-        보드_사진_생성(userId, storagePhoto1.getId(), board1.getId());
-        보드_사진_생성(userId, storagePhoto2.getId(), board1.getId());
-        보드_사진_생성(userId, storagePhoto2.getId(), board2.getId());
-        보드_사진_생성(userId, storagePhoto2.getId(), board3.getId());
-        보드_사진_생성(userId, storagePhoto3.getId(), board1.getId());
-        보드_사진_생성(userId, storagePhoto4.getId(), board2.getId());
+        보드_사진_복수_생성(userId, List.of(storagePhoto1.getId(), storagePhoto2.getId(), storagePhoto3.getId()), board1.getId());
+        보드_사진_복수_생성(userId, List.of(storagePhoto2.getId(), storagePhoto4.getId()), board2.getId());
+        보드_사진_복수_생성(userId, List.of(storagePhoto2.getId()), board3.getId());
         TagDTO.TagCreatedResponse tag1 = 태그_생성(userId, storagePhoto2.getId(), "tag-1");
         TagDTO.TagCreatedResponse tag2 = 태그_생성(userId, storagePhoto2.getId(), "tag-2");
+        태그붙이기_생성(userId, storagePhoto5.getId(), tag2.getId());
         보관함사진_휴지통_이동(List.of(storagePhoto3.getId(), storagePhoto4.getId()), userId);
 
         // when
-        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
+        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId() + "?tagIds=0," + tag2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
 
         // then
         assertAll(

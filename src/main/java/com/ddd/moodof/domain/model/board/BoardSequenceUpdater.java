@@ -12,7 +12,7 @@ public class BoardSequenceUpdater {
 
     @Transactional
     public Board update(Board board, Long previousBoardId, Long categoryId, Long userId) {
-        boardRepository.findByPreviousBoardId(board.getId())
+        boardRepository.findByUserIdAndPreviousBoardId(userId, board.getId())
                 .ifPresent(it -> it.changePreviousBoardId(board.getPreviousBoardId(), userId));
 
         boardRepository.findByPreviousBoardIdAndCategoryId(previousBoardId, categoryId)

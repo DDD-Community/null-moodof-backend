@@ -22,7 +22,7 @@ public class CategoryService {
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
         Category saved = categoryRepository.save(request.toEntity(userId));
-        saveCategoryIntermediate(saved, request.getPreviousId());
+        saveCategoryIntermediate(userId, saved, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(saved);
     }
 
@@ -44,34 +44,31 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO.CategoryResponse updatePreviousId(Long id, CategoryDTO.UpdateOrderCategoryRequest request, Long userId) {
-        Category target = findByIdAndUserId(id,userId);
-        updatePreviousId(target,request.getPreviousId());
+        Category target = findByIdAndUserId(id, userId);
+        updatePreviousId(userId, target, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(categoryRepository.save(target));
     }
 
-    private void saveCategoryIntermediate(Category saved, Long previousId) {
-        categoryRepository.findAllByPreviousId(previousId)
-                .stream()
-                .filter(c -> !c.getId().equals(saved.getId()))
-                .findAny()
+    private void saveCategoryIntermediate(Long userId, Category saved, Long previousId) {
+        categoryRepository.findByUserIdAndPreviousIdAndIdNot(userId, previousId, saved.getId())
                 .ifPresent(cc -> cc.updatePreviousId(saved.getId()));
     }
 
-    private void updatePreviousId(Category target, Long previousId) {
-        Category destination = findByPreviousId(previousId);
-        Optional<Category> afterTarget = categoryRepository.findByPreviousId(target.getId());
+    private void updatePreviousId(Long userId, Category target, Long previousId) {
+        Category destination = findByUserIdAndPreviousId(userId, previousId);
+        Optional<Category> afterTarget = categoryRepository.findByUserIdAndPreviousId(userId, target.getId());
         afterTarget.ifPresent(t -> categoryRepository.save(t.updatePreviousId(target.getPreviousId())));
         categoryRepository.save(destination.updatePreviousId(target.getId()));
         target.updatePreviousId(previousId);
     }
 
-    private Category findByPreviousId(Long previousId) {
-        return categoryRepository.findByPreviousId(previousId)
+    private Category findByUserIdAndPreviousId(Long userId, Long previousId) {
+        return categoryRepository.findByUserIdAndPreviousId(userId, previousId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지않는 previousId : " + previousId));
     }
 
     private Category findByIdAndUserId(Long id, Long userId) {
-        return categoryRepository.findByIdAndUserId(id,userId)
+        return categoryRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID : " + id));
     }
 
