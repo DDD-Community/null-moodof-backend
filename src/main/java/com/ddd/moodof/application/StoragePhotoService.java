@@ -2,6 +2,8 @@ package com.ddd.moodof.application;
 
 import com.ddd.moodof.adapter.infrastructure.persistence.PaginationUtils;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.domain.model.board.Board;
+import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhoto;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhotoCreator;
 import com.ddd.moodof.domain.model.storage.photo.StoragePhotoQueryRepository;
@@ -19,6 +21,7 @@ public class StoragePhotoService {
     private final StoragePhotoQueryRepository storagePhotoQueryRepository;
     private final StoragePhotoCreator storagePhotoCreator;
     private final PaginationUtils paginationUtils;
+    private final BoardRepository boardRepository;
 
     public StoragePhotoDTO.StoragePhotoResponse create(StoragePhotoDTO.CreateStoragePhoto request, Long userId) {
         StoragePhoto saved = storagePhotoCreator.create(request.getUri(), request.getRepresentativeColor(), userId);
@@ -27,6 +30,12 @@ public class StoragePhotoService {
 
     public StoragePhotoDTO.StoragePhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending, List<Long> tagIds) {
         return storagePhotoQueryRepository.findPageExcludeTrash(userId, PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending)), tagIds);
+    }
+
+    public StoragePhotoDTO.StoragePhotoPageResponse findSharedPage(String sharedKey, int page, int size, String sortBy, boolean descending, List<Long> tagIds) {
+        Board board = boardRepository.findBySharedKey(sharedKey)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 sharedKey : " + sharedKey));
+        return storagePhotoQueryRepository.findPageExcludeTrash(board.getUserId(), PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending)), tagIds);
     }
 
     public boolean existsByIdAndUserId(Long id, Long userId) {
@@ -42,5 +51,11 @@ public class StoragePhotoService {
 
     public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id) {
         return storagePhotoQueryRepository.findDetail(userId, id);
+    }
+
+    public StoragePhotoDTO.StoragePhotoDetailResponse findSharedBoardDetail(String sharedKey, Long id) {
+        Board board = boardRepository.findBySharedKey(sharedKey)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 sharedKey : " + sharedKey));
+        return storagePhotoQueryRepository.findDetail(board.getUserId(), id);
     }
 }

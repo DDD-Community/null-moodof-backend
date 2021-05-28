@@ -34,6 +34,7 @@ public class CategoryQuerydslRepository implements CategoryQueryRepository {
                         category.lastModifiedDate))
                 .from(category)
                 .where(includeUserId)
+                .orderBy(category.id.asc())
                 .fetch();
 
         for (CategoryDTO.CategoryResponse category : categories) {
@@ -48,6 +49,7 @@ public class CategoryQuerydslRepository implements CategoryQueryRepository {
                             board.lastModifiedDate))
                     .from(board)
                     .where(board.userId.eq(category.getUserId()).and(board.categoryId.eq(category.getId())))
+                    .orderBy(board.id.asc())
                     .fetch();
             categoryWithBoardList.add(CategoryDTO.CategoryWithBoardResponse.from(category, boards));
         }

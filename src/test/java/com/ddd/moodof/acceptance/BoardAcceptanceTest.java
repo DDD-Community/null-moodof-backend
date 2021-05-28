@@ -1,7 +1,5 @@
 package com.ddd.moodof.acceptance;
-
-import com.ddd.moodof.application.dto.BoardDTO;
-import com.ddd.moodof.application.dto.CategoryDTO;
+import com.ddd.moodof.application.dto.*;
 import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;

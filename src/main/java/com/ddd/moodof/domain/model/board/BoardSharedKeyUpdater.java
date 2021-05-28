@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoardSharedKeyUpdater {
     private final BoardRepository boardRepository;
-    public Board update(Board board, String sharedKey, Long userId){
-        board.updateSharedkey(sharedKey, userId);
+    public Board update(Board board, String sharedURL, String sharedKey, Long userId){
+        board.updateSharedkey(sharedURL, sharedKey, userId);
         return boardRepository.save(board);
     }
 }

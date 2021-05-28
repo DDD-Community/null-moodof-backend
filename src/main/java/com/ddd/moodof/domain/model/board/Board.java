@@ -29,6 +29,8 @@ public class Board {
 
     private Long categoryId;
 
+    private String sharedURL;
+
     private String sharedKey;
 
     @CreatedDate
@@ -56,11 +58,11 @@ public class Board {
         this.categoryId = categoryId;
     }
 
-    public void updateSharedkey(String sharedKey, Long userId){
+    public void updateSharedkey(String sharedURL, String sharedKey, Long userId){
         verify(userId);
+        this.sharedURL = sharedURL;
         this.sharedKey = sharedKey;
     }
-
 
     private void verify(Long userId) {
         if (isUserNotEqual(userId)) {

@@ -1,7 +1,6 @@
 package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.adapter.infrastructure.security.TokenProvider;
-import com.ddd.moodof.adapter.presentation.SharedController;
 import com.ddd.moodof.application.dto.*;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
@@ -41,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
     private static final String BEARER = "Bearer ";
-    private static final String BOARDS = "/boards";
 
     protected Long userId;
 
@@ -75,10 +73,9 @@ public class AcceptanceTest {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
     }
 
-    protected SharedDTO.SharedBoardResponse 보드_공유하기(Long id, Long userId){
-        SharedDTO.SharedBoardRequest request = new SharedDTO.SharedBoardRequest(id);
-
-        return postWithLogin(request, SharedController.API_SHARED + BOARDS, SharedDTO.SharedBoardResponse.class, userId);
+    protected BoardDTO.BoardSharedResponse 보드_공유하기_생성(Long id, Long userId){
+        BoardDTO.BoardSharedRequest request = new BoardDTO.BoardSharedRequest(id);
+        return postWithLogin(request, API_BOARD+ "/shared", BoardDTO.BoardSharedResponse.class, userId);
     }
 
     protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId){
@@ -233,30 +230,28 @@ public class AcceptanceTest {
             throw new AssertionError("test fails");
         }
     }
-    protected <T> T getPublicWithLogin(String uri, Class<T> response) {
+    protected <T> List<T> getListNotLoginWithProperty(String uri, Class<T> response, String property) {
         try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri + "/{property}", property)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
 
-            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AssertionError("test fails");
         }
     }
-
-    protected <T> List<T> getPublicListWithLogin(String uri, Class<T> response, String resourceId) {
+    protected <T> T getNotLoginWithMultiProperty(String uri, Class<T> response, String property1, Long property2) {
         try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri ,resourceId)
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri, property1, property2)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();
 
-            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
-
-            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AssertionError("test fails");
