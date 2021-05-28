@@ -73,12 +73,12 @@ public class AcceptanceTest {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
     }
 
-    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId){
-        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
+    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId) {
+        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title, previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
 
-    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId, String property){
+    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id, Long previousId, Long userId, String property) {
         CategoryDTO.UpdateOrderCategoryRequest request = new CategoryDTO.UpdateOrderCategoryRequest(previousId);
         return putPropertyWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, property);
     }
@@ -232,7 +232,24 @@ public class AcceptanceTest {
             String token = tokenProvider.createToken(userId);
 
             mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/{id}", resourceId)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent())
+                    .andReturn();
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T> void deleteListWithLogin(String uri, T request, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+
+
+            mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isNoContent())
                     .andReturn();
@@ -248,8 +265,8 @@ public class AcceptanceTest {
         return postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
     }
 
-    protected BoardPhotoDTO.BoardPhotoResponse 보드_사진_생성(Long userId, Long storagePhotoId, Long boardId) {
-        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoId, boardId);
-        return postWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
+    protected List<BoardPhotoDTO.BoardPhotoResponse> 보드_사진_복수_생성(Long userId, List<Long> storagePhotoIds, Long boardId) {
+        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoIds, boardId);
+        return postListWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
     }
 }

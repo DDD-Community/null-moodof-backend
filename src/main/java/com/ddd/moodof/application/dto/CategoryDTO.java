@@ -1,6 +1,5 @@
 package com.ddd.moodof.application.dto;
 
-import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.category.Category;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +42,7 @@ public class CategoryDTO {
                     .build();
         }
 
-        public static List<CategoryResponse> listForm(List<Category> categories) {
+        public static List<CategoryResponse> listFrom(List<Category> categories) {
             return categories.stream().map(category -> CategoryResponse.builder()
                     .id(category.getId())
                     .userId(category.getUserId())
@@ -61,7 +59,7 @@ public class CategoryDTO {
     @AllArgsConstructor
     @Getter
     @Builder
-    public static class CategoryWithBoardResponse{
+    public static class CategoryWithBoardResponse {
 
         private Long id;
 
@@ -75,7 +73,7 @@ public class CategoryDTO {
 
         private LocalDateTime lastModifiedDate;
 
-        private List<BoardDTO.BoardResponse> boardList = new ArrayList<>();
+        private List<BoardDTO.BoardResponse> boardList;
 
         public static CategoryWithBoardResponse from(CategoryDTO.CategoryResponse category, List<BoardDTO.BoardResponse> boards) {
             return CategoryWithBoardResponse.builder()
@@ -110,7 +108,8 @@ public class CategoryDTO {
                     .lastModifiedDate(null)
                     .build();
         }
-        public Category toEntity(Long userId, String title, Long previousId){
+
+        public Category toEntity(Long userId, String title, Long previousId) {
             return Category.builder()
                     .id(null)
                     .previousId(previousId)
