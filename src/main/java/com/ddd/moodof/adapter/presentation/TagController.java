@@ -1,6 +1,7 @@
 package com.ddd.moodof.adapter.presentation;
 
 import com.ddd.moodof.adapter.presentation.api.TagAPI;
+import com.ddd.moodof.application.TagCreator;
 import com.ddd.moodof.application.TagService;
 import com.ddd.moodof.application.dto.TagDTO;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,7 +16,9 @@ import java.util.List;
 @RestController
 public class TagController implements TagAPI {
     public static final String API_TAG = "/api/tags";
+
     private final TagService tagService;
+    private final TagCreator tagCreator;
 
     @Override
     @GetMapping
@@ -27,11 +29,11 @@ public class TagController implements TagAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<TagDTO.TagResponse> create(
+    public ResponseEntity<TagDTO.TagCreatedResponse> createWithTagAttachment(
             @RequestBody @Valid TagDTO.CreateRequest request,
             @LoginUserId Long userId) {
-        TagDTO.TagResponse response = tagService.create(request, userId);
-        return ResponseEntity.created(URI.create(API_TAG + "/" + response.getId())).body(response);
+        TagDTO.TagCreatedResponse response = tagCreator.create(request.getName(), userId, request.getStoragePhotoId());
+        return ResponseEntity.ok(response);
     }
 
     @Override

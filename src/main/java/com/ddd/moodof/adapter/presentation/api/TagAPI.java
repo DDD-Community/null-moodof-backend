@@ -18,7 +18,7 @@ public interface TagAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PostMapping
-    ResponseEntity<TagDTO.TagResponse> create(@RequestBody @Valid TagDTO.CreateRequest request, @ApiIgnore @LoginUserId Long userId);
+    ResponseEntity<TagDTO.TagCreatedResponse> createWithTagAttachment(@RequestBody @Valid TagDTO.CreateRequest request, @ApiIgnore @LoginUserId Long userId);
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping("/{id}")
