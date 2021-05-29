@@ -14,11 +14,8 @@ public interface PublicAPI {
     @GetMapping("/boards/{sharedKey}")
     ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> findAllByBoard(@PathVariable String sharedKey);
 
-//    @GetMapping("/boards/{sharedId}")
-//    ResponseEntity<List<CategoryDTO.CategoryWithBoardResponse>> getSharedBoard(@PathVariable String sharedId);
-
-    @GetMapping("/boards/{sharedId}/detail/{id}")
-    ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> getSharedBoardDetail(@PathVariable String sharedId,@PathVariable Long id);
+    @GetMapping("/boards/{sharedKey}/detail/{id}")
+    ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> getSharedBoardDetail(@PathVariable String sharedKey,@PathVariable Long id);
 
 
 }

@@ -54,7 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //@formatter:off
         super.configure(web);
         web.httpFirewall(allowUrlEncodedSlashHttpFirewall());
     }
