@@ -38,3 +38,4 @@ out/
 
 application-security.yml
 /src/main/resources/application-encrypto.yml
+/src/main/resources/application-dev.yml
