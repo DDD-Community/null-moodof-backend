@@ -17,18 +17,9 @@ public class TagDTO {
     @AllArgsConstructor
     @Getter
     public static class CreateRequest {
+        private Long storagePhotoId;
         @NotBlank
         private String name;
-
-        public Tag toEntity(Long userId, String name) {
-            return Tag.builder()
-                    .id(null)
-                    .userId(userId)
-                    .name(name)
-                    .createdDate(null)
-                    .lastModifiedDate(null)
-                    .build();
-        }
     }
 
     @NoArgsConstructor
@@ -80,5 +71,19 @@ public class TagDTO {
                     .lastModifiedDate(tag.getLastModifiedDate())
                     .build()).collect(Collectors.toList());
         }
+
+
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class TagCreatedResponse {
+        private Long id;
+        private Long userId;
+        private String name;
+        private LocalDateTime createdDate;
+        private LocalDateTime lastModifiedDate;
+        private TagAttachmentDTO.TagAttachmentResponse tagAttachment;
     }
 }

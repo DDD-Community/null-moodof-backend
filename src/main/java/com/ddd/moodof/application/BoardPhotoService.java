@@ -18,9 +18,9 @@ import java.util.Optional;
 public class BoardPhotoService {
     private static final long FIRST_PREVIOUS_BOARD_PHOTO_ID = 0L;
 
-    private final BoardRepository boardRepository;
     private final BoardPhotoRepository boardPhotoRepository;
     private final BoardPhotoVerifier boardPhotoVerifier;
+    private final BoardRepository boardRepository;
 
     public List<BoardPhotoDTO.BoardPhotoResponse> addPhotos(Long userId, BoardPhotoDTO.AddBoardPhoto request) {
         // TODO: 2021/05/25 StoragePhoto 삭제 대응
@@ -60,7 +60,6 @@ public class BoardPhotoService {
         List<BoardPhoto> boardPhotos = boardPhotoRepository.findAllByBoardIdAndUserId(boardId, userId);
         return BoardPhotoDTO.BoardPhotoResponse.listFrom(boardPhotos);
     }
-
     public List<BoardPhotoDTO.BoardPhotoResponse> findAllBySharedKey(String sharedKey) {
         Board board = boardRepository.findBySharedKey(sharedKey)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 sharedKey =" + sharedKey));

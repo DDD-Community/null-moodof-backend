@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TagAttachmentAcceptanceTest extends AcceptanceTest {
     private StoragePhotoDTO.StoragePhotoResponse storagePhoto;
-    private TagDTO.TagResponse tag;
+    private TagDTO.TagCreatedResponse tag;
 
     @Override
     @BeforeEach
     void setUp() {
         super.setUp();
         storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
-        tag = 태그_생성(userId, "tag");
+        tag = 태그_생성(userId, storagePhoto.getId(), "tag");
     }
 
     @Test

@@ -92,9 +92,30 @@ public class AcceptanceTest {
         return postListWithLogin(new TrashPhotoDTO.CreateTrashPhotos(storagePhotoIds), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoCreatedResponse.class, userId);
     }
 
-    protected TagDTO.TagResponse 태그_생성(Long userId, String name) {
-        TagDTO.CreateRequest request = new TagDTO.CreateRequest(name);
-        return postWithLogin(request, API_TAG, TagDTO.TagResponse.class, userId);
+    protected BoardDTO.BoardSharedResponse 보드_공유하기_생성(Long id, Long userId){
+        BoardDTO.BoardSharedRequest request = new BoardDTO.BoardSharedRequest(id);
+        return postWithLogin(request, API_BOARD+ "/shared", BoardDTO.BoardSharedResponse.class, userId);
+    }
+
+    protected TagDTO.TagCreatedResponse 태그_생성(Long userId, Long storagePhotoId, String name) {
+        TagDTO.CreateRequest request = new TagDTO.CreateRequest(storagePhotoId, name);
+        try {
+            String token = tokenProvider.createToken(userId);
+            String body = objectMapper.writeValueAsString(request);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(API_TAG)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), TagDTO.TagCreatedResponse.class);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
     }
 
     protected TagDTO.TagResponse 태그_수정(Long id, Long userId, String name) {
@@ -232,6 +253,22 @@ public class AcceptanceTest {
             String token = tokenProvider.createToken(userId);
 
             mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/{id}", resourceId)
+                    .header(AUTHORIZATION, BEARER + token))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent())
+                    .andReturn();
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+    protected <T> void deleteListWithLogin(String uri, T request, Long userId) {
+        try {
+            String token = tokenProvider.createToken(userId);
+
+
+            mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isNoContent())
@@ -243,9 +280,42 @@ public class AcceptanceTest {
         }
     }
 
+
+    protected <T> List<T> getListNotLogin(String uri, Class<T> response, String property) {
+        try {
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri + "/{property}", property)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+    protected <T> T getNotLoginWithMultiProperty(String uri, Class<T> response, String property1, Long property2) {
+        try {
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri, property1, property2)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
     protected TagAttachmentDTO.TagAttachmentResponse 태그붙이기_생성(Long userId, Long storagePhotoId, Long tagId) {
         TagAttachmentDTO.CreateTagAttachment request = new TagAttachmentDTO.CreateTagAttachment(storagePhotoId, tagId);
         return postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
     }
 
+    protected List<BoardPhotoDTO.BoardPhotoResponse> 보드_사진_복수_생성(Long userId, List<Long> storagePhotoIds, Long boardId) {
+        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoIds, boardId);
+        return postListWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
+    }
 }

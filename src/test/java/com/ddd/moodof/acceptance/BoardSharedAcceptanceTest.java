@@ -69,8 +69,9 @@ public class BoardSharedAcceptanceTest extends AcceptanceTest{
         보드_사진_복수_생성(userId, List.of(storagePhoto2.getId()), board3.getId());
         보드_사진_복수_생성(userId, List.of(storagePhoto3.getId()), board1.getId());
         보드_사진_복수_생성(userId, List.of(storagePhoto4.getId()), board2.getId());
-        TagDTO.TagResponse tag1 = 태그_생성(userId, "tag-1");
-        TagDTO.TagResponse tag2 = 태그_생성(userId, "tag-2");
+
+        TagDTO.TagCreatedResponse tag1 = 태그_생성(userId, storagePhoto1.getId(), "tag-1");
+        TagDTO.TagCreatedResponse tag2 = 태그_생성(userId, storagePhoto1.getId(), "tag-2");
         태그붙이기_생성(userId, storagePhoto2.getId(), tag1.getId());
         태그붙이기_생성(userId, storagePhoto2.getId(), tag2.getId());
         보관함사진_휴지통_이동(List.of(storagePhoto3.getId(), storagePhoto4.getId()), userId);

@@ -51,6 +51,7 @@ public class StoragePhotoController implements StoragePhotoAPI {
             @PathVariable Long id,
             @RequestParam(required = false, value = "tagIds") List<Long> tagIds) {
         StoragePhotoDTO.StoragePhotoDetailResponse response = storagePhotoService.findDetail(userId, id, tagIds);
+
         return ResponseEntity.ok(response);
     }
 
