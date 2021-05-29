@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface StoragePhotoQueryRepository {
     StoragePhotoDTO.StoragePhotoPageResponse findPageExcludeTrash(Long userId, Pageable pageable, List<Long> tagIds);
+
+    StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id, List<Long> tagIds);
 }

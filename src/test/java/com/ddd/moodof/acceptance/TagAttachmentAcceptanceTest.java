@@ -3,7 +3,6 @@ package com.ddd.moodof.acceptance;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagAttachmentDTO;
 import com.ddd.moodof.application.dto.TagDTO;
-import com.ddd.moodof.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,18 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TagAttachmentAcceptanceTest extends AcceptanceTest {
-    private Long userId;
     private StoragePhotoDTO.StoragePhotoResponse storagePhoto;
-    private TagDTO.TagResponse tag;
+    private TagDTO.TagCreatedResponse tag;
 
     @Override
     @BeforeEach
     void setUp() {
         super.setUp();
-        User user = signUp();
-        userId = user.getId();
         storagePhoto = 보관함사진_생성(userId, "photoUri", "representativeColor");
-        tag = 태그_생성(userId, "tag");
+        tag = 태그_생성(userId, storagePhoto.getId(), "tag");
     }
 
     @Test
