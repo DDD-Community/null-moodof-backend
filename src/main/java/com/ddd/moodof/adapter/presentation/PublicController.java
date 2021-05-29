@@ -1,8 +1,9 @@
 package com.ddd.moodof.adapter.presentation;
 
 import com.ddd.moodof.adapter.presentation.api.PublicAPI;
-import com.ddd.moodof.application.BoardService;
+import com.ddd.moodof.application.BoardPhotoService;
 import com.ddd.moodof.application.StoragePhotoService;
+import com.ddd.moodof.application.dto.BoardPhotoDTO;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,18 +20,18 @@ public class PublicController implements PublicAPI {
 
     private final StoragePhotoService storagePhotoService;
 
-    private final BoardService boardService;
+    private final BoardPhotoService boardPhotoService;
 
     @Override
-    @GetMapping("/boards/{sharedId}")
-    public ResponseEntity<List<CategoryDTO.CategoryWithBoardResponse>> getSharedBoard(@PathVariable String sharedId){
-        List<CategoryDTO.CategoryWithBoardResponse> response = boardService.findBySharedKey(sharedId);
-        return ResponseEntity.ok(response);
+    @GetMapping("/boards/{sharedKey}")
+    public ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> findAllByBoard(@PathVariable String sharedKey) {
+        List<BoardPhotoDTO.BoardPhotoResponse> responses = boardPhotoService.findAllBySharedKey(sharedKey);
+        return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/boards/{sharedId}/detail/{id}")
-    public ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> getSharedBoardDetail(@PathVariable String sharedId,@PathVariable Long id){
-        StoragePhotoDTO.StoragePhotoDetailResponse response = storagePhotoService.findSharedBoardDetail(sharedId, id);
+    @GetMapping("/boards/{sharedKey}/detail/{id}")
+    public ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> getSharedBoardDetail(@PathVariable String sharedKey,@PathVariable Long id){
+        StoragePhotoDTO.StoragePhotoDetailResponse response = storagePhotoService.findSharedBoardDetail(sharedKey, id);
         return ResponseEntity.ok(response);
     }
 }

@@ -33,9 +33,11 @@ public class EncryptUtil {
         System.arraycopy(saltBytes, 0, buffer, 0, saltBytes.length);
         System.arraycopy(ivBytes, 0, buffer, saltBytes.length, ivBytes.length);
         System.arraycopy(encryptedTextBytes, 0, buffer, saltBytes.length + ivBytes.length, encryptedTextBytes.length);
-        return Base64.getEncoder().encodeToString(buffer);
+//        .replaceAll("[^0-9a-zA-Z]", "");
+        return Base64.getEncoder().encodeToString(buffer).replaceAll("\\/","%");
     }
     public static String decryptAES256(String msg, String key) throws Exception {
+        msg = msg.replaceAll("%","/");
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         ByteBuffer buffer = ByteBuffer.wrap(Base64.getDecoder().decode(msg));
         byte[] saltBytes = new byte[20];

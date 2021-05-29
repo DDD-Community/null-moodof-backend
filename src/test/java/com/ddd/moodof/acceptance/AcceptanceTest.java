@@ -73,11 +73,6 @@ public class AcceptanceTest {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
     }
 
-    protected BoardDTO.BoardSharedResponse 보드_공유하기_생성(Long id, Long userId){
-        BoardDTO.BoardSharedRequest request = new BoardDTO.BoardSharedRequest(id);
-        return postWithLogin(request, API_BOARD+ "/shared", BoardDTO.BoardSharedResponse.class, userId);
-    }
-
     protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId){
         CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
@@ -222,36 +217,10 @@ public class AcceptanceTest {
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();
+
             CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
 
             return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new AssertionError("test fails");
-        }
-    }
-    protected <T> List<T> getListNotLoginWithProperty(String uri, Class<T> response, String property) {
-        try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri + "/{property}", property)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andReturn();
-            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
-
-            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new AssertionError("test fails");
-        }
-    }
-    protected <T> T getNotLoginWithMultiProperty(String uri, Class<T> response, String property1, Long property2) {
-        try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri, property1, property2)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andReturn();
-
-            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AssertionError("test fails");
@@ -279,8 +248,4 @@ public class AcceptanceTest {
         return postWithLogin(request, API_TAG_ATTACHMENT, TagAttachmentDTO.TagAttachmentResponse.class, userId);
     }
 
-    protected BoardPhotoDTO.BoardPhotoResponse 보드_사진_생성(Long userId, Long storagePhotoId, Long boardId) {
-        BoardPhotoDTO.AddBoardPhoto request = new BoardPhotoDTO.AddBoardPhoto(storagePhotoId, boardId);
-        return postWithLogin(request, API_BOARD_PHOTO, BoardPhotoDTO.BoardPhotoResponse.class, userId);
-    }
 }

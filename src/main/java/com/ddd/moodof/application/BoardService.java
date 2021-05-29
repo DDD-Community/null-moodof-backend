@@ -3,6 +3,7 @@ package com.ddd.moodof.application;
 import com.ddd.moodof.adapter.infrastructure.configuration.EncryptConfig;
 import com.ddd.moodof.adapter.infrastructure.security.encrypt.EncryptUtil;
 import com.ddd.moodof.application.dto.BoardDTO;
+import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.application.verifier.BoardVerifier;
 import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.board.BoardSharedKeyUpdater;
@@ -17,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -128,5 +130,11 @@ public class BoardService {
                 .append("/")
                 .append(sharedKey);
         return sharedURL.toString();
+    }
+
+    public List<CategoryDTO.CategoryWithBoardResponse> findBySharedKey(String sharedKey) {
+        Board board = boardRepository.findBySharedKey(sharedKey)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 key = " + sharedKey));
+        return categoryQueryRepository.findAllByUserId(board.getUserId());
     }
 }

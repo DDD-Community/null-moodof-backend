@@ -46,9 +46,11 @@ public class StoragePhotoController implements StoragePhotoAPI {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> findDetail(@LoginUserId Long userId, @PathVariable Long id) {
-        StoragePhotoDTO.StoragePhotoDetailResponse response = storagePhotoService.findDetail(userId, id);
-
+    public ResponseEntity<StoragePhotoDTO.StoragePhotoDetailResponse> findDetail(
+            @LoginUserId Long userId,
+            @PathVariable Long id,
+            @RequestParam(required = false, value = "tagIds") List<Long> tagIds) {
+        StoragePhotoDTO.StoragePhotoDetailResponse response = storagePhotoService.findDetail(userId, id, tagIds);
         return ResponseEntity.ok(response);
     }
 

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -49,13 +50,13 @@ public class StoragePhotoService {
         storagePhotoRepository.deleteById(id);
     }
 
-    public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id) {
-        return storagePhotoQueryRepository.findDetail(userId, id);
+    public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id, List<Long> tagIds) {
+        return storagePhotoQueryRepository.findDetail(userId, id, tagIds);
     }
 
     public StoragePhotoDTO.StoragePhotoDetailResponse findSharedBoardDetail(String sharedKey, Long id) {
         Board board = boardRepository.findBySharedKey(sharedKey)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 sharedKey : " + sharedKey));
-        return storagePhotoQueryRepository.findDetail(board.getUserId(), id);
+        return storagePhotoQueryRepository.findDetail(board.getUserId(), id, new ArrayList<>());
     }
 }
