@@ -56,9 +56,9 @@ public class StoragePhotoController implements StoragePhotoAPI {
     }
 
     @Override
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@LoginUserId Long userId, @PathVariable Long id) {
-        storagePhotoService.deleteById(userId, id);
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@LoginUserId Long userId, @RequestBody StoragePhotoDTO.DeleteStoragePhotos request) {
+        storagePhotoService.delete(userId, request);
         return ResponseEntity.noContent().build();
     }
 }

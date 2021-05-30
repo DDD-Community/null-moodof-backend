@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.ddd.moodof.adapter.presentation.TrashPhotoController.API_TRASH_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +70,11 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
         StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
         List<TrashPhotoDTO.TrashPhotoCreatedResponse> responses = 보관함사진_휴지통_이동(List.of(storagePhoto.getId()), userId);
 
+        List<Long> trashPhotoIds = responses.stream()
+                .map(TrashPhotoDTO.TrashPhotoCreatedResponse::getId)
+                .collect(Collectors.toList());
+
         // when then
-        deleteWithLogin(API_TRASH_PHOTO, responses.get(0).getId(), userId);
+        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.CancelTrashPhotos(trashPhotoIds), userId);
     }
 }
