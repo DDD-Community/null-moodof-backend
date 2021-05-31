@@ -4,7 +4,9 @@ import com.ddd.moodof.domain.model.board.Board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 public class BoardDTO {
@@ -15,6 +17,8 @@ public class BoardDTO {
     public static class CreateBoard {
         private Long previousBoardId;
         private Long categoryId;
+        @Length(max = 20, message = "보드의 최대 글자수는 20자 입니다.")
+        @NotBlank
         private String name;
 
         public Board toEntity(Long userId) {
@@ -43,6 +47,8 @@ public class BoardDTO {
     @Getter
     @AllArgsConstructor
     public static class ChangeBoardName {
+        @Length(max = 20, message = "보드의 최대 글자수는 20자 입니다.")
+        @NotBlank
         private String name;
     }
 

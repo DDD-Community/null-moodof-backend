@@ -14,12 +14,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class TrashPhotoService {
+    private static final int MAX_TRASH_PHOTO_COUNT = 120;
+
     private final TrashPhotoRepository trashPhotoRepository;
     private final TrashPhotoQueryRepository trashPhotoQueryRepository;
     private final StoragePhotoService storagePhotoService;
     private final PaginationUtils paginationUtils;
 
     public List<TrashPhotoDTO.TrashPhotoCreatedResponse> add(Long userId, TrashPhotoDTO.CreateTrashPhotos request) {
+        if (trashPhotoRepository.countByUserId(userId) >= MAX_TRASH_PHOTO_COUNT) {
+            throw new IllegalStateException("휴지통 최대 개수는 120개 입니다.");
+        }
+
         if (request.getStoragePhotoId().stream().allMatch(it -> storagePhotoService.existsByIdAndUserId(it, userId))) {
             List<TrashPhoto> trashPhotos = trashPhotoRepository.saveAll(request.toEntities(userId));
             return TrashPhotoDTO.TrashPhotoCreatedResponse.listOf(trashPhotos);

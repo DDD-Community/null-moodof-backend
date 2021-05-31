@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -93,6 +94,7 @@ public class CategoryDTO {
     @Getter
     @Builder
     public static class CreateCategoryRequest {
+        @Length(max = 20, message = "카테고리의 최대 글자수는 20자 입니다.")
         @NotBlank
         private String title;
 
@@ -126,6 +128,7 @@ public class CategoryDTO {
     @AllArgsConstructor
     @Getter
     public static class UpdateTitleCategoryRequest {
+        @Length(max = 20, message = "카테고리의 최대 글자수는 20자 입니다.")
         @NotBlank
         private String title;
     }

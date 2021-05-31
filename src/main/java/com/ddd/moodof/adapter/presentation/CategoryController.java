@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class CategoryController implements CategoryAPI {
     @Override
     @PostMapping
     public ResponseEntity<CategoryDTO.CategoryResponse> create(
-            @RequestBody CategoryDTO.CreateCategoryRequest request,
+            @Valid @RequestBody CategoryDTO.CreateCategoryRequest request,
             @LoginUserId Long userId) {
         CategoryDTO.CategoryResponse response = categoryService.create(request, userId);
         return ResponseEntity.created(URI.create(API_CATEGORY + "/" + response.getId())).body(response);
