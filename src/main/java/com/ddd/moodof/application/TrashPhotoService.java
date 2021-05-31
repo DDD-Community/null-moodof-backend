@@ -8,6 +8,7 @@ import com.ddd.moodof.domain.model.trash.photo.TrashPhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,21 +27,22 @@ public class TrashPhotoService {
             throw new IllegalStateException("휴지통 최대 개수는 120개 입니다.");
         }
 
-        if (request.getStoragePhotoId().stream().allMatch(it -> storagePhotoService.existsByIdAndUserId(it, userId))) {
+        if (request.getStoragePhotoIds().stream().allMatch(it -> storagePhotoService.existsByIdAndUserId(it, userId))) {
             List<TrashPhoto> trashPhotos = trashPhotoRepository.saveAll(request.toEntities(userId));
             return TrashPhotoDTO.TrashPhotoCreatedResponse.listOf(trashPhotos);
         }
-        throw new IllegalArgumentException("요청과 일치하지 않는 보관함사진이 존재합니다." + request.getStoragePhotoId());
+        throw new IllegalArgumentException("요청과 일치하지 않는 보관함사진이 존재합니다." + request.getStoragePhotoIds());
     }
 
     public TrashPhotoDTO.TrashPhotoPageResponse findPage(Long userId, int page, int size, String sortBy, boolean descending) {
         return trashPhotoQueryRepository.findPage(userId, PageRequest.of(page, size, paginationUtils.getSort(sortBy, descending)));
     }
 
-    public void cancel(Long id, Long userId) {
-        if (!trashPhotoRepository.existsByIdAndUserId(id, userId)) {
-            throw new IllegalArgumentException("요청과 일치하는 휴지통 사진이 없습니다. id / userId: " + id + " / " + userId);
+    @Transactional
+    public void cancel(TrashPhotoDTO.CancelTrashPhotos request, Long userId) {
+        if (!trashPhotoRepository.existsByIdInAndUserId(request.getTrashPhotoIds(), userId)) {
+            throw new IllegalArgumentException("요청과 일치하는 휴지통 사진이 없습니다.");
         }
-        trashPhotoRepository.deleteById(id);
+        trashPhotoRepository.deleteAllByIdIn(request.getTrashPhotoIds());
     }
 }

@@ -9,6 +9,7 @@ import com.ddd.moodof.domain.model.storage.photo.StoragePhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,11 +34,12 @@ public class StoragePhotoService {
         return storagePhotoRepository.existsByIdAndUserId(id, userId);
     }
 
-    public void deleteById(Long userId, Long id) {
-        if (!storagePhotoRepository.existsByIdAndUserId(id, userId)) {
-            throw new IllegalArgumentException("요청과 일치하는 보관함 사진이 없습니다. id / userId: " + id + " / " + userId);
+    @Transactional
+    public void delete(Long userId, StoragePhotoDTO.DeleteStoragePhotos request) {
+        if (!storagePhotoRepository.existsByIdInAndUserId(request.getStoragePhotoIds(), userId)) {
+            throw new IllegalArgumentException("요청과 일치하는 보관함 사진이 없습니다. ");
         }
-        storagePhotoRepository.deleteById(id);
+        storagePhotoRepository.deleteAllByIdIn(request.getStoragePhotoIds());
     }
 
     public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id, List<Long> tagIds) {
