@@ -72,12 +72,10 @@ public class BoardDTO {
     public static class BoardSharedResponse {
         private Long id;
 
-        private String sharedURI;
-
         private String sharedKey;
 
-        public static BoardDTO.BoardSharedResponse from(Long id, String sharedURL, String sharedKey) {
-            return new BoardDTO.BoardSharedResponse(id, sharedURL, sharedKey);
+        public static BoardDTO.BoardSharedResponse from(Long id, String sharedKey) {
+            return new BoardDTO.BoardSharedResponse(id, sharedKey);
         }
     }
 

@@ -69,43 +69,11 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
 
-    public BoardDTO.BoardSharedResponse getSharedURI(Long userId, Long id, HttpServletRequest httpServletRequest) {
+    public BoardDTO.BoardSharedResponse getSharedURI(Long userId, Long id) {
         Board board = boardRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Board, id = " + id));
-        String requestURI = getUrl(httpServletRequest);
         String sharedKey = board.getSharedKey();
-        String sharedURI = generatedURI(requestURI, sharedKey);
-        return BoardDTO.BoardSharedResponse.from(id,sharedURI, sharedKey);
+        return BoardDTO.BoardSharedResponse.from(id, sharedKey);
     }
 
-    public String getUrl(HttpServletRequest request) {
-        ServletServerHttpRequest httpRequest = new ServletServerHttpRequest(request);
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(httpRequest).build();
-
-        String scheme = uriComponents.getScheme();
-        String serverName = request.getServerName();
-        int serverPort = request.getServerPort();
-        String contextPath = request.getRequestURI();
-        StringBuilder url = new StringBuilder();
-
-        url.append(scheme).append("://");
-        url.append(serverName);
-
-        if (serverName.equals(LOCALHOST)) {
-            url.append(":").append("8080");
-        }else {
-            if (serverPort != 80 && serverPort != 443) {
-                url.append(":").append(serverPort);
-            }
-        }
-        url.append(contextPath);
-        return url.toString();
-    }
-
-    private String generatedURI(String requestURL, String sharedKey) {
-        return UriComponentsBuilder.fromUriString(requestURL)
-                .path(sharedKey)
-                .build()
-                .toUriString();
-    }
 }

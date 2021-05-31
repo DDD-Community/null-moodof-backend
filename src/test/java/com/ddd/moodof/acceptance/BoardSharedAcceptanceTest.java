@@ -46,8 +46,6 @@ public class BoardSharedAcceptanceTest extends AcceptanceTest{
 
         // then
         assertThat(response.getSharedKey()).isEqualTo(board.getSharedKey());
-
-
     }
     
     @Test

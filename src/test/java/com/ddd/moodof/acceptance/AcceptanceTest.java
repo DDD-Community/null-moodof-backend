@@ -92,11 +92,6 @@ public class AcceptanceTest {
         return postListWithLogin(new TrashPhotoDTO.CreateTrashPhotos(storagePhotoIds), API_TRASH_PHOTO, TrashPhotoDTO.TrashPhotoCreatedResponse.class, userId);
     }
 
-    protected BoardDTO.BoardSharedResponse 보드_공유하기_생성(Long id, Long userId){
-        BoardDTO.BoardSharedRequest request = new BoardDTO.BoardSharedRequest(id);
-        return postWithLogin(request, API_BOARD+ "/shared", BoardDTO.BoardSharedResponse.class, userId);
-    }
-
     protected TagDTO.TagCreatedResponse 태그_생성(Long userId, Long storagePhotoId, String name) {
         TagDTO.CreateRequest request = new TagDTO.CreateRequest(storagePhotoId, name);
         try {

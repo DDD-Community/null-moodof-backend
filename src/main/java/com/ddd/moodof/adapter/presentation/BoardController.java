@@ -47,8 +47,8 @@ public class BoardController implements BoardAPI {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/{id}")
-    public ResponseEntity<BoardDTO.BoardSharedResponse> getSharedKey(@LoginUserId Long userId, @PathVariable Long id, HttpServletRequest httpServletRequest){
-        BoardDTO.BoardSharedResponse response = boardService.getSharedURI(userId, id, httpServletRequest);
+    public ResponseEntity<BoardDTO.BoardSharedResponse> getSharedKey(@LoginUserId Long userId, @PathVariable Long id){
+        BoardDTO.BoardSharedResponse response = boardService.getSharedURI(userId, id);
         return ResponseEntity.ok(response);
     }
 }
