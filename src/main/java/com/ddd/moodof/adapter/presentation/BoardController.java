@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RequiredArgsConstructor
@@ -44,5 +45,10 @@ public class BoardController implements BoardAPI {
     public ResponseEntity<BoardDTO.BoardResponse> delete(@LoginUserId Long userId, @PathVariable Long id) {
         boardService.delete(userId, id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<BoardDTO.BoardSharedResponse> getSharedKey(@LoginUserId Long userId, @PathVariable Long id, HttpServletRequest httpServletRequest){
+        BoardDTO.BoardSharedResponse response = boardService.getSharedURI(userId, id, httpServletRequest);
+        return ResponseEntity.ok(response);
     }
 }

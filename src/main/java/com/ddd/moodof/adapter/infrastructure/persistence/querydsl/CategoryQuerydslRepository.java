@@ -44,6 +44,7 @@ public class CategoryQuerydslRepository implements CategoryQueryRepository {
                             board.userId,
                             board.name,
                             board.categoryId,
+                            board.sharedKey,
                             board.createdDate,
                             board.lastModifiedDate))
                     .from(board)
