@@ -14,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class BoardPhotoService {
+    private static final int MAX_BOARD_PHOTO_COUNT = 50;
     private static final long FIRST_PREVIOUS_BOARD_PHOTO_ID = 0L;
 
     private final BoardPhotoRepository boardPhotoRepository;
@@ -21,6 +22,9 @@ public class BoardPhotoService {
 
     public List<BoardPhotoDTO.BoardPhotoResponse> addPhotos(Long userId, BoardPhotoDTO.AddBoardPhoto request) {
         // TODO: 2021/05/25 StoragePhoto 삭제 대응
+        if (boardPhotoRepository.countByBoardId(request.getBoardId()) >= MAX_BOARD_PHOTO_COUNT) {
+            throw new IllegalStateException("보드에 추가할 수 있는 최대 사진 개수는 50개 입니다.");
+        }
         List<BoardPhoto> boardPhotos = boardPhotoVerifier.toEntities(userId, request.getStoragePhotoIds(), request.getBoardId());
         Optional<BoardPhoto> recentest = boardPhotoRepository.findFirstByBoardIdOrderByLastModifiedDateDesc(request.getBoardId());
         if (recentest.isPresent()) {

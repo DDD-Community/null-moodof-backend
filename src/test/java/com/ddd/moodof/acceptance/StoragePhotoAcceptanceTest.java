@@ -135,7 +135,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         StoragePhotoDTO.StoragePhotoResponse storagePhotoResponse = 보관함사진_생성(userId, "uri", "color");
 
         // when then
-        deleteWithLogin(API_STORAGE_PHOTO, storagePhotoResponse.getId(), userId);
+        deleteListWithLogin(API_STORAGE_PHOTO, new StoragePhotoDTO.DeleteStoragePhotos(List.of(storagePhotoResponse.getId())), userId);
     }
 
     @Test

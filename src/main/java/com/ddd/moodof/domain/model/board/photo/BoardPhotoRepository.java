@@ -9,4 +9,6 @@ public interface BoardPhotoRepository extends JpaRepository<BoardPhoto, Long> {
     Optional<BoardPhoto> findFirstByBoardIdOrderByLastModifiedDateDesc(Long boardId);
 
     List<BoardPhoto> findAllByBoardIdAndUserId(Long boardId, Long userId);
+
+    long countByBoardId(Long boardId);
 }

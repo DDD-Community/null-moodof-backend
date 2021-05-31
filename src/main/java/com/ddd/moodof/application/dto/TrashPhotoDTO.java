@@ -15,10 +15,10 @@ public class TrashPhotoDTO {
     @Getter
     @AllArgsConstructor
     public static class CreateTrashPhotos {
-        private List<Long> storagePhotoId;
+        private List<Long> storagePhotoIds;
 
         public List<TrashPhoto> toEntities(Long userId) {
-            return storagePhotoId.stream()
+            return storagePhotoIds.stream()
                     .map(storagePhotoId -> new TrashPhoto(null, storagePhotoId, userId, null, null))
                     .collect(Collectors.toList());
         }
@@ -66,5 +66,12 @@ public class TrashPhotoDTO {
     public static class TrashPhotoPageResponse {
         private long totalPageCount;
         private List<TrashPhotoResponse> responses;
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @AllArgsConstructor
+    public static class CancelTrashPhotos {
+        private List<Long> trashPhotoIds;
     }
 }

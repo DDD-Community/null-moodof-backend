@@ -63,4 +63,8 @@ public class Board {
     public boolean isUserNotEqual(Long userId) {
         return !this.userId.equals(userId);
     }
+
+    public boolean isCategoryNotEqual(Long categoryId) {
+        return !this.categoryId.equals(categoryId);
+    }
 }
