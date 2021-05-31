@@ -11,4 +11,6 @@ public interface StoragePhotoRepository extends JpaRepository<StoragePhoto, Long
     boolean existsByIdAndUserId(Long id, Long userId);
 
     void deleteAllByIdIn(List<Long> ids);
+
+    long countByUserId(Long userId);
 }

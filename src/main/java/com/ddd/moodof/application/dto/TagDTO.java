@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public class TagDTO {
     @Getter
     public static class CreateRequest {
         private Long storagePhotoId;
+
+        @Length(max = 15, message = "태그의 최대 글자수는 15자 입니다.")
         @NotBlank
         private String name;
     }
@@ -26,6 +29,7 @@ public class TagDTO {
     @AllArgsConstructor
     @Getter
     public static class UpdateRequest {
+        @Length(max = 15, message = "태그의 최대 글자수는 15자 입니다.")
         @NotBlank
         private String name;
 

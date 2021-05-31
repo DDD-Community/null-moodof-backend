@@ -8,4 +8,8 @@ public interface TrashPhotoRepository extends JpaRepository<TrashPhoto, Long> {
     boolean existsByIdInAndUserId(List<Long> id, Long userId);
 
     void deleteAllByIdIn(List<Long> id);
+
+    boolean existsByIdAndUserId(Long id, Long userId);
+
+    long countByUserId(Long userId);
 }
