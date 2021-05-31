@@ -1,36 +1,53 @@
 package com.ddd.moodof.acceptance;
 
-import com.ddd.moodof.adapter.infrastructure.configuration.EncryptConfig;
-import com.ddd.moodof.adapter.infrastructure.security.encrypt.EncryptUtil;
 import com.ddd.moodof.application.dto.*;
+import com.ddd.moodof.domain.model.board.Board;
+import com.ddd.moodof.domain.model.board.BoardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
-import static com.ddd.moodof.adapter.presentation.PublicController.API_PUBLIC;
+import static com.ddd.moodof.adapter.presentation.BoardController.API_BOARD;
+import static com.ddd.moodof.adapter.presentation.PublicBoardController.API_PUBLIC_BOARDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class BoardSharedAcceptanceTest extends AcceptanceTest{
 
     @Autowired
-    private EncryptConfig encryptConfig;
+    private BoardRepository boardRepository;
+
 
     @Test
-    public void 공유_URL_생성() throws Exception {
+    public void 공유_URI_생성() throws Exception {
+        // given
+        CategoryDTO.CategoryResponse category = 카테고리_생성(userId, "title", 0L);
+
+        // when
+        BoardDTO.BoardResponse response = 보드_생성(userId, 0L, category.getId(), "name");
+        Board board = boardRepository.findById(response.getId()).get();
+
+        // then
+        assertAll(
+                () -> assertThat(response.getId()).isEqualTo(board.getId()),
+                () -> assertThat(response.getCategoryId()).isEqualTo(board.getCategoryId()),
+                () -> assertThat(response.getSharedKey()).isEqualTo(board.getSharedKey())
+        );
+    }
+
+    @Test
+    public void 공유_URI_조회() throws Exception {
         // given
         CategoryDTO.CategoryResponse category = 카테고리_생성(userId, "title", 0L);
         BoardDTO.BoardResponse board = 보드_생성(userId, 0L, category.getId(), "name");
 
         // when
-        BoardDTO.BoardSharedResponse response = 보드_공유하기_생성(board.getId(), userId);
-        Long responseDecrypt = Long.parseLong(EncryptUtil.decryptAES256(response.getSharedKey(), encryptConfig.getKey()));
+        BoardDTO.BoardSharedResponse response = getWithLogin(API_BOARD + "/" + board.getId(), BoardDTO.BoardSharedResponse.class, userId);
 
         // then
-        assertAll(
-                () -> assertThat(board.getCategoryId()).isEqualTo(category.getId()),
-                () -> assertThat(response.getId()).isEqualTo(board.getId()),
-                () -> assertThat(responseDecrypt).isEqualTo(board.getId())
-        );
+        assertThat(response.getSharedKey()).isEqualTo(board.getSharedKey());
+
+
     }
     
     @Test
@@ -40,17 +57,17 @@ public class BoardSharedAcceptanceTest extends AcceptanceTest{
         StoragePhotoDTO.StoragePhotoResponse storagePhoto2 = 보관함사진_생성(userId, "photoUri", "representativeColor");
         CategoryDTO.CategoryResponse category = 카테고리_생성(userId, "title", 0L);
         BoardDTO.BoardResponse board = 보드_생성(userId, 0L, category.getId(), "name");
+        보드_사진_복수_생성(userId, List.of(storagePhoto.getId(), storagePhoto2.getId()), board.getId());
 
         // when
-        보드_사진_복수_생성(userId, List.of(storagePhoto.getId(), storagePhoto2.getId()), board.getId());
-        BoardDTO.BoardSharedResponse response = 보드_공유하기_생성(board.getId(), userId);
-        List<BoardPhotoDTO.BoardPhotoResponse> responses = getListNotLogin(API_PUBLIC + "/boards" , BoardPhotoDTO.BoardPhotoResponse.class,  response.getSharedKey());
+        List<BoardPhotoDTO.BoardPhotoResponse> response = getListNotLogin(API_PUBLIC_BOARDS , BoardPhotoDTO.BoardPhotoResponse.class,  board.getSharedKey());
+
         // then
-        assertThat(responses.size()).isEqualTo(2);
+        assertThat(response.size()).isEqualTo(2);
     }
 
     @Test
-    void 공유_보관함사진_상세_조회() {
+    void 공유_보드_상세조회() {
         // given
         CategoryDTO.CategoryResponse category = 카테고리_생성(userId, "title", 0L);
         CategoryDTO.CategoryResponse category2 = 카테고리_생성(userId, "title", category.getId());
@@ -75,10 +92,16 @@ public class BoardSharedAcceptanceTest extends AcceptanceTest{
         태그붙이기_생성(userId, storagePhoto2.getId(), tag1.getId());
         태그붙이기_생성(userId, storagePhoto2.getId(), tag2.getId());
         보관함사진_휴지통_이동(List.of(storagePhoto3.getId(), storagePhoto4.getId()), userId);
-        BoardDTO.BoardSharedResponse shared = 보드_공유하기_생성(board2.getId(), userId);
 
         // when
-        StoragePhotoDTO.StoragePhotoDetailResponse response = getNotLoginWithMultiProperty(API_PUBLIC + "/boards/{property1}/detail/{property2}", StoragePhotoDTO.StoragePhotoDetailResponse.class, shared.getSharedKey(), storagePhoto2.getId());
+        String uri = UriComponentsBuilder.fromUriString(API_PUBLIC_BOARDS)
+                .path("/{property1}/detail/{property2}")
+                .queryParam("tagIds", 0L, tag1.getId(), tag2.getId())
+                .build()
+                .expand(board2.getSharedKey(), storagePhoto2.getId())
+                .toUriString();
+
+        StoragePhotoDTO.StoragePhotoDetailResponse response = getNotLogin(uri, StoragePhotoDTO.StoragePhotoDetailResponse.class);
 
         // then
         assertAll(

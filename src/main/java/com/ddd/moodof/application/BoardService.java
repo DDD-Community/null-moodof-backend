@@ -1,15 +1,11 @@
 package com.ddd.moodof.application;
 
-import com.ddd.moodof.adapter.infrastructure.configuration.EncryptConfig;
 import com.ddd.moodof.adapter.infrastructure.security.encrypt.EncryptUtil;
 import com.ddd.moodof.application.dto.BoardDTO;
-import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.application.verifier.BoardVerifier;
 import com.ddd.moodof.domain.model.board.Board;
-import com.ddd.moodof.domain.model.board.BoardSharedKeyUpdater;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.board.BoardSequenceUpdater;
-import com.ddd.moodof.domain.model.category.CategoryQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
@@ -17,8 +13,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.security.GeneralSecurityException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -30,12 +24,6 @@ public class BoardService {
 
     private final BoardSequenceUpdater boardSequenceUpdater;
 
-    private final BoardSharedKeyUpdater boardSharedKeyUpdater;
-
-    private final CategoryQueryRepository categoryQueryRepository;
-
-    private final EncryptConfig encryptConfig;
-
     public static final String LOCALHOST = "localhost";
 
 
@@ -43,11 +31,17 @@ public class BoardService {
     public BoardDTO.BoardResponse create(Long userId, BoardDTO.CreateBoard request) {
         Board board = boardVerifier.toEntity(request.getPreviousBoardId(), request.getCategoryId(), request.getName(), userId);
         Board saved = boardRepository.save(board);
-
+        encryptByBoardId(userId, saved);
         boardRepository.findByUserIdAndPreviousBoardIdAndIdNot(userId, request.getPreviousBoardId(), saved.getId())
                 .ifPresent(it -> it.changePreviousBoardId(saved.getId(), userId));
 
         return BoardDTO.BoardResponse.from(saved);
+    }
+
+    public void encryptByBoardId(Long userId, Board saved) {
+        String sharedKey = EncryptUtil.encryptSHA256(Long.toString(saved.getId()));
+        saved.updateSharedkey(sharedKey, userId);
+        boardRepository.save(saved);
     }
 
     public BoardDTO.BoardResponse changeName(Long userId, Long id, BoardDTO.ChangeBoardName request) {
@@ -75,23 +69,13 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
 
-    public BoardDTO.BoardSharedResponse createSharedKey(Long id, Long userId, HttpServletRequest httpServletRequest) {
-        String requestURL= getUrl(httpServletRequest);
-        String sharedKey = generatedKey(id);
-        Board board = boardRepository.findById(id)
+    public BoardDTO.BoardSharedResponse getSharedURI(Long userId, Long id, HttpServletRequest httpServletRequest) {
+        Board board = boardRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Board, id = " + id));
-        return createBoardsURL(id, requestURL, sharedKey, board , userId);
-    }
-
-    private String generatedKey(Long id) {
-        try {
-            return EncryptUtil.encryptAES256(String.valueOf(id), encryptConfig.getKey());
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        String requestURI = getUrl(httpServletRequest);
+        String sharedKey = board.getSharedKey();
+        String sharedURI = generatedURI(requestURI, sharedKey);
+        return BoardDTO.BoardSharedResponse.from(id,sharedURI, sharedKey);
     }
 
     public String getUrl(HttpServletRequest request) {
@@ -118,23 +102,10 @@ public class BoardService {
         return url.toString();
     }
 
-    public BoardDTO.BoardSharedResponse createBoardsURL(Long id, String requestURL, String sharedKey, Board board, Long userId) {
-        String sharedURL = generatedURL(requestURL, sharedKey);
-        boardSharedKeyUpdater.update(board, sharedURL, sharedKey, userId);
-        return BoardDTO.BoardSharedResponse.from(id,sharedURL, sharedKey);
-    }
-
-    private String generatedURL(String requestURL, String sharedKey){
-        StringBuilder sharedURL = new StringBuilder();
-        sharedURL.append(requestURL)
-                .append("/")
-                .append(sharedKey);
-        return sharedURL.toString();
-    }
-
-    public List<CategoryDTO.CategoryWithBoardResponse> findBySharedKey(String sharedKey) {
-        Board board = boardRepository.findBySharedKey(sharedKey)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 key = " + sharedKey));
-        return categoryQueryRepository.findAllByUserId(board.getUserId());
+    private String generatedURI(String requestURL, String sharedKey) {
+        return UriComponentsBuilder.fromUriString(requestURL)
+                .path(sharedKey)
+                .build()
+                .toUriString();
     }
 }

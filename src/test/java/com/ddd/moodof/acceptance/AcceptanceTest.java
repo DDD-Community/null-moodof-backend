@@ -295,9 +295,9 @@ public class AcceptanceTest {
             throw new AssertionError("test fails");
         }
     }
-    protected <T> T getNotLoginWithMultiProperty(String uri, Class<T> response, String property1, Long property2) {
+    protected <T> T getNotLogin(String uri, Class<T> response) {
         try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri, property1, property2)
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();

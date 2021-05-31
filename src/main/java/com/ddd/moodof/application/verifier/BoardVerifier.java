@@ -19,6 +19,6 @@ public class BoardVerifier {
             throw new IllegalArgumentException("카테고리 생성자와 로그인 유저의 아이디가 다릅니다.");
         }
 
-        return new Board(null, previousBoardId, userId, name, categoryId, null, null, null, null);
+        return new Board(null, previousBoardId, userId, name, categoryId, null, null, null);
     }
 }

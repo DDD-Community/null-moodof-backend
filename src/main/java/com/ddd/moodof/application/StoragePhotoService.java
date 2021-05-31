@@ -54,9 +54,9 @@ public class StoragePhotoService {
         return storagePhotoQueryRepository.findDetail(userId, id, tagIds);
     }
 
-    public StoragePhotoDTO.StoragePhotoDetailResponse findSharedBoardDetail(String sharedKey, Long id) {
+    public StoragePhotoDTO.StoragePhotoDetailResponse findSharedBoardDetail(String sharedKey, Long id, List<Long> tagIds) {
         Board board = boardRepository.findBySharedKey(sharedKey)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 sharedKey : " + sharedKey));
-        return storagePhotoQueryRepository.findDetail(board.getUserId(), id, new ArrayList<>());
+        return storagePhotoQueryRepository.findDetail(board.getUserId(), id, tagIds);
     }
 }

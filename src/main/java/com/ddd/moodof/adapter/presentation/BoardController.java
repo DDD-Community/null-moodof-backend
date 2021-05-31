@@ -46,10 +46,9 @@ public class BoardController implements BoardAPI {
         boardService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/shared")
-    public ResponseEntity<BoardDTO.BoardSharedResponse> create(@RequestBody BoardDTO.BoardSharedRequest request, @LoginUserId Long userId, HttpServletRequest httpServletRequest){
-        BoardDTO.BoardSharedResponse response = boardService.createSharedKey(request.getId(), userId, httpServletRequest);
-        return ResponseEntity.created(URI.create(API_BOARD + "/shared/" + response.getId())).body(response);
+    @GetMapping("/{id}")
+    public ResponseEntity<BoardDTO.BoardSharedResponse> getSharedKey(@LoginUserId Long userId, @PathVariable Long id, HttpServletRequest httpServletRequest){
+        BoardDTO.BoardSharedResponse response = boardService.getSharedURI(userId, id, httpServletRequest);
+        return ResponseEntity.ok(response);
     }
 }

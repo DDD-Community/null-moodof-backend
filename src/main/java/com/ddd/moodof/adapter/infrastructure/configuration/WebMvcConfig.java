@@ -1,7 +1,6 @@
 package com.ddd.moodof.adapter.infrastructure.configuration;
 
 import com.ddd.moodof.adapter.infrastructure.security.LoginUserIdArgumentResolver;
-import com.ddd.moodof.adapter.infrastructure.security.SharedBoardIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -17,12 +16,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final LoginUserIdArgumentResolver loginUserIdArgumentResolver;
 
-    private final SharedBoardIdArgumentResolver sharedBoardIdArgumentResolver;
-
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginUserIdArgumentResolver);
-        resolvers.add(sharedBoardIdArgumentResolver);
     }
 
     @Override

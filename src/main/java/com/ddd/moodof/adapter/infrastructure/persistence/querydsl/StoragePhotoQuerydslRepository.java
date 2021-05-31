@@ -215,6 +215,7 @@ public class StoragePhotoQuerydslRepository implements StoragePhotoQueryReposito
                         board.userId,
                         board.name,
                         board.categoryId,
+                        board.sharedKey,
                         board.createdDate,
                         board.lastModifiedDate
                 ))

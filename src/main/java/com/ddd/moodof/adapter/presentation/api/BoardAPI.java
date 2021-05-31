@@ -27,7 +27,4 @@ public interface BoardAPI {
     @DeleteMapping("/{id}")
     ResponseEntity<BoardDTO.BoardResponse> delete(@ApiIgnore @LoginUserId Long userId, @PathVariable Long id);
 
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @PostMapping("/shared")
-    ResponseEntity<BoardDTO.BoardSharedResponse> create(@RequestBody BoardDTO.BoardSharedRequest request, @LoginUserId Long userId, HttpServletRequest httpServletRequest);
 }

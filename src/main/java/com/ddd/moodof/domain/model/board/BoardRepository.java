@@ -20,4 +20,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByUserIdAndPreviousBoardIdAndIdNot(Long userId, Long previousBoardId, Long id);
 
     Optional<Board> findByUserIdAndPreviousBoardId(Long userId, Long id);
+
+    Optional<Board> findByIdAndUserId(Long id, Long userId);
 }
