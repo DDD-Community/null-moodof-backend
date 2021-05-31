@@ -15,12 +15,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CategoryService {
+    private static final int MAX_CATEGORY_COUNT = 10;
+
     private final CategoryRepository categoryRepository;
     private final CategoryQueryRepository categoryQueryRepository;
     private final BoardRepository boardRepository;
 
     @Transactional
     public CategoryDTO.CategoryResponse create(CategoryDTO.CreateCategoryRequest request, Long userId) {
+        if (categoryRepository.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
+            throw new IllegalStateException("생성할 수 있는 카테고리의 최대 개수는 10개 입니다.");
+        }
+
         Category saved = categoryRepository.save(request.toEntity(userId));
         saveCategoryIntermediate(userId, saved, request.getPreviousId());
         return CategoryDTO.CategoryResponse.from(saved);

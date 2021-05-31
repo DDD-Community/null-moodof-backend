@@ -3,12 +3,10 @@ package com.ddd.moodof.adapter.presentation;
 import com.ddd.moodof.adapter.presentation.api.BoardAPI;
 import com.ddd.moodof.application.BoardService;
 import com.ddd.moodof.application.dto.BoardDTO;
-import com.ddd.moodof.application.dto.SharedDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.net.URI;
 
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class BoardController implements BoardAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<BoardDTO.BoardResponse> create(@LoginUserId Long userId, @RequestBody BoardDTO.CreateBoard request) {
+    public ResponseEntity<BoardDTO.BoardResponse> create(@LoginUserId Long userId, @Valid @RequestBody BoardDTO.CreateBoard request) {
         BoardDTO.BoardResponse response = boardService.create(userId, request);
         return ResponseEntity.created(URI.create(API_BOARD + "/" + response.getId())).body(response);
     }

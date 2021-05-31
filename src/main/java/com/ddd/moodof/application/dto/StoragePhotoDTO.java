@@ -93,4 +93,11 @@ public class StoragePhotoDTO {
             this.tags = tags;
         }
     }
+
+    @NoArgsConstructor
+    @Getter
+    @AllArgsConstructor
+    public static class DeleteStoragePhotos {
+        private List<Long> storagePhotoIds;
+    }
 }
