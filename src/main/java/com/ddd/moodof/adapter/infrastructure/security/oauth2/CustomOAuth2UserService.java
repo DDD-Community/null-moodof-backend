@@ -4,7 +4,10 @@ import com.ddd.moodof.adapter.infrastructure.security.UserPrincipal;
 import com.ddd.moodof.adapter.infrastructure.security.exception.OAuth2AuthenticationProcessingException;
 import com.ddd.moodof.adapter.infrastructure.security.oauth2.user.OAuth2UserInfo;
 import com.ddd.moodof.adapter.infrastructure.security.oauth2.user.OAuth2UserInfoFactory;
-import com.ddd.moodof.domain.model.category.CategoryInitializer;
+import com.ddd.moodof.application.BoardService;
+import com.ddd.moodof.application.CategoryService;
+import com.ddd.moodof.application.dto.BoardDTO;
+import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.domain.model.user.AuthProvider;
 import com.ddd.moodof.domain.model.user.User;
 import com.ddd.moodof.domain.model.user.UserRepository;
@@ -24,8 +27,11 @@ import java.util.Optional;
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
+    public static final String CATEGORY_SUB_TITLE = "님의 카테고리";
+    public static final String BOARD_SUB_TITLE = "님의 보드";
     private final UserRepository userRepository;
-    private final CategoryInitializer categoryInitializer;
+    private final BoardService boardService;
+    private final CategoryService categoryService;
 
     @Override
     @Transactional
@@ -68,7 +74,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User(null, oAuth2UserInfo.getEmail(), null, oAuth2UserInfo.getName(), oAuth2UserInfo.getImageUrl(), null, null, AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()), oAuth2UserInfo.getId());
         User saved = userRepository.save(user);
-        categoryInitializer.create(saved.getId(), saved.getNickname());
+
+        CategoryDTO.CreateCategoryRequest category = new CategoryDTO.CreateCategoryRequest(user.getNickname()+ CATEGORY_SUB_TITLE,0L);
+        CategoryDTO.CategoryResponse responseCategory = categoryService.create(category, user.getId());
+
+        BoardDTO.CreateBoard board = new BoardDTO.CreateBoard(0L, responseCategory.getId(), user.getNickname()+ BOARD_SUB_TITLE);
+        boardService.create(user.getId(), board);
+
         return saved;
     }
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {

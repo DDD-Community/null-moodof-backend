@@ -2,6 +2,8 @@ package com.ddd.moodof.application;
 
 import com.ddd.moodof.application.dto.BoardPhotoDTO;
 import com.ddd.moodof.application.verifier.BoardPhotoVerifier;
+import com.ddd.moodof.domain.model.board.Board;
+import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.board.photo.BoardPhoto;
 import com.ddd.moodof.domain.model.board.photo.BoardPhotoRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class BoardPhotoService {
 
     private final BoardPhotoRepository boardPhotoRepository;
     private final BoardPhotoVerifier boardPhotoVerifier;
+    private final BoardRepository boardRepository;
 
     public List<BoardPhotoDTO.BoardPhotoResponse> addPhotos(Long userId, BoardPhotoDTO.AddBoardPhoto request) {
         // TODO: 2021/05/25 StoragePhoto 삭제 대응
@@ -59,6 +62,12 @@ public class BoardPhotoService {
 
     public List<BoardPhotoDTO.BoardPhotoResponse> findAllByBoardId(Long boardId, Long userId) {
         List<BoardPhoto> boardPhotos = boardPhotoRepository.findAllByBoardIdAndUserId(boardId, userId);
+        return BoardPhotoDTO.BoardPhotoResponse.listFrom(boardPhotos);
+    }
+    public List<BoardPhotoDTO.BoardPhotoResponse> findAllBySharedKey(String sharedKey) {
+        Board board = boardRepository.findBySharedKey(sharedKey)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 sharedKey =" + sharedKey));
+        List<BoardPhoto> boardPhotos = boardPhotoRepository.findAllByBoardIdAndUserId(board.getId(), board.getUserId());
         return BoardPhotoDTO.BoardPhotoResponse.listFrom(boardPhotos);
     }
 }

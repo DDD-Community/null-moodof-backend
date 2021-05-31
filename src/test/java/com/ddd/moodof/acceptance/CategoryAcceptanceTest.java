@@ -2,8 +2,6 @@ package com.ddd.moodof.acceptance;
 
 import com.ddd.moodof.application.dto.BoardDTO;
 import com.ddd.moodof.application.dto.CategoryDTO;
-import com.ddd.moodof.domain.model.category.Category;
-import com.ddd.moodof.domain.model.category.CategoryInitializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,9 +16,6 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     public static final String TITLE = "title";
     public static final String NICK_NAME = "nickname";
     public  static final String SUB_TITLE = "님의 카테고리";
-
-    @Autowired
-    private CategoryInitializer categoryInitializer;
 
     @Test
     public void 카테고리_생성() throws Exception {
@@ -171,9 +166,9 @@ public class CategoryAcceptanceTest extends AcceptanceTest{
     @Test
     public void 카테고리_회원가입후_생성_초기화() throws Exception{
         // given
+        CategoryDTO.CategoryResponse category = 카테고리_생성(userId, nickName + SUB_TITLE, 0L);
 
         // when
-        Category category = categoryInitializer.create(userId, nickName);
         List<CategoryDTO.CategoryResponse> response = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
         // then
         assertAll(

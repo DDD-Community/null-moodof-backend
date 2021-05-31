@@ -29,6 +29,8 @@ public class Board {
 
     private Long categoryId;
 
+    private String sharedKey;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -52,6 +54,11 @@ public class Board {
         verify(userId);
         this.previousBoardId = previousBoardId;
         this.categoryId = categoryId;
+    }
+
+    public void updateSharedkey(String sharedKey, Long userId){
+        verify(userId);
+        this.sharedKey = sharedKey;
     }
 
     private void verify(Long userId) {

@@ -1,14 +1,19 @@
 package com.ddd.moodof.acceptance;
-
-import com.ddd.moodof.application.dto.BoardDTO;
-import com.ddd.moodof.application.dto.CategoryDTO;
+import com.ddd.moodof.application.dto.*;
 import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
+import static com.ddd.moodof.acceptance.CategoryAcceptanceTest.NICK_NAME;
+import static com.ddd.moodof.acceptance.CategoryAcceptanceTest.SUB_TITLE;
+import static com.ddd.moodof.adapter.infrastructure.security.oauth2.CustomOAuth2UserService.BOARD_SUB_TITLE;
+import static com.ddd.moodof.adapter.infrastructure.security.oauth2.CustomOAuth2UserService.CATEGORY_SUB_TITLE;
 import static com.ddd.moodof.adapter.presentation.BoardController.API_BOARD;
+import static com.ddd.moodof.adapter.presentation.CategoryController.API_CATEGORY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -167,5 +172,26 @@ public class BoardAcceptanceTest extends AcceptanceTest {
 
         // when then
         deleteWithLogin(API_BOARD, board.getId(), userId);
+    }
+
+    @Test
+    public void 보드_회원가입시_임의생성() throws Exception {
+        // given
+        BoardDTO.BoardResponse board = 보드_생성(userId, 0L, category.getId(), nickName + BOARD_SUB_TITLE);
+
+        // when
+        List<CategoryDTO.CategoryWithBoardResponse> response = getListWithLogin(API_CATEGORY, CategoryDTO.CategoryWithBoardResponse.class, userId);
+
+        // then
+        assertAll(
+                () -> assertThat(board.getPreviousBoardId()).isEqualTo(0L),
+                () -> assertThat(board.getId()).isEqualTo(1L),
+                () -> assertThat(board.getUserId()).isEqualTo(userId),
+                () -> assertThat(board.getName()).isEqualTo(NICK_NAME+BOARD_SUB_TITLE),
+
+                () -> assertThat(response.get(0).getBoardList().get(0).getId()).isEqualTo(board.getId()),
+                () -> assertThat(response.get(0).getBoardList().get(0).getUserId()).isEqualTo(board.getUserId()),
+                () -> assertThat(response.get(0).getBoardList().get(0).getName()).isEqualTo(board.getName())
+        );
     }
 }
