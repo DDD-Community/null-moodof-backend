@@ -2,6 +2,7 @@ package com.ddd.moodof.adapter.presentation.api;
 
 import com.ddd.moodof.adapter.presentation.LoginUserId;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,5 @@ public interface StoragePhotoAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping
-    ResponseEntity<Void> delete(@ApiIgnore @LoginUserId Long userId, @RequestBody StoragePhotoDTO.DeleteStoragePhotos request);
+    ResponseEntity<List<TrashPhotoDTO.TrashPhotoCreatedResponse>> addToTrash(@ApiIgnore @LoginUserId Long userId, @RequestBody TrashPhotoDTO.CreateTrashPhotos request);
 }

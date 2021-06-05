@@ -6,6 +6,7 @@ import com.ddd.moodof.application.dto.CategoryDTO;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,6 +68,6 @@ public class BoardPhotoAcceptanceTest extends AcceptanceTest {
         List<Long> boardPhotoIds = responses.stream()
                 .map(BoardPhotoDTO.BoardPhotoResponse::getId)
                 .collect(Collectors.toList());
-        deleteListWithLogin(API_BOARD_PHOTO, new BoardPhotoDTO.RemoveBoardPhotos(boardPhotoIds), userId);
+        deleteListWithLogin(API_BOARD_PHOTO, new BoardPhotoDTO.RemoveBoardPhotos(boardPhotoIds), userId, MockMvcResultMatchers.status().isNoContent());
     }
 }

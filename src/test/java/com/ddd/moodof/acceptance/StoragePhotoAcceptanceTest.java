@@ -7,6 +7,7 @@ import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TagDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
@@ -84,9 +85,9 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
-                () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
-                () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
+                () -> assertThat(response.getData().size()).isEqualTo(3),
+                () -> assertThat(response.getData().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getData().get(1)).usingRecursiveComparison().isEqualTo(second),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
                 () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
         );
@@ -121,9 +122,9 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getStoragePhotos().size()).isEqualTo(2),
-                () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
-                () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
+                () -> assertThat(response.getData().size()).isEqualTo(2),
+                () -> assertThat(response.getData().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getData().get(1)).usingRecursiveComparison().isEqualTo(second),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
                 () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
         );
@@ -135,7 +136,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         StoragePhotoDTO.StoragePhotoResponse storagePhotoResponse = 보관함사진_생성(userId, "uri", "color");
 
         // when then
-        deleteListWithLogin(API_STORAGE_PHOTO, new StoragePhotoDTO.DeleteStoragePhotos(List.of(storagePhotoResponse.getId())), userId);
+        deleteListWithLogin(API_STORAGE_PHOTO, new StoragePhotoDTO.DeleteStoragePhotos(List.of(storagePhotoResponse.getId())), userId, MockMvcResultMatchers.status().isOk());
     }
 
     @Test

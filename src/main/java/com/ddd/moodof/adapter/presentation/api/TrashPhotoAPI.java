@@ -26,5 +26,5 @@ public interface TrashPhotoAPI {
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping
-    ResponseEntity<Void> cancel(@ApiIgnore @LoginUserId Long userId, @RequestBody TrashPhotoDTO.CancelTrashPhotos request);
+    ResponseEntity<Void> delete(@ApiIgnore @LoginUserId Long userId, @RequestBody TrashPhotoDTO.TrashPhotosRequest request);
 }

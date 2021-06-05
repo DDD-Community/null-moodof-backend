@@ -55,7 +55,7 @@ public class StoragePhotoDTO {
     public static class StoragePhotoPageResponse {
         private long totalStoragePhotoCount;
         private long totalPageCount;
-        private List<StoragePhotoResponse> storagePhotos;
+        private List<StoragePhotoResponse> data;
     }
 
     @AllArgsConstructor

@@ -3,6 +3,7 @@ package com.ddd.moodof.acceptance;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -58,14 +59,15 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
+                () -> assertThat(response.getTotalTrashPhotoCount()).isEqualTo(3),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
-                () -> assertThat(response.getResponses().get(0).getStoragePhoto()).usingRecursiveComparison().isEqualTo(storagePhoto3),
-                () -> assertThat(response.getResponses().get(0).getId()).isEqualTo(top.get(0).getId())
+                () -> assertThat(response.getData().get(0).getStoragePhoto()).usingRecursiveComparison().isEqualTo(storagePhoto3),
+                () -> assertThat(response.getData().get(0).getId()).isEqualTo(top.get(0).getId())
         );
     }
 
     @Test
-    void 휴지통의_사진을_복구한다() {
+    void 휴지통_사진을_삭제한다() {
         // given
         StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
         List<TrashPhotoDTO.TrashPhotoCreatedResponse> responses = 보관함사진_휴지통_이동(List.of(storagePhoto.getId()), userId);
@@ -75,6 +77,23 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
                 .collect(Collectors.toList());
 
         // when then
-        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.CancelTrashPhotos(trashPhotoIds), userId);
+        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.TrashPhotosRequest(trashPhotoIds), userId, MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void 휴지통_사진을_복구한다() {
+        // given
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
+        List<TrashPhotoDTO.TrashPhotoCreatedResponse> trashPhotos = 보관함사진_휴지통_이동(List.of(storagePhoto.getId()), userId);
+
+        List<Long> trashPhotoIds = trashPhotos.stream()
+                .map(TrashPhotoDTO.TrashPhotoCreatedResponse::getId)
+                .collect(Collectors.toList());
+
+        // when
+        List<StoragePhotoDTO.StoragePhotoResponse> responses = postListWithLogin(new TrashPhotoDTO.TrashPhotosRequest(trashPhotoIds), API_TRASH_PHOTO + "/restore", StoragePhotoDTO.StoragePhotoResponse.class, userId);
+
+        // then
+        assertThat(responses.get(0)).usingRecursiveComparison().isEqualTo(storagePhoto);
     }
 }

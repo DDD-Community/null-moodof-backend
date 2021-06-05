@@ -47,6 +47,7 @@ public class TrashPhotoQuerydslRepository implements TrashPhotoQueryRepository {
                 .applyPagination(pageable, jpaQuery)
                 .fetch();
 
-        return new TrashPhotoDTO.TrashPhotoPageResponse(paginationUtils.getTotalPageCount(jpaQuery.fetchCount(), pageable.getPageSize()), trashPhotoResponses);
+        long totalCount = jpaQuery.fetchCount();
+        return new TrashPhotoDTO.TrashPhotoPageResponse(totalCount, paginationUtils.getTotalPageCount(totalCount, pageable.getPageSize()), trashPhotoResponses);
     }
 }

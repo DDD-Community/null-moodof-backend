@@ -30,4 +30,8 @@ public class TrashPhoto {
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    public boolean isUserNotEqual(Long userId) {
+        return !this.userId.equals(userId);
+    }
 }

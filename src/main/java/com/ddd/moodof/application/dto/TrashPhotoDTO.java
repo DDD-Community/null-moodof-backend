@@ -64,14 +64,15 @@ public class TrashPhotoDTO {
     @Getter
     @AllArgsConstructor
     public static class TrashPhotoPageResponse {
+        private long totalTrashPhotoCount;
         private long totalPageCount;
-        private List<TrashPhotoResponse> responses;
+        private List<TrashPhotoResponse> data;
     }
 
     @NoArgsConstructor
     @Getter
     @AllArgsConstructor
-    public static class CancelTrashPhotos {
+    public static class TrashPhotosRequest {
         private List<Long> trashPhotoIds;
     }
 }

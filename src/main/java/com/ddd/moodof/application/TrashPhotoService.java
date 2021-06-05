@@ -1,6 +1,7 @@
 package com.ddd.moodof.application;
 
 import com.ddd.moodof.adapter.infrastructure.persistence.PaginationUtils;
+import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhoto;
 import com.ddd.moodof.domain.model.trash.photo.TrashPhotoQueryRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -39,10 +41,31 @@ public class TrashPhotoService {
     }
 
     @Transactional
-    public void cancel(TrashPhotoDTO.CancelTrashPhotos request, Long userId) {
-        if (!trashPhotoRepository.existsByIdInAndUserId(request.getTrashPhotoIds(), userId)) {
-            throw new IllegalArgumentException("요청과 일치하는 휴지통 사진이 없습니다.");
-        }
+    public void deletePhoto(TrashPhotoDTO.TrashPhotosRequest request, Long userId) {
+        List<TrashPhoto> trashPhotos = trashPhotoRepository.findAllById(request.getTrashPhotoIds());
+
+        List<Long> storagePhotoIds = trashPhotos.stream()
+                .map(TrashPhoto::getStoragePhotoId)
+                .collect(Collectors.toList());
+
+        storagePhotoService.delete(userId, new StoragePhotoDTO.DeleteStoragePhotos(storagePhotoIds));
         trashPhotoRepository.deleteAllByIdIn(request.getTrashPhotoIds());
+    }
+
+    @Transactional
+    public List<StoragePhotoDTO.StoragePhotoResponse> restore(TrashPhotoDTO.TrashPhotosRequest request, Long userId) {
+        List<TrashPhoto> trashPhotos = trashPhotoRepository.findAllById(request.getTrashPhotoIds());
+
+        if (trashPhotos.stream().anyMatch(trashPhoto -> trashPhoto.isUserNotEqual(userId))) {
+            throw new IllegalArgumentException("휴지통 사진의 userId가 요청과 다릅니다.");
+        }
+
+        trashPhotoRepository.deleteAllByIdIn(request.getTrashPhotoIds());
+
+        List<Long> storagePhotoIds = trashPhotos.stream()
+                .map(TrashPhoto::getStoragePhotoId)
+                .collect(Collectors.toList());
+
+        return storagePhotoService.findAllById(storagePhotoIds);
     }
 }
