@@ -2,7 +2,9 @@ package com.ddd.moodof.adapter.presentation;
 
 import com.ddd.moodof.adapter.presentation.api.StoragePhotoAPI;
 import com.ddd.moodof.application.StoragePhotoService;
+import com.ddd.moodof.application.TrashPhotoService;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
+import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ public class StoragePhotoController implements StoragePhotoAPI {
     public static final String API_STORAGE_PHOTO = "/api/storage-photos";
 
     private final StoragePhotoService storagePhotoService;
+    private final TrashPhotoService trashPhotoService;
 
     @Override
     @PostMapping
@@ -57,8 +60,8 @@ public class StoragePhotoController implements StoragePhotoAPI {
 
     @Override
     @DeleteMapping
-    public ResponseEntity<Void> delete(@LoginUserId Long userId, @RequestBody StoragePhotoDTO.DeleteStoragePhotos request) {
-        storagePhotoService.delete(userId, request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<List<TrashPhotoDTO.TrashPhotoCreatedResponse>> addToTrash(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.CreateTrashPhotos request) {
+        List<TrashPhotoDTO.TrashPhotoCreatedResponse> response = trashPhotoService.add(userId, request);
+        return ResponseEntity.ok(response);
     }
 }

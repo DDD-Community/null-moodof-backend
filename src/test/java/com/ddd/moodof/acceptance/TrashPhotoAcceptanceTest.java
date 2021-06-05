@@ -3,6 +3,7 @@ package com.ddd.moodof.acceptance;
 import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 휴지통의_사진을_복구한다() {
+    void 휴지통의_사진을_삭제한다() {
         // given
         StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
         List<TrashPhotoDTO.TrashPhotoCreatedResponse> responses = 보관함사진_휴지통_이동(List.of(storagePhoto.getId()), userId);
@@ -75,6 +76,6 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
                 .collect(Collectors.toList());
 
         // when then
-        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.CancelTrashPhotos(trashPhotoIds), userId);
+        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.CancelTrashPhotos(trashPhotoIds), userId, MockMvcResultMatchers.status().isNoContent());
     }
 }

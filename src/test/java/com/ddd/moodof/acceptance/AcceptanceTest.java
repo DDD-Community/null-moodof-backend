@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -258,7 +259,7 @@ public class AcceptanceTest {
         }
     }
 
-    protected <T> void deleteListWithLogin(String uri, T request, Long userId) {
+    protected <T> void deleteListWithLogin(String uri, T request, Long userId, ResultMatcher expectResult) {
         try {
             String token = tokenProvider.createToken(userId);
 
@@ -267,7 +268,7 @@ public class AcceptanceTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER + token))
-                    .andExpect(MockMvcResultMatchers.status().isNoContent())
+                    .andExpect(expectResult)
                     .andReturn();
 
         } catch (Exception e) {
