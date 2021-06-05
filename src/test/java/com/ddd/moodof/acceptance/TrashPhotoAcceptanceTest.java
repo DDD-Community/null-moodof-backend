@@ -59,9 +59,10 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
+                () -> assertThat(response.getTotalTrashPhotoCount()).isEqualTo(3),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
-                () -> assertThat(response.getResponses().get(0).getStoragePhoto()).usingRecursiveComparison().isEqualTo(storagePhoto3),
-                () -> assertThat(response.getResponses().get(0).getId()).isEqualTo(top.get(0).getId())
+                () -> assertThat(response.getData().get(0).getStoragePhoto()).usingRecursiveComparison().isEqualTo(storagePhoto3),
+                () -> assertThat(response.getData().get(0).getId()).isEqualTo(top.get(0).getId())
         );
     }
 

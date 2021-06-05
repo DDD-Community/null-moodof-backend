@@ -85,9 +85,9 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
-                () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
-                () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
+                () -> assertThat(response.getData().size()).isEqualTo(3),
+                () -> assertThat(response.getData().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getData().get(1)).usingRecursiveComparison().isEqualTo(second),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
                 () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
         );
@@ -122,9 +122,9 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getStoragePhotos().size()).isEqualTo(2),
-                () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
-                () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
+                () -> assertThat(response.getData().size()).isEqualTo(2),
+                () -> assertThat(response.getData().get(0)).usingRecursiveComparison().isEqualTo(top),
+                () -> assertThat(response.getData().get(1)).usingRecursiveComparison().isEqualTo(second),
                 () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
                 () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
         );
