@@ -38,8 +38,8 @@ public class TrashPhotoController implements TrashPhotoAPI {
 
     @Override
     @DeleteMapping
-    public ResponseEntity<Void> cancel(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.CancelTrashPhotos request) {
-        trashPhotoService.cancel(request, userId);
+    public ResponseEntity<Void> delete(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.TrashPhotosRequest request) {
+        trashPhotoService.delete(request, userId);
         return ResponseEntity.noContent().build();
     }
 }

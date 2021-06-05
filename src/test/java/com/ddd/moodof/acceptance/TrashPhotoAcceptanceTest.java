@@ -76,6 +76,6 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
                 .collect(Collectors.toList());
 
         // when then
-        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.CancelTrashPhotos(trashPhotoIds), userId, MockMvcResultMatchers.status().isNoContent());
+        deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.TrashPhotosRequest(trashPhotoIds), userId, MockMvcResultMatchers.status().isNoContent());
     }
 }

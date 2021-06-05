@@ -71,7 +71,7 @@ public class TrashPhotoDTO {
     @NoArgsConstructor
     @Getter
     @AllArgsConstructor
-    public static class CancelTrashPhotos {
+    public static class TrashPhotosRequest {
         private List<Long> trashPhotoIds;
     }
 }
