@@ -2,6 +2,7 @@ package com.ddd.moodof.adapter.presentation;
 
 import com.ddd.moodof.adapter.presentation.api.TrashPhotoAPI;
 import com.ddd.moodof.application.TrashPhotoService;
+import com.ddd.moodof.application.dto.StoragePhotoDTO;
 import com.ddd.moodof.application.dto.TrashPhotoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,12 @@ public class TrashPhotoController implements TrashPhotoAPI {
         return ResponseEntity.ok(responses);
     }
 
+    @PostMapping("/restore")
+    public ResponseEntity<List<StoragePhotoDTO.StoragePhotoResponse>> restore(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.TrashPhotosRequest request) {
+        List<StoragePhotoDTO.StoragePhotoResponse> responses = trashPhotoService.restore(request, userId);
+        return ResponseEntity.ok(responses);
+    }
+
     @Override
     @GetMapping
     public ResponseEntity<TrashPhotoDTO.TrashPhotoPageResponse> findPage(
@@ -39,7 +46,7 @@ public class TrashPhotoController implements TrashPhotoAPI {
     @Override
     @DeleteMapping
     public ResponseEntity<Void> delete(@LoginUserId Long userId, @RequestBody TrashPhotoDTO.TrashPhotosRequest request) {
-        trashPhotoService.delete(request, userId);
+        trashPhotoService.deletePhoto(request, userId);
         return ResponseEntity.noContent().build();
     }
 }

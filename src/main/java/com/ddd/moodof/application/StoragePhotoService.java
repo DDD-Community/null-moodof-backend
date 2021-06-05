@@ -45,4 +45,9 @@ public class StoragePhotoService {
     public StoragePhotoDTO.StoragePhotoDetailResponse findDetail(Long userId, Long id, List<Long> tagIds) {
         return storagePhotoQueryRepository.findDetail(userId, id, tagIds);
     }
+
+    public List<StoragePhotoDTO.StoragePhotoResponse> findAllById(List<Long> storagePhotoIds) {
+        List<StoragePhoto> storagePhotos = storagePhotoRepository.findAllById(storagePhotoIds);
+        return StoragePhotoDTO.StoragePhotoResponse.listFrom(storagePhotos);
+    }
 }

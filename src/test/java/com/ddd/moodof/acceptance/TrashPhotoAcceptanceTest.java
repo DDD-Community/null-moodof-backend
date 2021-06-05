@@ -66,7 +66,7 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 휴지통의_사진을_삭제한다() {
+    void 휴지통_사진을_삭제한다() {
         // given
         StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
         List<TrashPhotoDTO.TrashPhotoCreatedResponse> responses = 보관함사진_휴지통_이동(List.of(storagePhoto.getId()), userId);
@@ -77,5 +77,22 @@ public class TrashPhotoAcceptanceTest extends AcceptanceTest {
 
         // when then
         deleteListWithLogin(API_TRASH_PHOTO, new TrashPhotoDTO.TrashPhotosRequest(trashPhotoIds), userId, MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void 휴지통_사진을_복구한다() {
+        // given
+        StoragePhotoDTO.StoragePhotoResponse storagePhoto = 보관함사진_생성(userId, "uri", "representativeColor");
+        List<TrashPhotoDTO.TrashPhotoCreatedResponse> trashPhotos = 보관함사진_휴지통_이동(List.of(storagePhoto.getId()), userId);
+
+        List<Long> trashPhotoIds = trashPhotos.stream()
+                .map(TrashPhotoDTO.TrashPhotoCreatedResponse::getId)
+                .collect(Collectors.toList());
+
+        // when
+        List<StoragePhotoDTO.StoragePhotoResponse> responses = postListWithLogin(new TrashPhotoDTO.TrashPhotosRequest(trashPhotoIds), API_TRASH_PHOTO + "/restore", StoragePhotoDTO.StoragePhotoResponse.class, userId);
+
+        // then
+        assertThat(responses.get(0)).usingRecursiveComparison().isEqualTo(storagePhoto);
     }
 }

@@ -41,7 +41,7 @@ public class TrashPhotoService {
     }
 
     @Transactional
-    public void delete(TrashPhotoDTO.TrashPhotosRequest request, Long userId) {
+    public void deletePhoto(TrashPhotoDTO.TrashPhotosRequest request, Long userId) {
         List<TrashPhoto> trashPhotos = trashPhotoRepository.findAllById(request.getTrashPhotoIds());
 
         List<Long> storagePhotoIds = trashPhotos.stream()
@@ -50,5 +50,22 @@ public class TrashPhotoService {
 
         storagePhotoService.delete(userId, new StoragePhotoDTO.DeleteStoragePhotos(storagePhotoIds));
         trashPhotoRepository.deleteAllByIdIn(request.getTrashPhotoIds());
+    }
+
+    @Transactional
+    public List<StoragePhotoDTO.StoragePhotoResponse> restore(TrashPhotoDTO.TrashPhotosRequest request, Long userId) {
+        List<TrashPhoto> trashPhotos = trashPhotoRepository.findAllById(request.getTrashPhotoIds());
+
+        if (trashPhotos.stream().anyMatch(trashPhoto -> trashPhoto.isUserNotEqual(userId))) {
+            throw new IllegalArgumentException("휴지통 사진의 userId가 요청과 다릅니다.");
+        }
+
+        trashPhotoRepository.deleteAllByIdIn(request.getTrashPhotoIds());
+
+        List<Long> storagePhotoIds = trashPhotos.stream()
+                .map(TrashPhoto::getStoragePhotoId)
+                .collect(Collectors.toList());
+
+        return storagePhotoService.findAllById(storagePhotoIds);
     }
 }
