@@ -37,3 +37,4 @@ out/
 .vscode/
 
 application-security.yml
+/src/main/resources/application-dev.yml

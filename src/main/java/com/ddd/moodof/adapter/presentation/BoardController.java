@@ -45,4 +45,10 @@ public class BoardController implements BoardAPI {
         boardService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BoardDTO.BoardSharedResponse> getSharedKey(@LoginUserId Long userId, @PathVariable Long id){
+        BoardDTO.BoardSharedResponse response = boardService.getSharedURI(userId, id);
+        return ResponseEntity.ok(response);
+    }
 }

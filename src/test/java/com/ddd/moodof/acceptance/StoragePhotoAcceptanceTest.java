@@ -87,8 +87,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.getStoragePhotos().size()).isEqualTo(3),
                 () -> assertThat(response.getStoragePhotos().get(0)).usingRecursiveComparison().isEqualTo(top),
                 () -> assertThat(response.getStoragePhotos().get(1)).usingRecursiveComparison().isEqualTo(second),
-                () -> assertThat(response.getTotalPageCount()).isEqualTo(2),
-                () -> assertThat(response.getTotalStoragePhotoCount()).isEqualTo(4)
+                () -> assertThat(response.getTotalPageCount()).isEqualTo(2)
         );
     }
 
@@ -160,7 +159,7 @@ public class StoragePhotoAcceptanceTest extends AcceptanceTest {
         보관함사진_휴지통_이동(List.of(storagePhoto3.getId(), storagePhoto4.getId()), userId);
 
         // when
-        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId() + "?tagIds=0," + tag2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
+        StoragePhotoDTO.StoragePhotoDetailResponse response = getWithLogin(API_STORAGE_PHOTO + "/" + storagePhoto2.getId(), StoragePhotoDTO.StoragePhotoDetailResponse.class, userId);
 
         // then
         assertAll(

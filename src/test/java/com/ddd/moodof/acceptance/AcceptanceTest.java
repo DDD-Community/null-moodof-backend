@@ -73,12 +73,12 @@ public class AcceptanceTest {
         return userRepository.save(new User(null, "test@test.com", "password", "nickname", "profileUrl", null, null, AuthProvider.google, "providerId"));
     }
 
-    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId) {
-        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title, previousId);
+    protected CategoryDTO.CategoryResponse 카테고리_생성(Long userId, String title, Long previousId){
+        CategoryDTO.CreateCategoryRequest request = new CategoryDTO.CreateCategoryRequest(title,previousId);
         return postWithLogin(request, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId);
     }
 
-    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id, Long previousId, Long userId, String property) {
+    protected CategoryDTO.CategoryResponse 카테고리_순서_변경(Long id,Long previousId, Long userId, String property){
         CategoryDTO.UpdateOrderCategoryRequest request = new CategoryDTO.UpdateOrderCategoryRequest(previousId);
         return putPropertyWithLogin(request, id, API_CATEGORY, CategoryDTO.CategoryResponse.class, userId, property);
     }
@@ -265,11 +265,39 @@ public class AcceptanceTest {
 
             mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER + token))
                     .andExpect(MockMvcResultMatchers.status().isNoContent())
                     .andReturn();
 
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+
+
+    protected <T> List<T> getListNotLogin(String uri, Class<T> response, String property) {
+        try {
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri, property)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+            CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, response);
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), collectionType);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AssertionError("test fails");
+        }
+    }
+    protected <T> T getNotLogin(String uri, Class<T> response) {
+        try {
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andReturn();
+
+            return objectMapper.readValue(result.getResponse().getContentAsString(), response);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AssertionError("test fails");
