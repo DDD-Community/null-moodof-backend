@@ -7,11 +7,8 @@ import com.ddd.moodof.domain.model.board.Board;
 import com.ddd.moodof.domain.model.board.BoardRepository;
 import com.ddd.moodof.domain.model.board.BoardSequenceUpdater;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.server.ServletServerHttpRequest;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
@@ -24,9 +21,6 @@ public class BoardService {
 
     private final BoardSequenceUpdater boardSequenceUpdater;
 
-    public static final String LOCALHOST = "localhost";
-
-
     @Transactional
     public BoardDTO.BoardResponse create(Long userId, BoardDTO.CreateBoard request) {
         Board board = boardVerifier.toEntity(request.getPreviousBoardId(), request.getCategoryId(), request.getName(), userId);
@@ -34,14 +28,12 @@ public class BoardService {
         encryptByBoardId(userId, saved);
         boardRepository.findByUserIdAndPreviousBoardIdAndIdNot(userId, request.getPreviousBoardId(), saved.getId())
                 .ifPresent(it -> it.changePreviousBoardId(saved.getId(), userId));
-
         return BoardDTO.BoardResponse.from(saved);
     }
 
     public void encryptByBoardId(Long userId, Board saved) {
         String sharedKey = EncryptUtil.encryptSHA256(Long.toString(saved.getId()));
         saved.updateSharedkey(sharedKey, userId);
-        boardRepository.save(saved);
     }
 
     public BoardDTO.BoardResponse changeName(Long userId, Long id, BoardDTO.ChangeBoardName request) {
