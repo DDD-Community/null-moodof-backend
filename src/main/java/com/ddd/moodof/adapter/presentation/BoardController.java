@@ -3,12 +3,10 @@ package com.ddd.moodof.adapter.presentation;
 import com.ddd.moodof.adapter.presentation.api.BoardAPI;
 import com.ddd.moodof.application.BoardService;
 import com.ddd.moodof.application.dto.BoardDTO;
-import com.ddd.moodof.application.dto.SharedDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RequiredArgsConstructor
@@ -46,6 +44,7 @@ public class BoardController implements BoardAPI {
         boardService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<BoardDTO.BoardSharedResponse> getSharedKey(@LoginUserId Long userId, @PathVariable Long id){
         BoardDTO.BoardSharedResponse response = boardService.getSharedURI(userId, id);

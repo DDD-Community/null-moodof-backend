@@ -278,7 +278,7 @@ public class AcceptanceTest {
 
     protected <T> List<T> getListNotLogin(String uri, Class<T> response, String property) {
         try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri + "/{property}", property)
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(uri, property)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();

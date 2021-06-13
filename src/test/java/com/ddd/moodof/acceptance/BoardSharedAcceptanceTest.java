@@ -58,7 +58,7 @@ public class BoardSharedAcceptanceTest extends AcceptanceTest{
         보드_사진_복수_생성(userId, List.of(storagePhoto.getId(), storagePhoto2.getId()), board.getId());
 
         // when
-        List<BoardPhotoDTO.BoardPhotoResponse> response = getListNotLogin(API_PUBLIC_BOARDS , BoardPhotoDTO.BoardPhotoResponse.class,  board.getSharedKey());
+        List<BoardPhotoDTO.BoardPhotoResponse> response = getListNotLogin(API_PUBLIC_BOARDS +"?sharedKey={sharedKey}" , BoardPhotoDTO.BoardPhotoResponse.class,  board.getSharedKey());
 
         // then
         assertThat(response.size()).isEqualTo(2);

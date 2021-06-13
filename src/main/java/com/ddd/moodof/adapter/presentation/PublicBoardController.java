@@ -23,8 +23,8 @@ public class PublicBoardController implements PublicBoardAPI {
     private final BoardPhotoService boardPhotoService;
 
     @Override
-    @GetMapping("/{sharedKey}")
-    public ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> findAllByBoard(@PathVariable String sharedKey) {
+    @GetMapping
+    public ResponseEntity<List<BoardPhotoDTO.BoardPhotoResponse>> findAllByBoard(@RequestParam String sharedKey) {
         List<BoardPhotoDTO.BoardPhotoResponse> responses = boardPhotoService.findAllBySharedKey(sharedKey);
         return ResponseEntity.ok(responses);
     }
