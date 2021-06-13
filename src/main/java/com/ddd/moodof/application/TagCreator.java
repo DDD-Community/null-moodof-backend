@@ -14,12 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class TagCreator {
+    private static final int MAX_TAG_COUNT = 30;
+
     private final TagRepository tagRepository;
     private final TagAttachmentRepository tagAttachmentRepository;
     private final StoragePhotoRepository storagePhotoRepository;
 
     @Transactional
     public TagDTO.TagCreatedResponse create(String name, Long userId, Long storagePhotoId) {
+        if (tagRepository.countByUserId(userId) >= MAX_TAG_COUNT) {
+            throw new IllegalStateException("생성할 수 있는 태그의 최대 개수는 30개 입니다.");
+        }
         if (!storagePhotoRepository.existsByIdAndUserId(storagePhotoId, userId)) {
             throw new IllegalArgumentException("태그 생성자의 아이디 및 StoragePhotoId와 일치하는 StoragePhoto가 존재하지 않습니다.");
         }
